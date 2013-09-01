@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<TextView  
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:text="Fan Speed"
+	    />
+	
+	<SeekBar
+		android:id="@+id/SeekBar"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:max="1000"
+		android:progress="500"
+		/>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingTop="20dp">
+		<TextView
+			android:text="@string/analog_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingRight="5dp"
+			/>
+		<TextView
+			android:id="@+id/TextView"
+			android:text="0"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			/>
+	</LinearLayout>
+
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" >
+
+	    <ToggleButton
+		android:id="@+id/ToggleButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:textOff="Led is OFF"
+		android:textOn="Led is ON"
+		/>
+
+	<ToggleButton
+	    android:id="@+id/ForceSendDataButton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textOff="Data according to program"
+	    android:textOn="Data every Itteration" />
+
+	
+	   
+	<ToggleButton
+	    android:id="@+id/DebugButton1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textOff="Debug Off"
+	    android:textOn="Debug On" />
+	    
+	</LinearLayout>
+	
+	<ToggleButton
+	    android:id="@+id/toggleFanButton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="FanOff" />
+	
+	<TextView
+	    android:id="@+id/textFuktInne"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Luftfuktighet Inne"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<SeekBar
+	    android:id="@+id/seekFuktInne"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+
+	<TextView
+	    android:id="@+id/textTempInne"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Temperatur Inne"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<SeekBar
+	    android:id="@+id/seekTempInne"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+
+	<TextView
+	    android:id="@+id/textFuktUte"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Luftfuktighet Ute"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<SeekBar
+	    android:id="@+id/seekFuktUte"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+
+	<TextView
+	    android:id="@+id/textTempUte"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Temperatur Ute"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<SeekBar
+	    android:id="@+id/seekTempUte"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+	
+	<TextView
+	    	android:id="@+id/debugText"
+	    	android:text="Debug"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingRight="5dp"
+			/>
+
+	<TextView
+	    android:id="@+id/connectedText"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Not Initialized"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</LinearLayout>

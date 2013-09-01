@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TNA Krypgrundsmonitor</string>
+    <string name="seekbar_label">Move to control the position:</string>
+    <string name="analog_label">Analog reading:</string>
+    <string name="service_name">Thomas Service</string>
+</resources>
