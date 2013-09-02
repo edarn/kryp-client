@@ -99,6 +99,7 @@ public abstract class IOIOService extends Service implements
 	 * Subclasses should call this method from their own onStart() if
 	 * overloaded. It takes care of connecting with the IOIO.
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
