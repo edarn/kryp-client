@@ -11,7 +11,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 		Intent startServiceIntent = new Intent(context, KrypgrundsService.class);
     context.startService(startServiceIntent);
     
-    Intent startActivityIntent = new Intent(context, IOIOSimpleApp.class);
+    Intent startActivityIntent = new Intent(context, KrypgrundGUI.class);
     startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(startActivityIntent);
     
