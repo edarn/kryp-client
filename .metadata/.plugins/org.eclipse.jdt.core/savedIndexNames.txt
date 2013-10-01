@@ -1,5 +1,0 @@
-INDEX VERSION 1.126+C:\Users\TNALap\kryp-client\.metadata\.plugins\org.eclipse.jdt.core
-1568571253.index
-3548662107.index
-1623704054.index
-2963367838.index
