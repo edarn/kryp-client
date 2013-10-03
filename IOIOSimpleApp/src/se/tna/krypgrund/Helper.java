@@ -340,7 +340,7 @@ public class Helper {
 						message.addHeader("content-type", "application/x-www-form-urlencoded");
 						JSONArray dataArray = new JSONArray();
 						/* Create a JSON Array that contains the data.*/
-						for (int i = 0; i < Math.min(history.size(),500); i++) //Dont send more than 500 measures in one post.
+						for (int i = 0; i < Math.min(history.size(),50); i++) //Dont send more than 50 measures in one post.
 						{
 							Stats temp = history.get(i);
 							dataArray.put(temp.getJSON());
