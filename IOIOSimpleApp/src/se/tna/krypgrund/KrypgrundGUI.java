@@ -12,14 +12,13 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import android.text.format.Time;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class KrypgrundGUI extends Activity {
-	private TextView textView_;
-	private SeekBar seekBar_;
 	private SeekBar seekFuktInne;
 	private SeekBar seekTempInne;
 	private SeekBar seekFuktUte;
@@ -30,6 +29,8 @@ public class KrypgrundGUI extends Activity {
 	private TextView textTempUte;
 	private TextView debugText;
 	private TextView initializedText;
+	private TextView fanStatus;
+	private TextView phoneId;
 
 	private ToggleButton toggleButton_;
 	private ToggleButton debugButton;
@@ -38,6 +39,7 @@ public class KrypgrundGUI extends Activity {
 
 	private KrypgrundsService kryp = null;
 	private ServiceConnection mConnection = null;
+	private TextView textFanOn;
 
 	@Override
 	public void onPause() {
@@ -69,10 +71,8 @@ public class KrypgrundGUI extends Activity {
 
 		setContentView(R.layout.main);
 
-		textView_ = (TextView) findViewById(R.id.TextView);
-
+		fanStatus = (TextView)  findViewById(R.id.fanStatus);
 		debugText = (TextView) findViewById(R.id.debugText);
-		seekBar_ = (SeekBar) findViewById(R.id.SeekBar);
 		seekFuktInne = (SeekBar) findViewById(R.id.seekFuktInne);
 		seekFuktUte = (SeekBar) findViewById(R.id.seekFuktUte);
 		seekTempInne = (SeekBar) findViewById(R.id.seekTempInne);
@@ -82,8 +82,9 @@ public class KrypgrundGUI extends Activity {
 		textFuktUte = (TextView) findViewById(R.id.textFuktUte);
 		textTempInne = (TextView) findViewById(R.id.textTempInne);
 		textTempUte = (TextView) findViewById(R.id.textTempUte);
+		textFanOn = (TextView) findViewById(R.id.textFanOn);
 		initializedText = (TextView) findViewById(R.id.connectedText);
-		seekBar_.setMax(100);
+		phoneId = (TextView) findViewById(R.id.phoneId);
 		seekFuktInne.setMax(100);
 		seekFuktUte.setMax(100);
 		seekTempInne.setMax(60);
@@ -109,9 +110,8 @@ public class KrypgrundGUI extends Activity {
 			public void run() {
 				// TODO Auto-generated method stub
 				if (null != kryp && null != kryp.data) {
-					setText(kryp.data);
-					setStatusText(kryp.statusText, kryp.isInitialized);
-					setDebugText(kryp.debugText);
+					updateUI();
+					//setStatusText(kryp.statusText, kryp.isInitialized);
 					kryp.setDebugMode(debugButton.isChecked());
 					enableUi(debugButton.isChecked());
 					if (debugButton.isChecked()) {
@@ -143,7 +143,6 @@ public class KrypgrundGUI extends Activity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				seekBar_.setEnabled(enable);
 				toggleButton_.setEnabled(enable);
 				seekTempUte.setEnabled(enable);
 				seekTempInne.setEnabled(enable);
@@ -154,50 +153,71 @@ public class KrypgrundGUI extends Activity {
 		});
 	}
 
-	private void setText(final Stats data) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				// textView_.setText(str);
-				textTempUte.setText("Temp Ute: "
-						+ String.format("%.2f", data.temperatureUte));
-				textTempInne.setText("Temp Inne: "
-						+ String.format("%.2f", data.temperatureInne));
-				textFuktUte.setText("Fukt Ute: "
-						+ String.format("%.2f", data.moistureUte));
-				textFuktInne.setText("Fukt Inne: "
-						+ String.format("%.2f", data.moistureInne));
-				if (!debugButton.isChecked()) {
+	private void updateUI() {
+		if (null != kryp) {
+			final StatusOfService status = kryp.getStatus();
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (status.fanOn)
+					{
+					fanStatus.setText("Fan is RUNNING");
+					}
+					else
+					{
+						fanStatus.setText("Fan is OFF");
+							
+					}
+					textTempUte.setText("Temp Ute: "
+							+ String.format("%.2f", status.temperatureUte));
+					textTempInne.setText("Temp Inne: "
+							+ String.format("%.2f", status.temperatureInne));
+					textFuktUte.setText("Fukt Ute: "
+							+ String.format("%.2f", status.moistureUte));
+					textFuktInne.setText("Fukt Inne: "
+							+ String.format("%.2f", status.moistureInne));
+					textFanOn.setText("Fan On =" + status.fanOn);
 
-					seekTempUte.setProgress((int) data.temperatureUte + 20);
-					seekTempInne.setProgress((int) data.temperatureInne + 20);
-					seekFuktInne.setProgress((int) data.moistureInne);
-					seekFuktUte.setProgress((int) data.moistureUte);
+					//Is ioio chip initialized etc
+					initializedText.setText(status.statusMessage);
+					phoneId.setText("IMEI:" + status.deviceId);
+					StringBuilder sb = new StringBuilder();
+					sb.append("HistorySize: ");
+					sb.append(status.historySize);
+					sb.append("\n");
+					sb.append("ReadingSize: ");
+					sb.append(status.readingSize);
+					sb.append("\n");
+					
+					sb.append("TimeOfCreation: ");
+					
+					Time tt = new Time();
+					tt.set(status.timeOfCreation);
+					sb.append(tt.format2445());
+					sb.append("\nTimeSinceLastSend: ");
+					tt.set(status.timeForLastSendData);
+					sb.append(tt.format2445());
+					
+					
+					
+					debugText.setText(sb.toString());
+					//debugText.setText(status.)
+					
+					if (!debugButton.isChecked()) {
+
+						seekTempUte
+								.setProgress((int) status.temperatureUte + 20);
+						seekTempInne
+								.setProgress((int) status.temperatureInne + 20);
+						seekFuktInne.setProgress((int) status.moistureInne);
+						seekFuktUte.setProgress((int) status.moistureUte);
+					}
+
 				}
-
-			}
-		});
+			});
+		}
 	}
 
-	private void setStatusText(final String text, final boolean initialized) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				textView_.setText(text);
-				initializedText.setText("IoIo is initialized = " + initialized);
 
-			}
-		});
-	}
-
-	private void setDebugText(final String text) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				debugText.setText(text);
-
-			}
-		});
-	}
 
 }

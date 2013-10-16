@@ -11,6 +11,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.PwmOutput;
@@ -29,13 +31,15 @@ public class Helper {
 
 	DigitalOutput Standby = null;
 	TwiMaster i2c = null;
+	KrypgrundsService krypService = null;
 
-	public Helper(IOIO _ioio) {
+	public Helper(IOIO _ioio, KrypgrundsService kryp) {
 
 		ioio = _ioio;
+		krypService = kryp;
 		if (ioio != null) {
 			try {
-				i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+				ioio.softReset();
 				Standby = ioio.openDigitalOutput(6);
 				Standby.write(true); // Activate chip
 
@@ -47,8 +51,9 @@ public class Helper {
 				ASpeed = ioio.openPwmOutput(3, 1000000);
 				ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
 
-			} catch (ConnectionLostException e) {
-				// TODO Auto-generated catch block
+				i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			} // USE FALSE for I2C otherwise to high voltage!!!
 		}
@@ -61,73 +66,81 @@ public class Helper {
 		A2.close();
 		ASpeed.close();
 	}
-/*
-	static int GetTemperature(AnalogInput port){
-		float SensorTemp=0;
-		try {
-			float SensorVolt = port.getVoltage();
-			float SupplyVolt = 5;
-			//SensorTemp = (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
-			
-			//Temperature compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C
-			//int TrueRH = SensorRF/(1.0546-0.00216*temperature);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return (int) SensorTemp;
-	}
-	
 
-	static int GetAnalogueMoisture(AnalogInput port){
-		float SensorRF=0;
-		try {
-			float SensorVolt = port.getVoltage();
-			float SupplyVolt = 5;
-			SensorRF = (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
-
-
-			//		Voltage output (1
-			//				st
-			//				 order curve fit) VOUT
-			//				=(VSUPPLY
-			//				)(0.0062(sensor RH) + 0.16), typical at 25 �C 
-			//				Temperature compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C
-			//int TrueRH = SensorRF/(1.0546-0.00216*temperature);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return (int) SensorRF;
-	}
-*/
-	public enum SensorType{
-		SensorInne,
-		SensorUte;
+	/*
+	 * static int GetTemperature(AnalogInput port){ float SensorTemp=0; try {
+	 * float SensorVolt = port.getVoltage(); float SupplyVolt = 5; //SensorTemp
+	 * = (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
+	 * 
+	 * //Temperature compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T
+	 * in �C //int TrueRH = SensorRF/(1.0546-0.00216*temperature); } catch
+	 * (InterruptedException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } catch (ConnectionLostException e) { // TODO
+	 * Auto-generated catch block e.printStackTrace(); } return (int)
+	 * SensorTemp; }
+	 * 
+	 * 
+	 * static int GetAnalogueMoisture(AnalogInput port){ float SensorRF=0; try {
+	 * float SensorVolt = port.getVoltage(); float SupplyVolt = 5; SensorRF =
+	 * (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
+	 * 
+	 * 
+	 * // Voltage output (1 // st // order curve fit) VOUT // =(VSUPPLY //
+	 * )(0.0062(sensor RH) + 0.16), typical at 25 �C // Temperature
+	 * compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C //int
+	 * TrueRH = SensorRF/(1.0546-0.00216*temperature); } catch
+	 * (InterruptedException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } catch (ConnectionLostException e) { // TODO
+	 * Auto-generated catch block e.printStackTrace(); } return (int) SensorRF;
+	 * }
+	 */
+	public enum SensorType {
+		SensorInne, SensorUte;
 	}
 
-	public boolean SendI2CCommand(int adress, int register, int data) {
+	byte receive[];
 
-		byte toSend[] = new byte[2];
-		byte receive[] = new byte[1];
+	public boolean SendI2CCommand(final int adress, int register, int data) {
+		final byte toSend[] = new byte[2];
+		receive = new byte[1];
 		toSend[0] = (byte) register;
 		toSend[1] = (byte) data;
-		try {
-			i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		if (i2c == null) {
+			krypService.isInitialized = false;
 			return false;
+		}
+		Thread a = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					if (i2c != null) {
+						i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
+					} else {
+						Log.e("Helper", "I2C is null, no command sent!");
+					}
+				} catch (ConnectionLostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		a.start();
+
+		try {
+			a.join(5000);
+			if (a.isAlive()) {
+				a.interrupt();
+				krypService.isInitialized = false;
+				return false;
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
 		return true;
 	}
@@ -154,9 +167,12 @@ public class Helper {
 
 	public boolean SetupGpioChip() {
 
-		SendI2CCommand(0x40, 1, 255);
-		SendI2CCommand(0x40, 2, 255);
-		SendI2CCommand(0x40, 3, 0xC0);
+		if (!SendI2CCommand(0x40, 1, 255))
+			return false;
+		if (!SendI2CCommand(0x40, 2, 255))
+			return false;
+		if (!SendI2CCommand(0x40, 3, 0xC0))
+			return false;
 
 		return true;
 	}
@@ -285,11 +301,9 @@ public class Helper {
 	}
 
 	public void WriteText(String text) {
-
 		for (char b : text.toCharArray()) {
 			SendI2CCommand(0xC6, 0, b);
 		}
-
 	}
 
 	public static int FanMaxSpeed = 100;
@@ -299,29 +313,29 @@ public class Helper {
 
 	boolean ControlFan(int Speed, boolean Clockwise) {
 		boolean retVal = true;
-		try {
-			if (Speed == FanStop) {
-				A1.write(false);
-				A2.write(false);
-				FanOn = false;
-			} else if (Clockwise) {
-				A1.write(true);
-				A2.write(false);
-				FanOn = true;
-
-			} else {
-				A1.write(false);
-				A2.write(true);
-				FanOn = true;
+		if (A1 != null && A2 != null) {
+			try {
+				if (Speed == FanStop) {
+					A1.write(false);
+					A2.write(false);
+					FanOn = false;
+				} else if (Clockwise) {
+					A1.write(true);
+					A2.write(false);
+					FanOn = true;
+				} else {
+					A1.write(false);
+					A2.write(true);
+					FanOn = true;
+				}
+				ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
+			} catch (ConnectionLostException e) {
+				retVal = false;
+				e.printStackTrace();
 			}
-			ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
-
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
+		} else {
 			retVal = false;
-			e.printStackTrace();
 		}
-
 		return retVal;
 	}
 
@@ -329,78 +343,57 @@ public class Helper {
 		return FanOn;
 	}
 
-	int failureDelay = 0;
-	boolean SendSuccess = true;
-
 	public String SendDataToServer(ArrayList<Stats> history,
 			boolean forceSendData, String id) {
-		String retVal = "HSize=" + history.size() + " Succ="
-				+ Boolean.toString(SendSuccess) + " fDelay:"
-				+ Integer.toString(failureDelay);
-		failureDelay++;
-		if (history.size() > 100 || forceSendData) {
-			/* if (SendSuccess || (!SendSuccess && failureDelay > 12)) */{
-				SendSuccess = true;
-				failureDelay = 0;
-				HttpClient client = null;
-				JSONObject data;
+		String retVal = "Trying to send " + history.size() + " items.\n";
+		HttpClient client = null;
+		JSONObject data;
+		boolean SendSuccess = true;
 
-				try {
-					/*
-					 * Keep sending data until there is a send failure or the
-					 * history is emptied.
-					 */
-					while (SendSuccess && history.size() > 0) {
-						data = new JSONObject();
+		try {
+			/*
+			 * Keep sending data until there is a send failure or the history is
+			 * emptied.
+			 */
+			while (SendSuccess && history.size() > 0) {
+				data = new JSONObject();
 
-						client = new DefaultHttpClient();
-						HttpPost message = new HttpPost(
-								"http://www.surfvind.se/Krypgrund.php");
-						message.addHeader("content-type",
-								"application/x-www-form-urlencoded");
-						JSONArray dataArray = new JSONArray();
+				client = new DefaultHttpClient();
+				HttpPost message = new HttpPost(
+						"http://www.surfvind.se/Krypgrund.php");
+				message.addHeader("content-type",
+						"application/x-www-form-urlencoded");
+				JSONArray dataArray = new JSONArray();
 
-						int itemsToSend = Math.min(history.size(), 50);
-						/* Create a JSON Array that contains the data. */
-						// Dont send more than 50 measures in one post.
-						for (int i = 0; i < itemsToSend; i++) {
-							Stats temp = history.get(i);
-							dataArray.put(temp.getJSON());
-						}
-						data.put("measure", dataArray);
-						data.put("id", id);
-						message.setEntity(new StringEntity(data.toString()));
-						HttpResponse response = client.execute(message);
-						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-							// Delete the reading that are sent.
-							for (int i = 0; i < itemsToSend; i++) {
-								history.remove(0);
-							}
-							retVal = "Success";
-						} else {
-							SendSuccess = false;
-							retVal = "F: "
-									+ response.getStatusLine().getStatusCode();
-						}
+				int itemsToSend = Math.min(history.size(), 50);
+				/* Create a JSON Array that contains the data. */
+				// Dont send more than 50 measures in one post.
+				for (int i = 0; i < itemsToSend; i++) {
+					Stats temp = history.get(i);
+					dataArray.put(temp.getJSON());
+				}
+				data.put("measure", dataArray);
+				data.put("id", id);
+				message.setEntity(new StringEntity(data.toString()));
+				HttpResponse response = client.execute(message);
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					// Delete the reading that are sent.
+					for (int i = 0; i < itemsToSend; i++) {
+						history.remove(0);
 					}
-				} catch (Exception e) {
-					retVal = "Ex:" + e.toString();
-
-				} finally {
-					if (null != client)
-						client.getConnectionManager().shutdown();
+					retVal += "Success";
+				} else {
+					SendSuccess = false;
+					retVal += "F: " + response.getStatusLine().getStatusCode();
 				}
 			}
+		} catch (Exception e) {
+			retVal += "Ex:" + e.toString();
+
+		} finally {
+			if (null != client)
+				client.getConnectionManager().shutdown();
 		}
 		return retVal;
-
-	}
-
-	public boolean GetSendSuccess() {
-		return SendSuccess;
-	}
-
-	public int GetFailureDelay() {
-		return failureDelay;
 	}
 }

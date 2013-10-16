@@ -31,7 +31,7 @@ public class DebuggerActivity extends Activity {
 		setContentView(R.layout.main);
 
 		textView_ = (TextView) findViewById(R.id.TextView);
-		seekBar_ = (SeekBar) findViewById(R.id.SeekBar);
+	//	seekBar_ = (SeekBar) findViewById(R.id.SeekBar);
 		seekFuktInne = (SeekBar) findViewById(R.id.seekFuktInne);
 		seekFuktUte = (SeekBar) findViewById(R.id.seekFuktUte);
 		seekTempInne = (SeekBar) findViewById(R.id.seekTempInne);
@@ -64,7 +64,7 @@ public class DebuggerActivity extends Activity {
 		// enableUi(false);
 	}
 
-	private Helper helper = new Helper(null);
+	private Helper helper = new Helper(null,null);
 
 	private void enableUi(final boolean enable) {
 		runOnUiThread(new Runnable() {
@@ -173,9 +173,9 @@ public class DebuggerActivity extends Activity {
 			measurements = new ArrayList<Stats>();
 			debugText = res;
 		} else {
-			String text = "HSize=" + history.size() + " Succ="
-					+ Boolean.toString(helper.GetSendSuccess()) + " fDelay:"
-					+ Integer.toString(helper.GetFailureDelay());
+			String text = "HSize=" + history.size() + " Succ=";
+				//	+ Boolean.toString(helper.GetSendSuccess()) + " fDelay:"
+				//	+ Integer.toString(helper.GetFailureDelay());
 			debugText = text;
 		}
 		try {
