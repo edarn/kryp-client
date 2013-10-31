@@ -81,7 +81,7 @@ public class DebuggerActivity extends Activity {
 		});
 	}
 
-	private void setText(final Stats data) {
+	private void setText(final KrypgrundStats data) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -114,22 +114,22 @@ public class DebuggerActivity extends Activity {
 		});
 	}
 
-	public Stats data;
+	public KrypgrundStats data;
 	int delay = 0;
 	int historyDelay = 0;
 	final int TIME_BETWEEN_ON_OFF = 2 * 5; // 5 minutes - each itteration is 30
 											// sec.
 
 	private boolean forceSendData = false;
-	ArrayList<Stats> measurements = new ArrayList<Stats>();
+	ArrayList<KrypgrundStats> measurements = new ArrayList<KrypgrundStats>();
 	public String debugText = "";
 	public String statusText = "";
 	boolean isInitialized = false;
-	ArrayList<Stats> history = new ArrayList<Stats>();
+	ArrayList<KrypgrundStats> history = new ArrayList<KrypgrundStats>();
 	private String id = "123456789";
 
 	public void loop() {
-		Stats temp = new Stats();
+		KrypgrundStats temp = new KrypgrundStats();
 
 		temp.moistureInne = seekTempInne.getProgress();
 		temp.moistureUte = seekTempUte.getProgress();
@@ -141,9 +141,9 @@ public class DebuggerActivity extends Activity {
 		historyDelay++;
 		if (historyDelay > 5) {
 
-			Stats total = new Stats();
+			KrypgrundStats total = new KrypgrundStats();
 
-			for (Stats stat : measurements) {
+			for (KrypgrundStats stat : measurements) {
 				total.moistureInne += stat.moistureInne;
 				total.moistureUte += stat.moistureUte;
 				total.temperatureInne += stat.temperatureInne;
@@ -168,10 +168,10 @@ public class DebuggerActivity extends Activity {
 			total.fanOn = helper.IsFanOn();
 			history.add(total);
 			historyDelay = 0;
-			String res = helper.SendDataToServer(history, forceSendData, id);
+			//String res = helper.SendDataToServer(history, forceSendData, id);
 
-			measurements = new ArrayList<Stats>();
-			debugText = res;
+			measurements = new ArrayList<KrypgrundStats>();
+			//debugText = res;
 		} else {
 			String text = "HSize=" + history.size() + " Succ=";
 				//	+ Boolean.toString(helper.GetSendSuccess()) + " fDelay:"

@@ -1,7 +1,5 @@
 package se.tna.krypgrund;
 
-import android.text.format.Time;
-
 public class StatusOfService {
 	public float moistureInne = 0;
 	public float moistureUte = 0;
@@ -21,6 +19,9 @@ public class StatusOfService {
 	public long timeBetweenReading = 0;
 	public long timeForLastFanControl = 0;
 	public String deviceId = "Not Detected";
+	public float analogInput = 0;
+	public int windDirection = 0;
+	public float windSpeed = 0;
 	
 	public StatusOfService(){
 		timeOfCreation = System.currentTimeMillis();

@@ -67,6 +67,32 @@
             android:text="FanOff" />
 
         <TextView
+            android:id="@+id/textWindDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VindRiktning:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textWindSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VindHastighet:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textAnalogInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Analog Input:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <SeekBar
+            android:id="@+id/seekAnalogInput"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:id="@+id/textFuktInne"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

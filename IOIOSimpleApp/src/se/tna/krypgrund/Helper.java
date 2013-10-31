@@ -13,8 +13,16 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput;
+import ioio.lib.api.DigitalInput.Spec;
+import ioio.lib.api.DigitalInput.Spec.Mode;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PulseInput.ClockRate;
+import ioio.lib.api.PulseInput.PulseMode;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
@@ -29,10 +37,19 @@ public class Helper {
 	DigitalOutput B2 = null;
 	PwmOutput BSpeed = null;
 
+	CapSense humidityInside = null;
+	CapSense humidityOutside = null;
+
 	DigitalOutput Standby = null;
 	TwiMaster i2c = null;
 	KrypgrundsService krypService = null;
-
+	
+	PulseInput pulseCounter = null;
+	AnalogInput anemometer = null;
+	
+	private static final int ANEMOMETER_WIND_VANE = 40;
+	private static final int ANEMOMETER_SPEED = 28;
+	
 	public Helper(IOIO _ioio, KrypgrundsService kryp) {
 
 		ioio = _ioio;
@@ -40,6 +57,7 @@ public class Helper {
 		if (ioio != null) {
 			try {
 				ioio.softReset();
+			//	Thread.sleep(1000);
 				Standby = ioio.openDigitalOutput(6);
 				Standby.write(true); // Activate chip
 
@@ -48,10 +66,20 @@ public class Helper {
 				A2 = ioio.openDigitalOutput(4);
 				A2.write(false);
 
-				ASpeed = ioio.openPwmOutput(3, 1000000);
-				ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
+				//ASpeed = ioio.openPwmOutput(3, 1000000);
+				//ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
 
-				i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+				//i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+
+				humidityOutside = ioio.openCapSense(31);
+				humidityInside = ioio.openCapSense(32);
+				
+				Spec spec = new Spec(ANEMOMETER_SPEED);
+				spec.mode = Mode.FLOATING;
+				pulseCounter =ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, false);
+				//pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED,PulseMode.FREQ);
+				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+			
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -101,6 +129,8 @@ public class Helper {
 	byte receive[];
 
 	public boolean SendI2CCommand(final int adress, int register, int data) {
+		return true;
+		/*
 		final byte toSend[] = new byte[2];
 		receive = new byte[1];
 		toSend[0] = (byte) register;
@@ -143,6 +173,7 @@ public class Helper {
 			e.printStackTrace();
 		}
 		return true;
+		*/
 	}
 
 	public int ReadI2CData(int adress, int register) {
@@ -245,6 +276,36 @@ public class Helper {
 		return temperature;
 	}
 
+	public final static float CalibrationDataHumidity = 0.00000000000330f;
+	public final static float CalibrationDataHumiditySensitivity = 0.000000000000006f;
+
+	public float GetMoistureCap(SensorType type, float temperature) {
+		float moisture = -1; // Result in %
+		
+		float capacitance = 0;
+		try {
+			if (type == SensorType.SensorInne)
+			{
+			capacitance = humidityInside.read();
+			}
+			else if (type == SensorType.SensorUte)
+			{
+				capacitance = humidityOutside.read();
+			}
+			moisture = (capacitance - CalibrationDataHumidity)
+					/ CalibrationDataHumiditySensitivity + 55;
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConnectionLostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return moisture;
+	}
+
 	public float GetMoisture(SensorType type, float temperature) {
 		float moisture = -1; // Result in %
 		float rawMoisture = -1;
@@ -338,12 +399,41 @@ public class Helper {
 		}
 		return retVal;
 	}
+	
+	public float getWindSpeed()
+	{
+		float speedMeterPerSecond = 0;
+		try {
+			float freq = pulseCounter.getFrequency();
+			speedMeterPerSecond = freq * 1.006f;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ConnectionLostException e) {
+			e.printStackTrace();
+		}
+		return speedMeterPerSecond;
+	}
+	public float getWindDirection()
+	{
+		float direction = 0;
+		try {
+		//	float voltage = anemometer.getVoltage();
+			float voltage = anemometer.read();
+			voltage *=3.3;
+			direction = voltage;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ConnectionLostException e) {
+			e.printStackTrace();
+		}
+		return direction* 360f / 3.3f;
+	}
 
 	public boolean IsFanOn() {
 		return FanOn;
 	}
 
-	public String SendDataToServer(ArrayList<Stats> history,
+	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history,
 			boolean forceSendData, String id) {
 		String retVal = "Trying to send " + history.size() + " items.\n";
 		HttpClient client = null;
@@ -374,6 +464,61 @@ public class Helper {
 				}
 				data.put("measure", dataArray);
 				data.put("id", id);
+				message.setEntity(new StringEntity(data.toString()));
+				HttpResponse response = client.execute(message);
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					// Delete the reading that are sent.
+					for (int i = 0; i < itemsToSend; i++) {
+						history.remove(0);
+					}
+					retVal += "Success";
+				} else {
+					SendSuccess = false;
+					retVal += "F: " + response.getStatusLine().getStatusCode();
+				}
+			}
+		} catch (Exception e) {
+			retVal += "Ex:" + e.toString();
+
+		} finally {
+			if (null != client)
+				client.getConnectionManager().shutdown();
+		}
+		return retVal;
+	}
+
+	public String SendSurfvindDataToServer(ArrayList<SurfvindStats> history,
+			boolean forceSendData, String id, String version) {
+		String retVal = "Trying to send " + history.size() + " items.\n";
+		HttpClient client = null;
+		JSONObject data;
+		boolean SendSuccess = true;
+
+		try {
+			/*
+			 * Keep sending data until there is a send failure or the history is
+			 * emptied.
+			 */
+			while (SendSuccess && history.size() > 0) {
+				data = new JSONObject();
+
+				client = new DefaultHttpClient();
+				HttpPost message = new HttpPost(
+						"http://www.surfvind.se/AddSurfvindDataIOIOv1.php");
+				message.addHeader("content-type",
+						"application/x-www-form-urlencoded");
+				JSONArray dataArray = new JSONArray();
+
+				int itemsToSend = Math.min(history.size(), 50);
+				/* Create a JSON Array that contains the data. */
+				// Dont send more than 50 measures in one post.
+				for (int i = 0; i < itemsToSend; i++) {
+					Stats temp = history.get(i);
+					dataArray.put(temp.getJSON());
+				}
+				data.put("measure", dataArray);
+				data.put("id", id);
+				data.put("version", version);
 				message.setEntity(new StringEntity(data.toString()));
 				HttpResponse response = client.execute(message);
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

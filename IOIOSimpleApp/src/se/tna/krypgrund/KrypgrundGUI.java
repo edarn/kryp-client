@@ -13,6 +13,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import android.text.format.Time;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,12 +45,44 @@ public class KrypgrundGUI extends Activity {
 	private KrypgrundsService kryp = null;
 	private ServiceConnection mConnection = null;
 	private TextView textFanOn;
+	private TextView textWindSpeed;
+	private TextView textWindDirection;
+	private SeekBar windSeekBar;
+	private TextView textAnalogInput;
 
 	@Override
 	public void onPause() {
 
 		super.onPause();
 		mConnection = null;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		 MenuInflater inflater = getMenuInflater();
+		    inflater.inflate(R.menu.settings, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.useKrypgrund:
+	        	
+	          showPopup(seekFuktInne);
+	            return true;
+	        case R.id.useSurfvind:
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	public void showPopup(View v) {
+	    PopupMenu popup = new PopupMenu(this, v);
+	    MenuInflater inflater = popup.getMenuInflater();
+	    inflater.inflate(R.menu.actions, popup.getMenu());
+	    popup.show();
 	}
 
 	@Override
@@ -70,7 +107,12 @@ public class KrypgrundGUI extends Activity {
 		};
 
 		setContentView(R.layout.main);
-
+		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
+		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
+		textAnalogInput = (TextView) findViewById(R.id.textAnalogInput);
+		windSeekBar = (SeekBar) findViewById(R.id.seekAnalogInput);
+		windSeekBar.setMax(330);
+		
 		fanStatus = (TextView)  findViewById(R.id.fanStatus);
 		debugText = (TextView) findViewById(R.id.debugText);
 		seekFuktInne = (SeekBar) findViewById(R.id.seekFuktInne);
@@ -85,7 +127,7 @@ public class KrypgrundGUI extends Activity {
 		textFanOn = (TextView) findViewById(R.id.textFanOn);
 		initializedText = (TextView) findViewById(R.id.connectedText);
 		phoneId = (TextView) findViewById(R.id.phoneId);
-		seekFuktInne.setMax(100);
+		seekFuktInne.setMax(400);
 		seekFuktUte.setMax(100);
 		seekTempInne.setMax(60);
 		seekTempUte.setMax(60);
@@ -116,9 +158,9 @@ public class KrypgrundGUI extends Activity {
 					enableUi(debugButton.isChecked());
 					if (debugButton.isChecked()) {
 
-						Stats debugData = null;
+						KrypgrundStats debugData = null;
 						// Must this be run on the UI thread?
-						debugData = new Stats();
+						debugData = new KrypgrundStats();
 						debugData.moistureInne = seekFuktInne.getProgress();
 						debugData.moistureUte = seekFuktUte.getProgress();
 						debugData.temperatureInne = seekTempInne.getProgress();
@@ -168,6 +210,12 @@ public class KrypgrundGUI extends Activity {
 						fanStatus.setText("Fan is OFF");
 							
 					}
+					
+					textAnalogInput.setText("Analog Input: " + String.format("%.2f",status.analogInput));
+					textWindDirection.setText("Vindriktning: " +status.windDirection);
+					textWindSpeed.setText("Vindhastighet: " + String.format("%.2f",status.windSpeed));
+					windSeekBar.setProgress((int) status.analogInput);
+					
 					textTempUte.setText("Temp Ute: "
 							+ String.format("%.2f", status.temperatureUte));
 					textTempInne.setText("Temp Inne: "
