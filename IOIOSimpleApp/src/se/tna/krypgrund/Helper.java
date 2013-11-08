@@ -43,13 +43,13 @@ public class Helper {
 	DigitalOutput Standby = null;
 	TwiMaster i2c = null;
 	KrypgrundsService krypService = null;
-	
+
 	PulseInput pulseCounter = null;
 	AnalogInput anemometer = null;
-	
+
 	private static final int ANEMOMETER_WIND_VANE = 40;
 	private static final int ANEMOMETER_SPEED = 28;
-	
+
 	public Helper(IOIO _ioio, KrypgrundsService kryp) {
 
 		ioio = _ioio;
@@ -57,7 +57,7 @@ public class Helper {
 		if (ioio != null) {
 			try {
 				ioio.softReset();
-			//	Thread.sleep(1000);
+				// Thread.sleep(1000);
 				Standby = ioio.openDigitalOutput(6);
 				Standby.write(true); // Activate chip
 
@@ -66,20 +66,22 @@ public class Helper {
 				A2 = ioio.openDigitalOutput(4);
 				A2.write(false);
 
-				//ASpeed = ioio.openPwmOutput(3, 1000000);
-				//ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
+				// ASpeed = ioio.openPwmOutput(3, 1000000);
+				// ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
 
-				//i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+				// i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
+				// false);
 
 				humidityOutside = ioio.openCapSense(31);
 				humidityInside = ioio.openCapSense(32);
-				
+
 				Spec spec = new Spec(ANEMOMETER_SPEED);
 				spec.mode = Mode.FLOATING;
-				pulseCounter =ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, false);
-				//pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED,PulseMode.FREQ);
+				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz,
+						PulseMode.FREQ, false);
+				// pulseCounter =
+				// ioio.openPulseInput(ANEMOMETER_SPEED,PulseMode.FREQ);
 				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
-			
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -88,11 +90,16 @@ public class Helper {
 	}
 
 	public void Destroy() {
-		i2c.close();
-		Standby.close();
-		A1.close();
-		A2.close();
-		ASpeed.close();
+		if (i2c != null)
+			i2c.close();
+		if (Standby != null)
+			Standby.close();
+		if (A1 != null)
+			A1.close();
+		if (A2 != null)
+			A2.close();
+		if (ASpeed != null)
+			ASpeed.close();
 	}
 
 	/*
@@ -131,49 +138,24 @@ public class Helper {
 	public boolean SendI2CCommand(final int adress, int register, int data) {
 		return true;
 		/*
-		final byte toSend[] = new byte[2];
-		receive = new byte[1];
-		toSend[0] = (byte) register;
-		toSend[1] = (byte) data;
-
-		if (i2c == null) {
-			krypService.isInitialized = false;
-			return false;
-		}
-		Thread a = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					if (i2c != null) {
-						i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
-					} else {
-						Log.e("Helper", "I2C is null, no command sent!");
-					}
-				} catch (ConnectionLostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		a.start();
-
-		try {
-			a.join(5000);
-			if (a.isAlive()) {
-				a.interrupt();
-				krypService.isInitialized = false;
-				return false;
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return true;
-		*/
+		 * final byte toSend[] = new byte[2]; receive = new byte[1]; toSend[0] =
+		 * (byte) register; toSend[1] = (byte) data;
+		 * 
+		 * if (i2c == null) { krypService.isInitialized = false; return false; }
+		 * Thread a = new Thread(new Runnable() {
+		 * 
+		 * @Override public void run() { try { if (i2c != null) {
+		 * i2c.writeRead(adress / 2, false, toSend, 2, receive, 0); } else {
+		 * Log.e("Helper", "I2C is null, no command sent!"); } } catch
+		 * (ConnectionLostException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } catch (InterruptedException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } } }); a.start();
+		 * 
+		 * try { a.join(5000); if (a.isAlive()) { a.interrupt();
+		 * krypService.isInitialized = false; return false; } } catch
+		 * (InterruptedException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } return true;
+		 */
 	}
 
 	public int ReadI2CData(int adress, int register) {
@@ -281,20 +263,17 @@ public class Helper {
 
 	public float GetMoistureCap(SensorType type, float temperature) {
 		float moisture = -1; // Result in %
-		
+
 		float capacitance = 0;
 		try {
-			if (type == SensorType.SensorInne)
-			{
-			capacitance = humidityInside.read();
-			}
-			else if (type == SensorType.SensorUte)
-			{
+			if (type == SensorType.SensorInne) {
+				capacitance = humidityInside.read();
+			} else if (type == SensorType.SensorUte) {
 				capacitance = humidityOutside.read();
 			}
 			moisture = (capacitance - CalibrationDataHumidity)
 					/ CalibrationDataHumiditySensitivity + 55;
-			
+
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -399,9 +378,8 @@ public class Helper {
 		}
 		return retVal;
 	}
-	
-	public float getWindSpeed()
-	{
+
+	public float getWindSpeed() {
 		float speedMeterPerSecond = 0;
 		try {
 			float freq = pulseCounter.getFrequency();
@@ -413,20 +391,20 @@ public class Helper {
 		}
 		return speedMeterPerSecond;
 	}
-	public float getWindDirection()
-	{
+
+	public float getWindDirection() {
 		float direction = 0;
 		try {
-		//	float voltage = anemometer.getVoltage();
+			// float voltage = anemometer.getVoltage();
 			float voltage = anemometer.read();
-			voltage *=3.3;
+			voltage *= 3.3;
 			direction = voltage;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
 		}
-		return direction* 360f / 3.3f;
+		return direction * 360f / 3.3f;
 	}
 
 	public boolean IsFanOn() {
