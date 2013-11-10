@@ -21,11 +21,11 @@ import android.telephony.TelephonyManager;
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
 	protected static final long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
-			.toMillis(5);
-	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
 			.toMillis(1);
+	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.SECONDS
+			.toMillis(25);
 	protected static final long TIME_BETWEEN_READING = TimeUnit.SECONDS
-			.toMillis(5);
+			.toMillis(2);
 	protected static final long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
 			.toMillis(3);
 
@@ -35,8 +35,6 @@ public class KrypgrundsService extends IOIOService {
 	private long timeBetweenAddToHistory = TIME_BETWEEN_ADD_TO_HISTORY;
 	private long timeBetweenReading = TIME_BETWEEN_READING;
 	private long timeForLastFanControl = 0;
-
-	public KrypgrundStats data;
 
 	private final IBinder mBinder = new MyBinder();
 	private boolean debugMode = false;
@@ -58,7 +56,6 @@ public class KrypgrundsService extends IOIOService {
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
-	
 
 	public void setDebugMode(boolean enable) {
 		debugMode = enable;
@@ -77,7 +74,6 @@ public class KrypgrundsService extends IOIOService {
 			public void disconnected() {
 				super.disconnected();
 				isInitialized = false;
-				helper.Destroy();
 			}
 
 			@Override
@@ -101,11 +97,12 @@ public class KrypgrundsService extends IOIOService {
 			}
 
 			Random r = new Random();
+
 			@Override
 			public void loop() {
 				try {
 					if (!isInitialized) {
-					//	initialize();
+						// initialize();
 					}
 					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
 
@@ -121,9 +118,9 @@ public class KrypgrundsService extends IOIOService {
 							temp.temperatureUte = 10 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorUte);
 							temp.temperatureInne = 5 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorInne);
 							temp.moistureUte = 23 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorUte,
-													// temp.temperatureUte);
+							// temp.temperatureUte);
 							temp.moistureInne = 56 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorInne,
-													// temp.temperatureInne);
+							// temp.temperatureInne);
 							/*
 							 * y = 4.632248129 e6.321315927ï¿½10-2 x y=max fukt
 							 * i gram/m3
@@ -136,9 +133,6 @@ public class KrypgrundsService extends IOIOService {
 									.expm1(0.06321315927 * temp.temperatureInne) + 1))
 									* temp.moistureInne;
 						}
-						synchronized (KrypgrundsService.this) {
-							data = temp;
-						}
 						rawMeasurements.add(temp);
 
 					}
@@ -149,17 +143,20 @@ public class KrypgrundsService extends IOIOService {
 						// list.
 						SurfvindStats temp = new SurfvindStats();
 
-						temp.windDirectionAvg =helper.getWindDirection(); // 180 + r.nextInt(30);
-						temp.windSpeedAvg =  helper.getWindSpeed(); //8 + r.nextInt(10)/10f; //
-						rawSurfvindsMeasurements.add(temp);
-						synchronized (KrypgrundsService.this) {
-							data = new KrypgrundStats();
-							data.moistureInne = temp.windDirectionAvg;
-							data.temperatureInne = temp.windSpeedAvg;
-							data.moistureUte = 0;
-							data.temperatureUte = 0;
+						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);// helper.getWindDirection();
+																				// //
+																				// 180
+																				// +
+																				// r.nextInt(30);
+						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); // getWindSpeed();
+																			// //8
+																			// +
+																			// r.nextInt(10)/10f;
+																			// //
+						if (temp.windDirectionAvg != -1
+								&& temp.windSpeedAvg != -1) {
+							rawSurfvindsMeasurements.add(temp);
 						}
-					
 					}
 
 					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
@@ -236,9 +233,11 @@ public class KrypgrundsService extends IOIOService {
 									krypgrundHistory, forceSendData, id);
 							// Reset time even if it fails - don´t hesitate to
 							// retry sending.
-							
-							debugText += helper.SendSurfvindDataToServer(surfvindHistory,forceSendData,id, version);
-							
+
+							debugText += helper
+									.SendSurfvindDataToServer(surfvindHistory,
+											forceSendData, id, version);
+
 							timeForLastSendData = System.currentTimeMillis();
 						}
 						rawMeasurements = new ArrayList<KrypgrundStats>();
@@ -311,7 +310,7 @@ public class KrypgrundsService extends IOIOService {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		return Service.START_STICKY;
+		return Service.START_NOT_STICKY;
 	}
 
 	@Override
@@ -338,38 +337,35 @@ public class KrypgrundsService extends IOIOService {
 		}
 	}
 
+	StatusOfService status = new StatusOfService();
+
 	public StatusOfService getStatus() {
-		StatusOfService status = new StatusOfService();
 
 		synchronized (KrypgrundsService.this) {
 			int pos = rawMeasurements.size() - 1;
 			if (pos >= 0) {
-//				KrypgrundStats oneReading = rawMeasurements.get(pos);
-//				status.moistureInne = oneReading.moistureInne;
-//				status.moistureUte = oneReading.moistureUte;
-//				status.temperatureUte = oneReading.temperatureUte;
-//				status.temperatureInne = oneReading.temperatureInne;
-//				status.absolutFuktInne = oneReading.absolutFuktInne;
-//				status.absolutFuktUte = oneReading.absolutFuktUte;
+				KrypgrundStats oneReading = rawMeasurements.get(pos);
+				status.moistureInne = oneReading.moistureInne;
+				status.moistureUte = oneReading.moistureUte;
+				status.temperatureUte = oneReading.temperatureUte;
+				status.temperatureInne = oneReading.temperatureInne;
+				status.absolutFuktInne = oneReading.absolutFuktInne;
+				status.absolutFuktUte = oneReading.absolutFuktUte;
 			}
-			 pos = rawSurfvindsMeasurements.size() - 1;
-				
-			if (pos > 0){
+			pos = rawSurfvindsMeasurements.size() - 1;
+			if (pos >= 0) {
 				SurfvindStats oneReading = rawSurfvindsMeasurements.get(pos);
 				status.windDirection = (int) oneReading.windDirectionAvg;
 				status.windSpeed = oneReading.windSpeedAvg;
-				status.analogInput = oneReading.windDirectionAvg * 3.3f/360f;
-				
-				
-				
+				status.analogInput = oneReading.windDirectionAvg * 3.3f / 360f;
 			}
 		}
 		if (helper != null)
 			status.fanOn = helper.IsFanOn();
 		if (krypgrundHistory != null)
-			status.historySize = krypgrundHistory.size();
+			status.historySize = surfvindHistory.size();
 		if (rawMeasurements != null)
-			status.readingSize = rawMeasurements.size();
+			status.readingSize = rawSurfvindsMeasurements.size();
 		status.statusMessage = debugText;
 		status.timeForLastSendData = timeForLastSendData;
 		status.timeBetweenSendingDataToServer = timeBetweenSendingDataToServer;

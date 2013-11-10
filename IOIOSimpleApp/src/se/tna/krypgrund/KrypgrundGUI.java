@@ -54,36 +54,48 @@ public class KrypgrundGUI extends Activity {
 	public void onPause() {
 
 		super.onPause();
-		mConnection = null;
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		 MenuInflater inflater = getMenuInflater();
-		    inflater.inflate(R.menu.settings, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.settings, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.useKrypgrund:
-	        	
-	          showPopup(seekFuktInne);
-	            return true;
-	        case R.id.useSurfvind:
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.useKrypgrund:
+
+			showPopup(seekFuktInne);
+			return true;
+		case R.id.useSurfvind:
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
+
 	public void showPopup(View v) {
-	    PopupMenu popup = new PopupMenu(this, v);
-	    MenuInflater inflater = popup.getMenuInflater();
-	    inflater.inflate(R.menu.actions, popup.getMenu());
-	    popup.show();
+		PopupMenu popup = new PopupMenu(this, v);
+		MenuInflater inflater = popup.getMenuInflater();
+		inflater.inflate(R.menu.actions, popup.getMenu());
+		popup.show();
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (serviceBound && mConnection != null) {
+			unbindService(mConnection);
+			mConnection = null;
+			
+		}
+	}
+
+	boolean serviceBound = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,13 +108,16 @@ public class KrypgrundGUI extends Activity {
 				kryp = ((KrypgrundsService.MyBinder) service).getService();
 				Toast.makeText(KrypgrundGUI.this, "Connected",
 						Toast.LENGTH_SHORT).show();
-
+				serviceBound = true;
 			}
 
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				kryp = null;
-
+				serviceBound = false;
+				Toast.makeText(KrypgrundGUI.this, "DisConnected",
+						Toast.LENGTH_SHORT).show();
+				
 			}
 		};
 
@@ -112,8 +127,8 @@ public class KrypgrundGUI extends Activity {
 		textAnalogInput = (TextView) findViewById(R.id.textAnalogInput);
 		windSeekBar = (SeekBar) findViewById(R.id.seekAnalogInput);
 		windSeekBar.setMax(330);
-		
-		fanStatus = (TextView)  findViewById(R.id.fanStatus);
+
+		fanStatus = (TextView) findViewById(R.id.fanStatus);
 		debugText = (TextView) findViewById(R.id.debugText);
 		seekFuktInne = (SeekBar) findViewById(R.id.seekFuktInne);
 		seekFuktUte = (SeekBar) findViewById(R.id.seekFuktUte);
@@ -151,9 +166,9 @@ public class KrypgrundGUI extends Activity {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				if (null != kryp && null != kryp.data) {
+				if (null != kryp) {
 					updateUI();
-					//setStatusText(kryp.statusText, kryp.isInitialized);
+					// setStatusText(kryp.statusText, kryp.isInitialized);
 					kryp.setDebugMode(debugButton.isChecked());
 					enableUi(debugButton.isChecked());
 					if (debugButton.isChecked()) {
@@ -201,21 +216,21 @@ public class KrypgrundGUI extends Activity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (status.fanOn)
-					{
-					fanStatus.setText("Fan is RUNNING");
-					}
-					else
-					{
+					if (status.fanOn) {
+						fanStatus.setText("Fan is RUNNING");
+					} else {
 						fanStatus.setText("Fan is OFF");
-							
+
 					}
-					
-					textAnalogInput.setText("Analog Input: " + String.format("%.2f",status.analogInput));
-					textWindDirection.setText("Vindriktning: " +status.windDirection);
-					textWindSpeed.setText("Vindhastighet: " + String.format("%.2f",status.windSpeed));
-					windSeekBar.setProgress((int) status.analogInput);
-					
+
+					textAnalogInput.setText("Analog Input: "
+							+ String.format("%.2f", status.analogInput));
+					textWindDirection.setText("Vindriktning: "
+							+ status.windDirection);
+					textWindSpeed.setText("Vindhastighet: "
+							+ String.format("%.2f", status.windSpeed));
+					windSeekBar.setProgress(status.windDirection);
+
 					textTempUte.setText("Temp Ute: "
 							+ String.format("%.2f", status.temperatureUte));
 					textTempInne.setText("Temp Inne: "
@@ -226,7 +241,7 @@ public class KrypgrundGUI extends Activity {
 							+ String.format("%.2f", status.moistureInne));
 					textFanOn.setText("Fan On =" + status.fanOn);
 
-					//Is ioio chip initialized etc
+					// Is ioio chip initialized etc
 					initializedText.setText(status.statusMessage);
 					phoneId.setText("IMEI:" + status.deviceId);
 					StringBuilder sb = new StringBuilder();
@@ -236,21 +251,19 @@ public class KrypgrundGUI extends Activity {
 					sb.append("ReadingSize: ");
 					sb.append(status.readingSize);
 					sb.append("\n");
-					
+
 					sb.append("TimeOfCreation: ");
-					
+
 					Time tt = new Time();
 					tt.set(status.timeOfCreation);
 					sb.append(tt.format2445());
 					sb.append("\nTimeSinceLastSend: ");
 					tt.set(status.timeForLastSendData);
 					sb.append(tt.format2445());
-					
-					
-					
+
 					debugText.setText(sb.toString());
-					//debugText.setText(status.)
-					
+					// debugText.setText(status.)
+
 					if (!debugButton.isChecked()) {
 
 						seekTempUte
@@ -265,7 +278,5 @@ public class KrypgrundGUI extends Activity {
 			});
 		}
 	}
-
-
 
 }
