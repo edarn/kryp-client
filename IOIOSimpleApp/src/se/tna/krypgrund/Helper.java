@@ -46,6 +46,8 @@ public class Helper {
 
 	PulseInput pulseCounter = null;
 	AnalogInput anemometer = null;
+	private AnalogInput power;
+	private AnalogInput temp;
 
 	private static final int ANEMOMETER_WIND_VANE = 40;
 	private static final int ANEMOMETER_SPEED = 28;
@@ -56,14 +58,17 @@ public class Helper {
 		krypService = kryp;
 		if (ioio != null) {
 			try {
-				ioio.softReset();
+				// ioio.softReset();
 
-				// anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 
-				Spec spec = new Spec(ANEMOMETER_SPEED);
-				spec.mode = Mode.FLOATING;
-				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_2MHz,
-						PulseMode.FREQ, true);
+				power = ioio.openAnalogInput(42);
+				temp = ioio.openAnalogInput(43);
+
+//				Spec spec = new Spec(ANEMOMETER_SPEED);
+//				spec.mode = Mode.PULL_UP;
+//				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz,
+//						PulseMode.FREQ, true);
 
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
@@ -386,10 +391,10 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-			Thread.sleep(200);
+	//		Thread.sleep(200);
 			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_2MHz,
 					PulseMode.FREQ, true);
-			Thread.sleep(1000);
+	//		Thread.sleep(1000);
 			freq = pulseCounter.getFrequency();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -408,16 +413,24 @@ public class Helper {
 	public float getWindSpeed2() throws ConnectionLostException {
 		float speedMeterPerSecond = 0;
 		try {
-			Thread.sleep(200);
+			// Thread.sleep(200);
 			freq = pulseCounter.getFrequency();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		System.out.println("WindSpeed: " + freq + " Hz");
-		if (freq < 0.5 || freq > 60)
-			freq = 0;
-		speedMeterPerSecond = freq * 1.006f;
+		System.out.println("WindSpeed: " + String.format("%.2f", freq) + " Hz");
+		if (freq < 0.5){
+			speedMeterPerSecond = 0;
+		}
+		else if (freq > 60)
+		{
+			speedMeterPerSecond = -1;
+		}
+		else
+		{
+			speedMeterPerSecond = freq * 1.006f;
+		}
 		return speedMeterPerSecond;
 	}
 
@@ -434,24 +447,23 @@ public class Helper {
 				try {
 					switch (command) {
 					case FREQ:
-						result = getWindSpeed2();
+						result = getWindSpeed();
 						break;
 
 					case ANALOG:
-						result = getWindDirection();
+						result = getWindDirection2();
 						break;
 					}
 				} catch (Exception e) {
 					Log.e("Helper", "An IOIO command failed: Command = "
 							+ command);
 					e.printStackTrace();
-					Log.e("Helper", "Now issuing a hard reset on IOIO");
-					try {
-						ioio.hardReset();
-					} catch (ConnectionLostException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					/*
+					 * Log.e("Helper", "Now issuing a hard reset on IOIO"); try
+					 * { ioio.hardReset(); } catch (ConnectionLostException e1)
+					 * { // TODO Auto-generated catch block
+					 * e1.printStackTrace(); }
+					 */
 
 				}
 			}
@@ -462,15 +474,9 @@ public class Helper {
 			commandExecutor.join(4000);
 			if (commandExecutor.isAlive()) {
 				commandExecutor.interrupt();
-				commandExecutor = null;
-
-				return 0;
-			} else {
-				commandExecutor = null;
 			}
-
+			commandExecutor = null;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
@@ -503,18 +509,48 @@ public class Helper {
 	public float getWindDirection2() throws ConnectionLostException {
 		float direction = 0;
 		try {
-			Thread.sleep(200);
+			// Thread.sleep(200);
 
 			float voltage = anemometer.getVoltage();
 			System.out.println("Volt: " + voltage + " Rate: "
 					+ anemometer.getSampleRate());
-
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		return direction;
+	}
+
+	public int getBatteryVoltage() throws ConnectionLostException {
+		float voltage = 0;
+		try {
+
+			voltage = power.getVoltage();
+
+			voltage += voltage / 4400 * 24000;
+			System.out.println("VBatt: " + voltage);
+			voltage*=100;
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return (int)voltage;
+	}
+
+	public int getTemp() throws ConnectionLostException {
+		float voltage = 0;
+		try {
+			voltage = temp.getVoltage();
+			System.out.println("Tempraw: " + voltage);
+
+			voltage = 100 * voltage - 50;
+			System.out.println("Tempcalc: " + voltage);
+			voltage *=10;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return (int)voltage;
 	}
 
 	public boolean IsFanOn() {
@@ -573,6 +609,24 @@ public class Helper {
 				client.getConnectionManager().shutdown();
 		}
 		return retVal;
+	}
+
+	public void trim(ArrayList<SurfvindStats> history) {
+		SurfvindStats temp = null;
+		ArrayList<SurfvindStats> toRemove = new ArrayList<SurfvindStats>();
+		for (int i = 0; i < history.size(); i++) {
+			temp = history.get(i);
+			if (temp.windSpeedAvg <= 3 && temp.windSpeedMax > 10) {
+				toRemove.add(temp);
+			} else if (temp.windSpeedAvg <= 5 && temp.windSpeedMax > 12) {
+				toRemove.add(temp);
+			} else if (temp.windSpeedAvg * 2 < temp.windSpeedMax) {
+				toRemove.add(temp);
+			}
+		}
+		for (SurfvindStats s : toRemove) {
+			history.remove(s);
+		}
 	}
 
 	public String SendSurfvindDataToServer(ArrayList<SurfvindStats> history,

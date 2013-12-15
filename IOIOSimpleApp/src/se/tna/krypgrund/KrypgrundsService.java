@@ -21,11 +21,10 @@ import android.telephony.TelephonyManager;
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
 	protected static final long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
+			.toMillis(5);
+	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
 			.toMillis(1);
-	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.SECONDS
-			.toMillis(25);
-	protected static final long TIME_BETWEEN_READING = TimeUnit.SECONDS
-			.toMillis(2);
+	protected static final long TIME_BETWEEN_READING = 50;//TimeUnit.SECONDS.toMillis(2);
 	protected static final long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
 			.toMillis(3);
 
@@ -153,10 +152,13 @@ public class KrypgrundsService extends IOIOService {
 																			// +
 																			// r.nextInt(10)/10f;
 																			// //
+						temp.batteryVoltage = helper.getBatteryVoltage();
+						temp.temperature = helper.getTemp();
 						if (temp.windDirectionAvg != -1
 								&& temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
 						}
+						
 					}
 
 					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
@@ -219,10 +221,14 @@ public class KrypgrundsService extends IOIOService {
 								if (stat.windSpeedAvg > total.windSpeedMax) {
 									total.windSpeedMax = stat.windSpeedAvg;
 								}
+								total.temperature +=stat.temperature;
+								total.batteryVoltage += stat.batteryVoltage;
 							}
 							int size = rawSurfvindsMeasurements.size();
 							total.windDirectionAvg /= size;
 							total.windSpeedAvg /= size;
+							total.temperature /= size;
+							total.batteryVoltage /= size;
 							surfvindHistory.add(total);
 							rawSurfvindsMeasurements.clear();
 						}
@@ -233,11 +239,10 @@ public class KrypgrundsService extends IOIOService {
 									krypgrundHistory, forceSendData, id);
 							// Reset time even if it fails - don´t hesitate to
 							// retry sending.
-
+							helper.trim(surfvindHistory);
 							debugText += helper
 									.SendSurfvindDataToServer(surfvindHistory,
 											forceSendData, id, version);
-
 							timeForLastSendData = System.currentTimeMillis();
 						}
 						rawMeasurements = new ArrayList<KrypgrundStats>();

@@ -9,6 +9,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -60,29 +63,53 @@ public class KrypgrundGUI extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.settings, menu);
+		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+		
+		MenuItem item = null;
+		
+		item = menu.findItem(R.id.useSurfvind);
+		if (null != item)
+		{
+			item.setChecked(preferences.getBoolean("useSurfvind", false));
+		//item.setChecked(true);
+	}
+		item = menu.findItem(R.id.useKrypgrund);
+		if (null != item)
+		{
+			item.setChecked(preferences.getBoolean("useKrypgrund", false));
+		}
+		
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
+		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+		
+		PopupMenu popup = new PopupMenu(this, forceSendDataButton);
+		MenuInflater inflater = popup.getMenuInflater();
+		Editor s = preferences.edit();
 		switch (item.getItemId()) {
 		case R.id.useKrypgrund:
-
-			showPopup(seekFuktInne);
-			return true;
+			inflater.inflate(R.menu.krypgrund_actions, popup.getMenu());
+			s.putBoolean("useKrypgrund", true);
+			break;
 		case R.id.useSurfvind:
-			return true;
+			inflater.inflate(R.menu.surfvind_actions, popup.getMenu());
+			s.putBoolean("useSurfvind", !preferences.getBoolean("useSurfvind", false));
+			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+		s.apply();
+		
+		popup.show();
+		return true;
 	}
 
 	public void showPopup(View v) {
-		PopupMenu popup = new PopupMenu(this, v);
-		MenuInflater inflater = popup.getMenuInflater();
-		inflater.inflate(R.menu.actions, popup.getMenu());
-		popup.show();
+
 	}
 
 	@Override
@@ -91,11 +118,12 @@ public class KrypgrundGUI extends Activity {
 		if (serviceBound && mConnection != null) {
 			unbindService(mConnection);
 			mConnection = null;
-			
+
 		}
 	}
 
 	boolean serviceBound = false;
+	SharedPreferences preferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,10 +145,22 @@ public class KrypgrundGUI extends Activity {
 				serviceBound = false;
 				Toast.makeText(KrypgrundGUI.this, "DisConnected",
 						Toast.LENGTH_SHORT).show();
-				
+
 			}
 		};
-
+		
+		
+		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+			
+			@Override
+			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+					String key) {
+				preferences = sharedPreferences;
+				
+			}
+		});
+		
 		setContentView(R.layout.main);
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);

@@ -10,6 +10,8 @@ public class SurfvindStats extends Stats {
 	public float windDirectionMin = 0;
 	public float windDirectionAvg = 0;
 	public float windDirectionMax = 0;
+	public int batteryVoltage =0;
+	public int temperature = 0;
 	
 
 	@Override
@@ -24,6 +26,9 @@ public class SurfvindStats extends Stats {
 			ret.put("WindSpeedMin", windSpeedMin);
 			ret.put("WindSpeedAvg", windSpeedAvg);
 			ret.put("WindSpeedMax", windSpeedMax);
+			
+			ret.put("Battery", (int)batteryVoltage);
+			ret.put("Temperature", (int)temperature);
 			
 			ret.put("TimeStamp", time.format2445());
 			
