@@ -48,9 +48,16 @@ public class Helper {
 	AnalogInput anemometer = null;
 	private AnalogInput power;
 	private AnalogInput temp;
+	private AnalogInput mAnalogPulsecounter;
 
 	private static final int ANEMOMETER_WIND_VANE = 40;
 	private static final int ANEMOMETER_SPEED = 28;
+
+	private enum FrequencyReading {
+		Continuos_Reading, OpenClose_Reading, Analogue_Reading
+	};
+
+	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Analogue_Reading;
 
 	public Helper(IOIO _ioio, KrypgrundsService kryp) {
 
@@ -65,10 +72,17 @@ public class Helper {
 				power = ioio.openAnalogInput(42);
 				temp = ioio.openAnalogInput(43);
 
-//				Spec spec = new Spec(ANEMOMETER_SPEED);
-//				spec.mode = Mode.PULL_UP;
-//				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz,
-//						PulseMode.FREQ, true);
+				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
+					mAnalogPulsecounter = ioio.openAnalogInput(ANEMOMETER_SPEED);
+				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
+					Spec spec = new Spec(ANEMOMETER_SPEED);
+					spec.mode = Mode.PULL_UP;
+					pulseCounter = ioio.openPulseInput(spec,
+							ClockRate.RATE_16MHz, PulseMode.FREQ, true);
+				}
+				else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
+					//Do nothing as open and close will be done at every call.
+				}
 
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
@@ -124,13 +138,12 @@ public class Helper {
 	 * 
 	 * 
 	 * // Voltage output (1 // st // order curve fit) VOUT // =(VSUPPLY //
-	 * )(0.0062(sensor RH) + 0.16), typical at 25 �C // Temperature
-	 * compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C //int
-	 * TrueRH = SensorRF/(1.0546-0.00216*temperature); } catch
-	 * (InterruptedException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (ConnectionLostException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } return (int) SensorRF;
-	 * }
+	 * )(0.0062(sensor RH) + 0.16), typical at 25 �C // Temperature compensation
+	 * True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C //int TrueRH =
+	 * SensorRF/(1.0546-0.00216*temperature); } catch (InterruptedException e) {
+	 * // TODO Auto-generated catch block e.printStackTrace(); } catch
+	 * (ConnectionLostException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } return (int) SensorRF; }
 	 */
 	public enum SensorType {
 		SensorInne, SensorUte;
@@ -391,11 +404,13 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-	//		Thread.sleep(200);
 			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_2MHz,
 					PulseMode.FREQ, true);
-	//		Thread.sleep(1000);
-			freq = pulseCounter.getFrequency();
+			float duration = pulseCounter.waitPulseGetDuration();
+
+			freq = 1 / duration;
+			// freq = pulseCounter.getFrequency();
+
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -410,6 +425,7 @@ public class Helper {
 		return speedMeterPerSecond;
 	}
 
+	
 	public float getWindSpeed2() throws ConnectionLostException {
 		float speedMeterPerSecond = 0;
 		try {
@@ -420,17 +436,67 @@ public class Helper {
 		}
 
 		System.out.println("WindSpeed: " + String.format("%.2f", freq) + " Hz");
-		if (freq < 0.5){
+		if (freq < 0.5) {
 			speedMeterPerSecond = 0;
-		}
-		else if (freq > 60)
-		{
+		} else if (freq > 60) {
 			speedMeterPerSecond = -1;
-		}
-		else
-		{
+		} else {
 			speedMeterPerSecond = freq * 1.006f;
 		}
+		return speedMeterPerSecond;
+	}
+    
+	public float getWindSpeed3() throws ConnectionLostException {
+        ArrayList<Boolean> values = new ArrayList<Boolean>();
+		float speedMeterPerSecond = 0;
+		final int NBR_READINGS_TO_ANALYZE = 2000;
+		values.clear();
+		try {
+			while (values.size() < NBR_READINGS_TO_ANALYZE) {
+				for (int i = 0; i < mAnalogPulsecounter.available(); i++) {
+					if (mAnalogPulsecounter.readBuffered() > 0.9) // HIGH
+					{
+						values.add(true);
+					} else {
+						values.add(false);
+					}
+				}
+			}
+			boolean currentValue = values.get(0);
+			int i = 1;
+			int startPulse = i;
+			int endPulse = 0;
+			for (; i < values.size(); i++) // Detect an edge.
+			{
+				if (currentValue != values.get(i)) {
+					currentValue = values.get(i);
+					break;
+				}
+			}
+			int nbrPulses = 0;
+			boolean status = false;
+			for (; i < values.size(); i++) // Detect an edge.
+			{
+				if (currentValue != values.get(i)) {
+					status = true;
+				} else if (status) {
+					nbrPulses++;
+					endPulse = i; // Save the value for last known complete
+									// pulse
+					status = false;
+				}
+			}
+			freq = NBR_READINGS_TO_ANALYZE - (endPulse - startPulse)
+					/ (float) (anemometer.getSampleRate() * nbrPulses);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("WindSpeed: " + freq + " Hz");
+		if (freq < 0.5 || freq > 60)
+			freq = 0;
+		speedMeterPerSecond = freq * 1.006f;
 		return speedMeterPerSecond;
 	}
 
@@ -447,7 +513,19 @@ public class Helper {
 				try {
 					switch (command) {
 					case FREQ:
-						result = getWindSpeed();
+						switch(GET_SPEED_VERSION)
+						{
+						case Continuos_Reading:
+							result = getWindSpeed();
+							break;
+						case OpenClose_Reading:
+							result = getWindSpeed2();
+							break;
+						case Analogue_Reading:
+							result = getWindSpeed3();
+							break;
+						}
+						result = getWindSpeed3();
 						break;
 
 					case ANALOG:
@@ -474,6 +552,7 @@ public class Helper {
 			commandExecutor.join(4000);
 			if (commandExecutor.isAlive()) {
 				commandExecutor.interrupt();
+				
 			}
 			commandExecutor = null;
 		} catch (InterruptedException e) {
@@ -530,12 +609,12 @@ public class Helper {
 
 			voltage += voltage / 4400 * 24000;
 			System.out.println("VBatt: " + voltage);
-			voltage*=100;
+			voltage *= 100;
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return (int)voltage;
+		return (int) voltage;
 	}
 
 	public int getTemp() throws ConnectionLostException {
@@ -546,11 +625,11 @@ public class Helper {
 
 			voltage = 100 * voltage - 50;
 			System.out.println("Tempcalc: " + voltage);
-			voltage *=10;
+			voltage *= 10;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return (int)voltage;
+		return (int) voltage;
 	}
 
 	public boolean IsFanOn() {
