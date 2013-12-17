@@ -65,10 +65,16 @@ public class Helper {
 				power = ioio.openAnalogInput(42);
 				temp = ioio.openAnalogInput(43);
 
-//				Spec spec = new Spec(ANEMOMETER_SPEED);
-//				spec.mode = Mode.PULL_UP;
-//				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz,
-//						PulseMode.FREQ, true);
+				float speedMeterPerSecond = 0;
+				Spec spec = new Spec(ANEMOMETER_SPEED);
+				spec.mode = Mode.PULL_UP;
+				pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
+
+				// Spec spec = new Spec(ANEMOMETER_SPEED);
+				// spec.mode = Mode.PULL_UP;
+				// pulseCounter = ioio.openPulseInput(spec,
+				// ClockRate.RATE_16MHz,
+				// PulseMode.FREQ, true);
 
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
@@ -250,8 +256,7 @@ public class Helper {
 		// WriteText("Volt:" + Float.toString(voltage));
 		// temperature =
 		// (float)(((float)((float)voltage/(float)supply)-(float)0.16)/(float)0.0062);
-		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375))
-				/ (float) 0.0225;
+		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375)) / (float) 0.0225;
 		// Temperature compensation for moisture
 		// int temperature = xxx;
 		// moisture =
@@ -274,8 +279,7 @@ public class Helper {
 			} else if (type == SensorType.SensorUte) {
 				capacitance = humidityOutside.read();
 			}
-			moisture = (capacitance - CalibrationDataHumidity)
-					/ CalibrationDataHumiditySensitivity + 55;
+			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -391,10 +395,9 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-	//		Thread.sleep(200);
-			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_2MHz,
-					PulseMode.FREQ, true);
-	//		Thread.sleep(1000);
+			// Thread.sleep(200);
+			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
+			// Thread.sleep(1000);
 			freq = pulseCounter.getFrequency();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -404,9 +407,13 @@ public class Helper {
 		}
 
 		System.out.println("WindSpeed: " + freq + " Hz");
-		if (freq < 0.5 || freq > 60)
-			freq = 0;
-		speedMeterPerSecond = freq * 1.006f;
+		if (freq < 0.5) {
+			speedMeterPerSecond = 0;
+		} else if (freq > 60) {
+			speedMeterPerSecond = -1;
+		} else {
+			speedMeterPerSecond = freq * 1.006f;
+		}
 		return speedMeterPerSecond;
 	}
 
@@ -420,15 +427,11 @@ public class Helper {
 		}
 
 		System.out.println("WindSpeed: " + String.format("%.2f", freq) + " Hz");
-		if (freq < 0.5){
+		if (freq < 0.5) {
 			speedMeterPerSecond = 0;
-		}
-		else if (freq > 60)
-		{
+		} else if (freq > 60) {
 			speedMeterPerSecond = -1;
-		}
-		else
-		{
+		} else {
 			speedMeterPerSecond = freq * 1.006f;
 		}
 		return speedMeterPerSecond;
@@ -447,7 +450,7 @@ public class Helper {
 				try {
 					switch (command) {
 					case FREQ:
-						result = getWindSpeed();
+						result = getWindSpeed2();
 						break;
 
 					case ANALOG:
@@ -455,16 +458,9 @@ public class Helper {
 						break;
 					}
 				} catch (Exception e) {
-					Log.e("Helper", "An IOIO command failed: Command = "
-							+ command);
+					Log.e("Helper", "An IOIO command failed: Command = " + command);
 					e.printStackTrace();
-					/*
-					 * Log.e("Helper", "Now issuing a hard reset on IOIO"); try
-					 * { ioio.hardReset(); } catch (ConnectionLostException e1)
-					 * { // TODO Auto-generated catch block
-					 * e1.printStackTrace(); }
-					 */
-
+					
 				}
 			}
 		});
@@ -489,8 +485,7 @@ public class Helper {
 			anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 			Thread.sleep(200);
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: "
-					+ anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -499,8 +494,7 @@ public class Helper {
 			Log.e("Helper", "Now issuing a hard reset on IOIO");
 			ioio.hardReset();
 		} finally {
-			System.out
-					.println("======= GetWindDirection anemometer close.----");
+			System.out.println("======= GetWindDirection anemometer close.----");
 			anemometer.close();
 		}
 		return direction;
@@ -512,8 +506,7 @@ public class Helper {
 			// Thread.sleep(200);
 
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: "
-					+ anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -530,12 +523,12 @@ public class Helper {
 
 			voltage += voltage / 4400 * 24000;
 			System.out.println("VBatt: " + voltage);
-			voltage*=100;
+			voltage *= 100;
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return (int)voltage;
+		return (int) voltage;
 	}
 
 	public int getTemp() throws ConnectionLostException {
@@ -546,19 +539,18 @@ public class Helper {
 
 			voltage = 100 * voltage - 50;
 			System.out.println("Tempcalc: " + voltage);
-			voltage *=10;
+			voltage *= 10;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return (int)voltage;
+		return (int) voltage;
 	}
 
 	public boolean IsFanOn() {
 		return FanOn;
 	}
 
-	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history,
-			boolean forceSendData, String id) {
+	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history, boolean forceSendData, String id) {
 		String retVal = "Trying to send " + history.size() + " items.\n";
 		HttpClient client = null;
 		JSONObject data;
@@ -573,10 +565,8 @@ public class Helper {
 				data = new JSONObject();
 
 				client = new DefaultHttpClient();
-				HttpPost message = new HttpPost(
-						"http://www.surfvind.se/Krypgrund.php");
-				message.addHeader("content-type",
-						"application/x-www-form-urlencoded");
+				HttpPost message = new HttpPost("http://www.surfvind.se/Krypgrund.php");
+				message.addHeader("content-type", "application/x-www-form-urlencoded");
 				JSONArray dataArray = new JSONArray();
 
 				int itemsToSend = Math.min(history.size(), 50);
@@ -629,8 +619,7 @@ public class Helper {
 		}
 	}
 
-	public String SendSurfvindDataToServer(ArrayList<SurfvindStats> history,
-			boolean forceSendData, String id, String version) {
+	public String SendSurfvindDataToServer(ArrayList<SurfvindStats> history, boolean forceSendData, String id, String version) {
 		String retVal = "Trying to send " + history.size() + " items.\n";
 		HttpClient client = null;
 		JSONObject data;
@@ -645,10 +634,8 @@ public class Helper {
 				data = new JSONObject();
 
 				client = new DefaultHttpClient();
-				HttpPost message = new HttpPost(
-						"http://www.surfvind.se/AddSurfvindDataIOIOv1.php");
-				message.addHeader("content-type",
-						"application/x-www-form-urlencoded");
+				HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindDataIOIOv1.php");
+				message.addHeader("content-type", "application/x-www-form-urlencoded");
 				JSONArray dataArray = new JSONArray();
 
 				int itemsToSend = Math.min(history.size(), 50);
