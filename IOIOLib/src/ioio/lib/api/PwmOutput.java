@@ -37,7 +37,7 @@ import ioio.lib.api.exception.ConnectionLostException;
  * for simulating analog outputs for controlling the intensity of LEDs, the
  * rotation speed of motors, etc. They are also frequently used for controlling
  * hobby servo motors. PwmOutput instances are obtained by calling
- * {@link IOIO#openPwmOutput(ioio.lib.api.DigitalOutput.Spec, int)}.
+ * {@link IOIO#openPwmOutput(ioio.lib.api.DigitalOutput.Spec, float)}.
  * <p>
  * When used for motors and LEDs, a frequency of several KHz is typically used,
  * where there is a trade-off between switching power-loses and smoothness of
@@ -88,7 +88,7 @@ import ioio.lib.api.exception.ConnectionLostException;
  * servo.close();  // pin 12 can now be used for something else.
  * </pre>
  * 
- * @see IOIO#openPwmOutput(ioio.lib.api.DigitalOutput.Spec, int)
+ * @see IOIO#openPwmOutput(ioio.lib.api.DigitalOutput.Spec, float)
  */
 public interface PwmOutput extends Closeable {
 	/**
@@ -104,6 +104,9 @@ public interface PwmOutput extends Closeable {
 	 */
 	public void setDutyCycle(float dutyCycle) throws ConnectionLostException;
 
+	
+	
+	public void setFreqency(float frequency) throws ConnectionLostException;
 	/**
 	 * Sets the pulse width of the PWM output. The pulse width is duration of
 	 * the high-time within a single period of the signal. For relative control

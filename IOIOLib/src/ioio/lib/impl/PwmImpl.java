@@ -30,14 +30,15 @@ package ioio.lib.impl;
 
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.impl.IOIOProtocol.PwmScale;
 
 import java.io.IOException;
 
 class PwmImpl extends AbstractResource implements PwmOutput {
 	private final int pwmNum_;
 	private final int pinNum_;
-	private final float baseUs_;
-	private final int period_;
+	private float baseUs_;
+	private int period_;
 
 	public PwmImpl(IOIOImpl ioio, int pinNum, int pwmNum, int period,
 			float baseUs) throws ConnectionLostException {
@@ -95,6 +96,31 @@ class PwmImpl extends AbstractResource implements PwmOutput {
 		try {
 			ioio_.protocol_.setPwmDutyCycle(pwmNum_, pw, fraction);
 		} catch (IOException e) {
+			throw new ConnectionLostException(e);
+		}
+	}
+
+	@Override
+	public void setFreqency(float freqHz) throws ConnectionLostException {
+		assert (freqHz <= 0);
+		checkState();
+		int scale = 0;
+		while (true) {
+			final int clk = 16000000 / IOIOProtocol.PwmScale.values()[scale].scale;
+			period_ = (int) (clk / freqHz);
+			if (period_ <= 65536) {
+				baseUs_ = 1000000.0f / clk;
+				break;
+			}
+			if (++scale >= PwmScale.values().length) {
+				throw new IllegalArgumentException("Frequency too low: "
+						+ freqHz);
+			}
+		}
+		try {
+			ioio_.protocol_.setPwmPeriod(pwmNum_, period_-1, IOIOProtocol.PwmScale.values()[scale]);
+		} catch (IOException e) {
+			close();
 			throw new ConnectionLostException(e);
 		}
 	}

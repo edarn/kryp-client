@@ -451,14 +451,14 @@ public class IOIOImpl implements IOIO, DisconnectListener {
 	}
 
 	@Override
-	public PwmOutput openPwmOutput(int pin, int freqHz)
+	public PwmOutput openPwmOutput(int pin, float freqHz)
 			throws ConnectionLostException {
 		return openPwmOutput(new DigitalOutput.Spec(pin), freqHz);
 	}
 
 	@Override
 	synchronized public PwmOutput openPwmOutput(DigitalOutput.Spec spec,
-			int freqHz) throws ConnectionLostException {
+			float freqHz) throws ConnectionLostException {
 		checkState();
 		hardware_.checkSupportsPeripheralOutput(spec.pin);
 		checkPinFree(spec.pin);
@@ -469,7 +469,7 @@ public class IOIOImpl implements IOIO, DisconnectListener {
 		int period;
 		while (true) {
 			final int clk = 16000000 / IOIOProtocol.PwmScale.values()[scale].scale;
-			period = clk / freqHz;
+			period = (int) (clk / freqHz);
 			if (period <= 65536) {
 				baseUs = 1000000.0f / clk;
 				break;

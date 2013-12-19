@@ -373,15 +373,15 @@ public interface IOIO {
 	 *             concurrent PWM resources is not exceeded.
 	 * @see PwmOutput
 	 */
-	public PwmOutput openPwmOutput(DigitalOutput.Spec spec, int freqHz)
+	public PwmOutput openPwmOutput(DigitalOutput.Spec spec, float freqHz)
 			throws ConnectionLostException;
 
 	/**
 	 * Shorthand for openPwmOutput(new DigitalOutput.Spec(pin), freqHz).
 	 * 
-	 * @see #openPwmOutput(ioio.lib.api.DigitalOutput.Spec, int)
+	 * @see #openPwmOutput(ioio.lib.api.DigitalOutput.Spec, float)
 	 */
-	public PwmOutput openPwmOutput(int pin, int freqHz)
+	public PwmOutput openPwmOutput(int pin, float freqHz)
 			throws ConnectionLostException;
 
 	/**
