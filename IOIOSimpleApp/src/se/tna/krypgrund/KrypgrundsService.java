@@ -239,7 +239,7 @@ public class KrypgrundsService extends IOIOService {
 									krypgrundHistory, forceSendData, id);
 							// Reset time even if it fails - don´t hesitate to
 							// retry sending.
-							helper.trim(surfvindHistory);
+						//	helper.trim(surfvindHistory);
 							debugText += helper
 									.SendSurfvindDataToServer(surfvindHistory,
 											forceSendData, id, version);
