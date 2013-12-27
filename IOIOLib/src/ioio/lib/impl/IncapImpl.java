@@ -54,10 +54,10 @@ class IncapImpl extends AbstractPin implements DataModuleListener,
 	@Override
 	public synchronized float waitPulseGetDuration()
 			throws InterruptedException, ConnectionLostException {
-		if (mode_ != PulseMode.POSITIVE && mode_ != PulseMode.NEGATIVE) {
+		/*if (mode_ != PulseMode.POSITIVE && mode_ != PulseMode.NEGATIVE) {
 			throw new IllegalStateException(
 					"Cannot wait for pulse when module was not opened in pulse mode.");
-		}
+		}*/
 		checkState();
 		while (pulseQueue_.isEmpty() && state_ == State.OPEN) {
 			wait();
@@ -85,7 +85,7 @@ class IncapImpl extends AbstractPin implements DataModuleListener,
 			result |= ((int) data[i]) & 0xFF;
 		}
 		if (result == 0) {
-			result = 1 << (size * 8);
+			result = Integer.MAX_VALUE;
 		}
 		return result;
 	}

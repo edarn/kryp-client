@@ -57,7 +57,7 @@ public class Helper {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
 	};
 
-	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.OpenClose_Reading;
+	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Continuos_Reading;
 
 	public Helper(IOIO _ioio, KrypgrundsService kryp) {
 
@@ -399,8 +399,11 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_2MHz, PulseMode.FREQ, true);
+			//pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED, PulseMode.FREQ);
+			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
+			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
+			//float duration = pulseCounter.getDuration();
 
 			freq = 1 / duration;
 			// freq = pulseCounter.getFrequency();
@@ -413,13 +416,13 @@ public class Helper {
 		}
 
 		System.out.println("WindSpeed: " + freq + " Hz");
-		if (freq < 0.5) {
-			speedMeterPerSecond = 0;
-		} else if (freq > 60) {
-			speedMeterPerSecond = -1;
-		} else {
+//		if (freq < 0.5) {
+//			speedMeterPerSecond = 0;
+//		} else if (freq > 60) {
+//			speedMeterPerSecond = -1;
+//		} else {
 			speedMeterPerSecond = freq * 1.006f;
-		}
+//		}
 		return speedMeterPerSecond;
 	}
 
@@ -428,6 +431,7 @@ public class Helper {
 		try {
 			// Thread.sleep(200);
 			freq = pulseCounter.getFrequency();
+			//pulseCounter.w
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

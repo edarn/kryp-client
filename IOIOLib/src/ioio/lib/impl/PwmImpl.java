@@ -28,6 +28,7 @@
  */
 package ioio.lib.impl;
 
+import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.impl.IOIOProtocol.PwmScale;
@@ -118,6 +119,8 @@ class PwmImpl extends AbstractResource implements PwmOutput {
 			}
 		}
 		try {
+			ioio_.protocol_.setPinDigitalOut(pinNum_, false, DigitalOutput.Spec.Mode.NORMAL);
+			ioio_.protocol_.setPinPwm(pinNum_, pwmNum_, true);
 			ioio_.protocol_.setPwmPeriod(pwmNum_, period_-1, IOIOProtocol.PwmScale.values()[scale]);
 		} catch (IOException e) {
 			close();
