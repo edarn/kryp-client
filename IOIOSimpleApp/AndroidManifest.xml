@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-sdk
-        android:minSdkVersion="12"
+        android:minSdkVersion="10"
         android:targetSdkVersion="18" />
 
     <application
@@ -43,6 +43,7 @@
         <activity
             android:name="se.tna.krypgrund.KrypgrundGUI"
             android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:launchMode="singleTask" >
             <intent-filter>

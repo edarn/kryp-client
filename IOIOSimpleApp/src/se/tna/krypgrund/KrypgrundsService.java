@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import se.tna.krypgrund.Helper.Command;
+import se.tna.krypgrund.Helper.SensorType;
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
@@ -24,7 +27,7 @@ public class KrypgrundsService extends IOIOService {
 			.toMillis(5);
 	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
 			.toMillis(1);
-	protected static final long TIME_BETWEEN_READING = 50;//TimeUnit.SECONDS.toMillis(2);
+	protected static final long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
 	protected static final long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
 			.toMillis(3);
 
@@ -51,7 +54,7 @@ public class KrypgrundsService extends IOIOService {
 	public final static int SURFVIND = 0x1;
 	public final static int KRYPGRUND = 0x2;
 	public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
-	private int serviceMode = SURFVIND;
+	private int serviceMode = KRYPGRUND;
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
@@ -89,7 +92,7 @@ public class KrypgrundsService extends IOIOService {
 				id = telephonyManager.getDeviceId();
 
 				helper = new Helper(ioio_, KrypgrundsService.this);
-				if (helper.SetupGpioChip()) {
+				if (helper.queryIOIO(Command.SetupGpio) != 0) {
 					isInitialized = true;
 				}
 
@@ -114,20 +117,24 @@ public class KrypgrundsService extends IOIOService {
 								// temp = debugStats;
 							}
 						} else {
-							temp.temperatureUte = 10 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorUte);
-							temp.temperatureInne = 5 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorInne);
-							temp.moistureUte = 23 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorUte,
-							// temp.temperatureUte);
-							temp.moistureInne = 56 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorInne,
-							// temp.temperatureInne);
-							/*
+							float rawMoisture = 0;
+							//temp.temperatureUte = helper.queryIOIO(Command.TempOut);
+							temp.temperatureInne =helper.queryIOIO(Command.TempIn);
+							//rawMoisture = helper.queryIOIO(Command.MoistOut);// helper.GetMoisture(SensorType.SensorUte, temp.temperatureUte);
+							// Temperature compensation for moisture
+							// int temperature = xxx;
+    						//temp.moistureUte = (float) ((float) rawMoisture / (float) ((1.0546 - 0.00216 * temp.temperatureUte)));
+						  
+							rawMoisture = helper.queryIOIO(Command.MoistIn);//helper.GetMoisture(SensorType.SensorInne, temp.temperatureInne);
+							temp.moistureInne = (float) ((float) rawMoisture / (float) ((1.0546 - 0.00216 * temp.temperatureInne)));
+										/*
 							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt
 							 * i gram/m3
 							 */
 
-							temp.absolutFuktUte = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * temp.temperatureUte) + 1))
-									* temp.moistureUte;
+							//temp.absolutFuktUte = (float) (4.632248129 * (Math
+							//		.expm1(0.06321315927 * temp.temperatureUte) + 1))
+							//		* temp.moistureUte;
 							temp.absolutFuktInne = (float) (4.632248129 * (Math
 									.expm1(0.06321315927 * temp.temperatureInne) + 1))
 									* temp.moistureInne;
@@ -142,12 +149,12 @@ public class KrypgrundsService extends IOIOService {
 						// list.
 						SurfvindStats temp = new SurfvindStats();
 
-						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);// helper.getWindDirection();
+						temp.windDirectionAvg = helper.queryIOIO(Command.Analog);// helper.getWindDirection();
 																				// //
 																				// 180
 																				// +
 																				// r.nextInt(30);
-						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); // getWindSpeed();
+						temp.windSpeedAvg = helper.queryIOIO(Command.Freq); // getWindSpeed();
 																			// //8
 																			// +
 																			// r.nextInt(10)/10f;
@@ -368,9 +375,9 @@ public class KrypgrundsService extends IOIOService {
 		if (helper != null)
 			status.fanOn = helper.IsFanOn();
 		if (krypgrundHistory != null)
-			status.historySize = surfvindHistory.size();
+			status.historySize = krypgrundHistory.size();
 		if (rawMeasurements != null)
-			status.readingSize = rawSurfvindsMeasurements.size();
+			status.readingSize = rawMeasurements.size();
 		status.statusMessage = debugText;
 		status.timeForLastSendData = timeForLastSendData;
 		status.timeBetweenSendingDataToServer = timeBetweenSendingDataToServer;

@@ -20,7 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
+//import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +85,7 @@ public class KrypgrundGUI extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
+		/*
 		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
 		
 		PopupMenu popup = new PopupMenu(this, forceSendDataButton);
@@ -105,6 +106,7 @@ public class KrypgrundGUI extends Activity {
 		s.apply();
 		
 		popup.show();
+		*/
 		return true;
 	}
 
@@ -232,7 +234,7 @@ public class KrypgrundGUI extends Activity {
 
 		};
 
-		timer.scheduleAtFixedRate(t, 0, 400);
+		timer.scheduleAtFixedRate(t, 0, 2000);
 
 	}
 

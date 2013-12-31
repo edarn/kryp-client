@@ -65,20 +65,35 @@ public class Helper {
 		krypService = kryp;
 		if (ioio != null) {
 			try {
-				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+				/*
+				 * anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+				 * 
+				 * power = ioio.openAnalogInput(42); temp =
+				 * ioio.openAnalogInput(43);
+				 * 
+				 * if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
+				 * mAnalogPulsecounter = ioio.openAnalogInput(ANEMOMETER_SPEED);
+				 * } else if (GET_SPEED_VERSION ==
+				 * FrequencyReading.Continuos_Reading) { Spec spec = new
+				 * Spec(ANEMOMETER_SPEED); spec.mode = Mode.PULL_UP;
+				 * pulseCounter = ioio.openPulseInput(spec,
+				 * ClockRate.RATE_16MHz, PulseMode.FREQ, true); } else if
+				 * (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
+				 * // Do nothing as open and close will be done at every call. }
+				 */
 
-				power = ioio.openAnalogInput(42);
-				temp = ioio.openAnalogInput(43);
+				Standby = ioio.openDigitalOutput(6);
+				Standby.write(true); // Activate chip
 
-				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
-					mAnalogPulsecounter = ioio.openAnalogInput(ANEMOMETER_SPEED);
-				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
-					Spec spec = new Spec(ANEMOMETER_SPEED);
-					spec.mode = Mode.PULL_UP;
-					pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz, PulseMode.FREQ, true);
-				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
-					// Do nothing as open and close will be done at every call.
-				}
+				A1 = ioio.openDigitalOutput(5);
+				A1.write(false);
+				A2 = ioio.openDigitalOutput(4);
+				A2.write(false);
+
+				ASpeed = ioio.openPwmOutput(3, 1000000);
+				ASpeed.setDutyCycle(0); // Enginge off - 1 = Full on
+
+				i2c = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
 
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
@@ -148,62 +163,44 @@ public class Helper {
 
 	byte receive[];
 
-	public boolean SendI2CCommand(final int adress, int register, int data) {
+	public boolean SendI2CCommand(final int adress, int register, int data) throws ConnectionLostException, InterruptedException {
+
+		final byte toSend[] = new byte[2];
+		receive = new byte[1];
+		toSend[0] = (byte) register;
+		toSend[1] = (byte) data;
+
+		if (i2c == null) {
+			krypService.isInitialized = false;
+			Log.e("Helper", "I2C is null, no command sent!");
+			return false;
+		} else {
+			i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
+		}
 		return true;
-		/*
-		 * final byte toSend[] = new byte[2]; receive = new byte[1]; toSend[0] =
-		 * (byte) register; toSend[1] = (byte) data;
-		 * 
-		 * if (i2c == null) { krypService.isInitialized = false; return false; }
-		 * Thread a = new Thread(new Runnable() {
-		 * 
-		 * @Override public void run() { try { if (i2c != null) {
-		 * i2c.writeRead(adress / 2, false, toSend, 2, receive, 0); } else {
-		 * Log.e("Helper", "I2C is null, no command sent!"); } } catch
-		 * (ConnectionLostException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } catch (InterruptedException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } } }); a.start();
-		 * 
-		 * try { a.join(5000); if (a.isAlive()) { a.interrupt();
-		 * krypService.isInitialized = false; return false; } } catch
-		 * (InterruptedException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } return true;
-		 */
 	}
 
-	public int ReadI2CData(int adress, int register) {
+	public int ReadI2CData(int adress, int register) throws ConnectionLostException, InterruptedException {
 		byte toSend[] = new byte[1];
 		byte toReceive[] = new byte[1];
 		toSend[0] = (byte) register;
-
-		try {
-			i2c.writeRead(adress / 2, false, toSend, 1, toReceive, 1);
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-
+		i2c.writeRead(adress / 2, false, toSend, 1, toReceive, 1);
 		return (int) (toReceive[0] & 0xFF);
 	}
 
-	public boolean SetupGpioChip() {
+	public float SetupGpioChip() throws ConnectionLostException, InterruptedException {
 
 		if (!SendI2CCommand(0x40, 1, 255))
-			return false;
+			return 0;
 		if (!SendI2CCommand(0x40, 2, 255))
-			return false;
+			return 0;
 		if (!SendI2CCommand(0x40, 3, 0xC0))
-			return false;
+			return 0;
 
-		return true;
+		return 1;
 	}
 
-	public float GetTemperatureNew(SensorType type) {
+	public float GetTemperatureNew(SensorType type) throws ConnectionLostException, InterruptedException {
 		float temperature = -1; // Result in %
 		// float supply = 5;
 
@@ -226,7 +223,7 @@ public class Helper {
 		return temperature;
 	}
 
-	public float GetTemperature(SensorType type) {
+	public float GetTemperature(SensorType type) throws ConnectionLostException, InterruptedException {
 		float temperature = -1; // Result in %
 		float supply = 5;
 
@@ -243,7 +240,12 @@ public class Helper {
 											// channel
 		// SendI2CCommand(0x40,0,0x6); //Request ADC measurement from AD2
 		// channel
-
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		high = ReadI2CData(0x40, 1); // Read Highbyte
 		// ClearScreen();
 		// CursorHome();
@@ -273,31 +275,20 @@ public class Helper {
 	public final static float CalibrationDataHumidity = 0.00000000000330f;
 	public final static float CalibrationDataHumiditySensitivity = 0.000000000000006f;
 
-	public float GetMoistureCap(SensorType type, float temperature) {
+	public float GetMoistureCap(SensorType type, float temperature) throws InterruptedException, ConnectionLostException {
 		float moisture = -1; // Result in %
 
 		float capacitance = 0;
-		try {
-			if (type == SensorType.SensorInne) {
-				capacitance = humidityInside.read();
-			} else if (type == SensorType.SensorUte) {
-				capacitance = humidityOutside.read();
-			}
-			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (type == SensorType.SensorInne) {
+			capacitance = humidityInside.read();
+		} else if (type == SensorType.SensorUte) {
+			capacitance = humidityOutside.read();
 		}
-
+		moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
 		return moisture;
 	}
 
-	public float GetMoisture(SensorType type, float temperature) {
-		float moisture = -1; // Result in %
+	public float GetMoisture(SensorType type) throws ConnectionLostException, InterruptedException {
 		float rawMoisture = -1;
 		float supply = (float) 4.93;
 
@@ -310,48 +301,32 @@ public class Helper {
 		else if (type == SensorType.SensorUte)
 			SendI2CCommand(0x40, 0, 0x6); // Request ADC measurement from AD3
 											// channel
-
 		high = ReadI2CData(0x40, 1); // Read Highbyte
-		// ClearScreen();
-		// CursorHome();
-		// WriteText("High:" + Integer.toString(high));
-		// NewLine();
 		low = ReadI2CData(0x40, 2); // Read Lowbyte
-		// WriteText("Low :" + Integer.toString(low));
-		// NewLine();
 		total = (high << 8) + low; // Raw measurement 0-1023 value representing
-									// 0-5V
-		// WriteText("Tot :" + Integer.toString(total));
-		// NewLine();
 		voltage = (float) ((float) total * (float) 4.93 / (float) 1024);
-		// WriteText("Volt:" + Float.toString(voltage));
 		rawMoisture = (float) (((float) ((float) voltage / (float) supply) - (float) 0.16) / (float) 0.0062);
 
-		// Temperature compensation for moisture
-		// int temperature = xxx;
-		moisture = (float) ((float) rawMoisture / (float) ((1.0546 - 0.00216 * temperature)));
-		// moisture = rawMoisture;
-
-		return moisture;
+		return rawMoisture;
 	}
 
-	public void ClearScreen() {
+	public void ClearScreen() throws ConnectionLostException, InterruptedException {
 		SendI2CCommand(0xC6, 0, 12);
 	}
 
-	public void TurnOnBacklight() {
+	public void TurnOnBacklight() throws ConnectionLostException, InterruptedException {
 		SendI2CCommand(0xC6, 0, 19);
 	}
 
-	public void NewLine() {
+	public void NewLine() throws ConnectionLostException, InterruptedException {
 		SendI2CCommand(0xC6, 0, 13);
 	}
 
-	public void CursorHome() {
+	public void CursorHome() throws ConnectionLostException, InterruptedException {
 		SendI2CCommand(0xC6, 0, 1);
 	}
 
-	public void WriteText(String text) {
+	public void WriteText(String text) throws ConnectionLostException, InterruptedException {
 		for (char b : text.toCharArray()) {
 			SendI2CCommand(0xC6, 0, b);
 		}
@@ -364,29 +339,31 @@ public class Helper {
 
 	boolean ControlFan(int Speed, boolean Clockwise) {
 		boolean retVal = true;
-		if (A1 != null && A2 != null && ASpeed != null) {
-			try {
-				if (Speed == FanStop) {
-					A1.write(false);
-					A2.write(false);
-					FanOn = false;
-				} else if (Clockwise) {
-					A1.write(true);
-					A2.write(false);
-					FanOn = true;
-				} else {
-					A1.write(false);
-					A2.write(true);
-					FanOn = true;
-				}
-				ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
-			} catch (ConnectionLostException e) {
-				retVal = false;
-				e.printStackTrace();
-			}
-		} else {
-			retVal = false;
-		}
+		
+//		if (A1 != null && A2 != null && ASpeed != null) {
+//			try {
+//				if (Speed == FanStop) {
+//					A1.write(false);
+//					A2.write(false);
+//					FanOn = false;
+//				} else if (Clockwise) {
+//					A1.write(true);
+//					A2.write(false);
+//					FanOn = true;
+//				} else {
+//					A1.write(false);
+//					A2.write(true);
+//					FanOn = true;
+//				}
+//				ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
+//			} catch (ConnectionLostException e) {
+//				retVal = false;
+//				e.printStackTrace();
+//			}
+//		} else {
+//			retVal = false;
+//		}
+//
 		return retVal;
 	}
 
@@ -399,30 +376,20 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-			//pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED, PulseMode.FREQ);
 			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
 			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
-			//float duration = pulseCounter.getDuration();
 
 			freq = 1 / duration;
-			// freq = pulseCounter.getFrequency();
 
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			pulseCounter.close();
 		}
 
 		System.out.println("WindSpeed: " + freq + " Hz");
-//		if (freq < 0.5) {
-//			speedMeterPerSecond = 0;
-//		} else if (freq > 60) {
-//			speedMeterPerSecond = -1;
-//		} else {
-			speedMeterPerSecond = freq * 1.006f;
-//		}
+		speedMeterPerSecond = freq * 1.006f;
 		return speedMeterPerSecond;
 	}
 
@@ -431,7 +398,7 @@ public class Helper {
 		try {
 			// Thread.sleep(200);
 			freq = pulseCounter.getFrequency();
-			//pulseCounter.w
+			// pulseCounter.w
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -500,19 +467,51 @@ public class Helper {
 		return speedMeterPerSecond;
 	}
 
+	public enum Command {
+		TempOut, TempIn, MoistOut, MoistIn, Freq, Analog, SetupGpio
+	}
+
 	public static final int FREQ = 0;
 	public static final int ANALOG = 1;
+	protected static final int TEMP_OUT = 0;
 	float result = 0;
 
-	public synchronized float queryIOIO(final int command) {
+	public synchronized float queryIOIO(final Command command) {
 		result = -1;
 		Thread commandExecutor = new Thread(new Runnable() {
+			private void reportErrorAndRestart(Exception e) {
+
+				Log.e("Helper", "An IOIO command failed: Command = " + command);
+				e.printStackTrace();
+				try {
+					ioio.hardReset();
+
+				} catch (ConnectionLostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 
 			@Override
 			public void run() {
 				try {
 					switch (command) {
-					case FREQ:
+					case TempIn:
+						result = GetTemperature(SensorType.SensorInne);
+						break;
+					case TempOut:
+						result = GetTemperature(SensorType.SensorUte);
+						break;
+					case MoistIn:
+						result = GetMoisture(SensorType.SensorInne);
+						break;
+					case MoistOut:
+						result = GetMoisture(SensorType.SensorUte);
+						break;
+					case SetupGpio:
+						result = SetupGpioChip();
+						break;
+					case Freq:
 						switch (GET_SPEED_VERSION) {
 						case Continuos_Reading:
 							result = getWindSpeed2();
@@ -524,24 +523,23 @@ public class Helper {
 							result = getWindSpeed3();
 							break;
 						}
-						result = getWindSpeed3();
 						break;
 
-					case ANALOG:
+					case Analog:
 						result = getWindDirection2();
 						break;
 					}
-				} catch (Exception e) {
-					Log.e("Helper", "An IOIO command failed: Command = " + command);
-					e.printStackTrace();
-
+				} catch (ConnectionLostException e) {
+					reportErrorAndRestart(e);
+				} catch (InterruptedException e) {
+					reportErrorAndRestart(e);
 				}
 			}
 		});
 		commandExecutor.start();
 		try {
 			// Give command 4 seconds for command to finish
-			commandExecutor.join(4000);
+			commandExecutor.join(10000);
 			if (commandExecutor.isAlive()) {
 				commandExecutor.interrupt();
 
@@ -575,49 +573,28 @@ public class Helper {
 		return direction;
 	}
 
-	public float getWindDirection2() throws ConnectionLostException {
+	public float getWindDirection2() throws ConnectionLostException, InterruptedException {
 		float direction = 0;
-		try {
-			// Thread.sleep(200);
+		// Thread.sleep(200);
 
-			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
-			voltage *= 360 / 3.3f;
-			direction = voltage;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		float voltage = anemometer.getVoltage();
+		System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
+		voltage *= 360 / 3.3f;
+		direction = voltage;
 		return direction;
 	}
 
-	public int getBatteryVoltage() throws ConnectionLostException {
-		float voltage = 0;
-		try {
-
-			voltage = power.getVoltage();
-
-			voltage += voltage / 4400 * 24000;
-			System.out.println("VBatt: " + voltage);
-			voltage *= 100;
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public int getBatteryVoltage() throws ConnectionLostException, InterruptedException {
+		float voltage = power.getVoltage();
+		voltage += voltage / 4400 * 24000;
+		System.out.println("VBatt: " + voltage);
+		voltage *= 100;
 		return (int) voltage;
 	}
 
-	public int getTemp() throws ConnectionLostException {
-		float voltage = 0;
-		try {
-			voltage = temp.getVoltage();
-			System.out.println("Tempraw: " + voltage);
-
-			voltage = 100 * voltage - 50;
-			System.out.println("Tempcalc: " + voltage);
-			voltage *= 10;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public int getTemp() throws ConnectionLostException, InterruptedException {
+		float voltage = temp.getVoltage() * 100 - 50;
+		voltage *= 10;
 		return (int) voltage;
 	}
 
