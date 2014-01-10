@@ -3,7 +3,7 @@ package se.tna.krypgrund;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SurfvindStats extends Stats {
+public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 	public float windSpeedMin = 0;
 	public float windSpeedAvg = 0;
 	public float windSpeedMax = 0;
@@ -37,5 +37,19 @@ public class SurfvindStats extends Stats {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+
+	@Override
+	public int compareTo(SurfvindStats another) {
+		if (windSpeedAvg > another.windSpeedAvg)
+		{
+			return 1;
+		}
+		else if (windSpeedAvg < another.windSpeedAvg)
+		{
+			return -1;
+		}
+		return 0;
 	}
 }

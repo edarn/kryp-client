@@ -58,20 +58,21 @@ public class BluetoothIOIOConnection implements IOIOConnection {
 
 	@Override
 	public void waitForConnect() throws ConnectionLostException {
-		synchronized (this) {
-			if (disconnect_) {
-				throw new ConnectionLostException();
-			}
-			try {
-				socket_ = createSocket(device_);
-			} catch (IOException e) {
-				throw new ConnectionLostException(e);
-			}
-		}
 		// keep trying to connect as long as we're not aborting
 		while (true) {
+			synchronized (this) {
+				if (disconnect_) {
+					throw new ConnectionLostException();
+				}
+				try {
+					socket_ = createSocket(device_);
+				} catch (IOException e) {
+					throw new ConnectionLostException(e);
+				}
+			}
 			try {
-				Log.v(TAG, "Attempting to connect to Bluetooth device: " + name_);
+				Log.v(TAG, "Attempting to connect to Bluetooth device: "
+						+ name_);
 				socket_.connect();
 				Log.v(TAG, "Established connection to device " + name_
 						+ " address: " + address_);
@@ -81,6 +82,11 @@ public class BluetoothIOIOConnection implements IOIOConnection {
 					throw new ConnectionLostException(e);
 				}
 				try {
+					try {
+						socket_.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 					Thread.sleep(1000);
 				} catch (InterruptedException e1) {
 				}
@@ -90,7 +96,7 @@ public class BluetoothIOIOConnection implements IOIOConnection {
 
 	public static BluetoothSocket createSocket(final BluetoothDevice device)
 			throws IOException {
-		if (Build.VERSION.SDK_INT >= 10 ) {
+		if (Build.VERSION.SDK_INT >= 10) {
 			// We're trying to create an insecure socket, which is only
 			// supported in API 10 and up. Otherwise, we try a secure socket
 			// which is in API 7 and up.

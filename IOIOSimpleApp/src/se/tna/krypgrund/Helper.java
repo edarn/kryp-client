@@ -1,6 +1,7 @@
 package se.tna.krypgrund;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -50,8 +51,8 @@ public class Helper {
 	private AnalogInput temp;
 	private AnalogInput mAnalogPulsecounter;
 
-	private static final int ANEMOMETER_WIND_VANE = 40;
-	private static final int ANEMOMETER_SPEED = 28;
+	private static final int ANEMOMETER_WIND_VANE = 45;
+	private static final int ANEMOMETER_SPEED = 46;
 
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
@@ -399,11 +400,12 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-			//pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED, PulseMode.FREQ);
+			// pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED,
+			// PulseMode.FREQ);
 			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
 			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
-			//float duration = pulseCounter.getDuration();
+			// float duration = pulseCounter.getDuration();
 
 			freq = 1 / duration;
 			// freq = pulseCounter.getFrequency();
@@ -416,13 +418,13 @@ public class Helper {
 		}
 
 		System.out.println("WindSpeed: " + freq + " Hz");
-//		if (freq < 0.5) {
-//			speedMeterPerSecond = 0;
-//		} else if (freq > 60) {
-//			speedMeterPerSecond = -1;
-//		} else {
-			speedMeterPerSecond = freq * 1.006f;
-//		}
+		// if (freq < 0.5) {
+		// speedMeterPerSecond = 0;
+		// } else if (freq > 60) {
+		// speedMeterPerSecond = -1;
+		// } else {
+		speedMeterPerSecond = freq * 1.006f;
+		// }
 		return speedMeterPerSecond;
 	}
 
@@ -431,7 +433,7 @@ public class Helper {
 		try {
 			// Thread.sleep(200);
 			freq = pulseCounter.getFrequency();
-			//pulseCounter.w
+			// pulseCounter.w
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -524,7 +526,6 @@ public class Helper {
 							result = getWindSpeed3();
 							break;
 						}
-						result = getWindSpeed3();
 						break;
 
 					case ANALOG:

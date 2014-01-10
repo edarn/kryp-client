@@ -39,7 +39,7 @@ class AbstractResource implements Closeable, DisconnectListener {
 		DISCONNECTED
 	}
 	
-	protected State state_ = State.OPEN;
+	public State state_ = State.OPEN;
 	protected final IOIOImpl ioio_;
 
 	public AbstractResource(IOIOImpl ioio) throws ConnectionLostException {

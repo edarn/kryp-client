@@ -6,6 +6,7 @@ import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +24,8 @@ public class KrypgrundsService extends IOIOService {
 	protected static final long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
 			.toMillis(5);
 	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
-			.toMillis(1);
-	protected static final long TIME_BETWEEN_READING = 50;//TimeUnit.SECONDS.toMillis(2);
+			.toMillis(2);
+	protected static final long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
 	protected static final long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
 			.toMillis(3);
 
@@ -203,6 +204,15 @@ public class KrypgrundsService extends IOIOService {
 							SurfvindStats total = new SurfvindStats();
 							total.windDirectionMin = 999999;
 							total.windSpeedMin = 999999;
+
+							Collections.sort(rawSurfvindsMeasurements);
+
+						/*	if (rawSurfvindsMeasurements.size() > 7) {
+								for (int i = 0; i < 3; i++) {
+									rawSurfvindsMeasurements.remove(0);
+									rawSurfvindsMeasurements.remove(rawSurfvindsMeasurements.size() - 1);
+								}
+							}*/
 
 							// Calculate an averagevalue of all the readings.
 							for (SurfvindStats stat : rawSurfvindsMeasurements) {
