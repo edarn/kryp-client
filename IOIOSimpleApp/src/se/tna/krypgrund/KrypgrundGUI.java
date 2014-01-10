@@ -63,48 +63,37 @@ public class KrypgrundGUI extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.settings, menu);
-		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		
-		MenuItem item = null;
-		
-		item = menu.findItem(R.id.useSurfvind);
-		if (null != item)
-		{
-			item.setChecked(preferences.getBoolean("useSurfvind", false));
-		//item.setChecked(true);
-	}
-		item = menu.findItem(R.id.useKrypgrund);
-		if (null != item)
-		{
-			item.setChecked(preferences.getBoolean("useKrypgrund", false));
-		}
-		
+		/*
+		 * preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+		 * MenuItem item = null; item = menu.findItem(R.id.setup); if (null !=
+		 * item) { item.setChecked(preferences.getBoolean("useSurfvind",
+		 * false)); // item.setChecked(true); } item =
+		 * menu.findItem(R.id.useKrypgrund); if (null != item) {
+		 * item.setChecked(preferences.getBoolean("useKrypgrund", false)); }
+		 */
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
-		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		
-		PopupMenu popup = new PopupMenu(this, forceSendDataButton);
-		MenuInflater inflater = popup.getMenuInflater();
-		Editor s = preferences.edit();
-		switch (item.getItemId()) {
-		case R.id.useKrypgrund:
-			inflater.inflate(R.menu.krypgrund_actions, popup.getMenu());
-			s.putBoolean("useKrypgrund", true);
-			break;
-		case R.id.useSurfvind:
-			inflater.inflate(R.menu.surfvind_actions, popup.getMenu());
-			s.putBoolean("useSurfvind", !preferences.getBoolean("useSurfvind", false));
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		s.apply();
-		
-		popup.show();
+
+		/*
+		 * preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+		 * 
+		 * PopupMenu popup = new PopupMenu(this, forceSendDataButton);
+		 * MenuInflater inflater = popup.getMenuInflater(); Editor s =
+		 * preferences.edit(); switch (item.getItemId()) { case
+		 * R.id.useKrypgrund: inflater.inflate(R.menu.krypgrund_actions,
+		 * popup.getMenu()); s.putBoolean("useKrypgrund", true); break; case
+		 * R.id.useSurfvind: inflater.inflate(R.menu.surfvind_actions,
+		 * popup.getMenu()); s.putBoolean("useSurfvind",
+		 * !preferences.getBoolean("useSurfvind", false)); break; default:
+		 * return super.onOptionsItemSelected(item); } s.apply();
+		 * 
+		 * popup.show();
+		 */
+		startActivity(new Intent(this, SetupActivity.class));
 		return true;
 	}
 
@@ -148,19 +137,19 @@ public class KrypgrundGUI extends Activity {
 
 			}
 		};
-		
-		
+
 		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-			
-			@Override
-			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-					String key) {
-				preferences = sharedPreferences;
-				
-			}
-		});
-		
+		preferences
+				.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+
+					@Override
+					public void onSharedPreferenceChanged(
+							SharedPreferences sharedPreferences, String key) {
+						preferences = sharedPreferences;
+
+					}
+				});
+
 		setContentView(R.layout.main);
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);

@@ -14,14 +14,20 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
             android:text="Name of sensor:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f6fa91"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/stationName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" >
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="100" >
 
             <requestFocus />
         </EditText>
@@ -30,8 +36,11 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Update frequency:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f6fa91"
+            android:textStyle="bold" />
 
         <RadioGroup
             android:id="@+id/updateFrequency"
@@ -45,6 +54,13 @@
                 android:checked="true"
                 android:onClick="onRadioButtonClicked"
                 android:text="1 Min" />
+
+            <RadioButton
+                android:id="@+id/threeMinutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRadioButtonClicked"
+                android:text="3 Min" />
 
             <RadioButton
                 android:id="@+id/fiveMinutes"
@@ -65,8 +81,11 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Sensors to use:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f6fa91"
+            android:textStyle="bold" />
 
         <RadioGroup
             android:id="@+id/sensorType"
@@ -78,14 +97,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:onClick="onRadioButtonClicked"
                 android:text="WeatherStation" />
 
             <RadioButton
                 android:id="@+id/crawlspaceStation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onRadioButtonClicked"
                 android:text="CrawlSpace" />
         </RadioGroup>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save" />
     </LinearLayout>
 
 </LinearLayout>

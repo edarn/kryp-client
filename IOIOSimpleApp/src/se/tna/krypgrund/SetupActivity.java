@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -15,6 +17,9 @@ public class SetupActivity extends Activity {
 
 	private static final String UPDATE_FREQ = "Time_Between_Reads";
 	private static final String SENSOR_TYPE = "Sensor_Type";
+	protected static final String READ_INTERVAL = "Read_Interval";
+	protected static final String STATION_NAME = "Station_Name";
+	private static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
 	private EditText name;
 	private RadioGroup updateFrequency;
 	private RadioGroup sensorType;
@@ -27,15 +32,31 @@ public class SetupActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.setup);
+		
 		name = (EditText) findViewById(R.id.stationName);
 		updateFrequency = (RadioGroup) findViewById(R.id.updateFrequency);
 		sensorType = (RadioGroup) findViewById(R.id.sensorType);
 		prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
 		prefsEditor = prefs.edit();
-		int sensorType = prefs.getInt(SENSOR_TYPE, R.id.weatherStation);
-		updateFrequency.check(sensorType);
+		int type = prefs.getInt(SENSOR_TYPE_RADIO, R.id.weatherStation);
+		sensorType.check(type);
 		int readInterval = prefs.getInt(UPDATE_FREQ, R.id.oneMinute);
 		updateFrequency.check(readInterval);
+		String sensorName = prefs.getString(STATION_NAME, "");
+		name.setText(sensorName);
+		Button b = (Button) findViewById(R.id.saveButton);
+		b.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				prefsEditor.putInt(SENSOR_TYPE, stationType);
+				prefsEditor.putLong(READ_INTERVAL, updateTime);
+				prefsEditor.putString(STATION_NAME, name.getText().toString());
+				prefsEditor.apply();
+				finish();
+			}
+		});		
 	}
 
 	public static int getSensorType(int radioId)
@@ -52,6 +73,8 @@ public class SetupActivity extends Activity {
 		long readInterval = TimeUnit.MINUTES.toMillis(1); //Default
 		if (radioId == R.id.oneMinute)
 			readInterval = TimeUnit.MINUTES.toMillis(1);
+		else if (radioId == R.id.threeMinutes)
+			readInterval = TimeUnit.MINUTES.toMillis(3);
 		else if (radioId == R.id.fiveMinutes)
 			readInterval = TimeUnit.MINUTES.toMillis(5);
 		else if (radioId == R.id.tenMinutes)
@@ -63,18 +86,6 @@ public class SetupActivity extends Activity {
 	protected void onDestroy() {
 		prefsEditor.apply();
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
 	}
 
 	public void onRadioButtonClicked(View view) {
@@ -106,13 +117,13 @@ public class SetupActivity extends Activity {
 		case R.id.weatherStation:
 			if (checked) {
 				stationType = KrypgrundsService.SURFVIND;
-				prefsEditor.putInt(SENSOR_TYPE, view.getId());
+				prefsEditor.putInt(SENSOR_TYPE_RADIO, view.getId());
 			}
 			break;
 		case R.id.crawlspaceStation:
 			if (checked) {
-				stationType = KrypgrundsService.SURFVIND;
-				prefsEditor.putInt(SENSOR_TYPE, view.getId());
+				stationType = KrypgrundsService.KRYPGRUND;
+				prefsEditor.putInt(SENSOR_TYPE_RADIO, view.getId());
 			}
 			break;
 		}
