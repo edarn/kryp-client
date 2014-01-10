@@ -58,6 +58,12 @@
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
         </activity>
+        
+         <activity
+            android:name="se.tna.krypgrund.SetupActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask" >
+        </activity>
         <!--
 		<activity android:name="se.tna.krypgrund.DebuggerActivity"
 			android:configChanges="orientation|keyboardHidden" android:label="Debugger"
