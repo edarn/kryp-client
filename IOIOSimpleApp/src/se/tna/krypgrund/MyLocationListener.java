@@ -10,8 +10,10 @@ public class MyLocationListener implements LocationListener {
 	public double longitude = 0;
 	public double latitude = 0;
 	public float accuracy = 0;
+	SetupActivity setupActivity = null;
 
-	public MyLocationListener() {
+	public MyLocationListener(SetupActivity act) {
+		setupActivity = act;
 	}
 
 	@Override
@@ -19,6 +21,8 @@ public class MyLocationListener implements LocationListener {
 		longitude = loc.getLongitude();
 		latitude = loc.getLatitude();
 		accuracy = loc.getAccuracy();
+		setupActivity.setPosition(latitude,longitude);
+		System.out.println("Long: " + longitude + " Latitude: " + latitude + " Acc: " + accuracy);
 	}
 	
 

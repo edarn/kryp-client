@@ -9,6 +9,112 @@
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weather Station:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <FrameLayout
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="20dp" >
+
+                <WebView
+                    android:id="@+id/webViewCompassBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <WebView
+                    android:id="@+id/webViewCompass"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00000000" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="200dp"
+                android:layout_height="200dp" >
+
+                <WebView
+                    android:id="@+id/webViewSpeedBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <WebView
+                    android:id="@+id/webViewSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00000000" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/battery" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Voltage: " />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="12" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="50dp"
+                android:src="@drawable/red_thermometer" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Temp " />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="7" />
+         <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=" grader" />
+        </LinearLayout>
+
+        <!--
+             <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        -->
+
+        <TextView
             android:id="@+id/fanStatus"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

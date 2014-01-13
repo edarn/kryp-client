@@ -15,11 +15,13 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import android.telephony.TelephonyManager;
 import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -123,34 +125,55 @@ public class KrypgrundGUI extends Activity {
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				kryp = ((KrypgrundsService.MyBinder) service).getService();
-				Toast.makeText(KrypgrundGUI.this, "Connected",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(KrypgrundGUI.this, "Connected", Toast.LENGTH_SHORT).show();
 				serviceBound = true;
+				kryp.updateSettings();
 			}
 
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				kryp = null;
 				serviceBound = false;
-				Toast.makeText(KrypgrundGUI.this, "DisConnected",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(KrypgrundGUI.this, "DisConnected", Toast.LENGTH_SHORT).show();
 
 			}
 		};
 
 		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		preferences
-				.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
 
-					@Override
-					public void onSharedPreferenceChanged(
-							SharedPreferences sharedPreferences, String key) {
-						preferences = sharedPreferences;
+			@Override
+			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+				preferences = sharedPreferences;
 
-					}
-				});
+			}
+		});
 
 		setContentView(R.layout.main);
+
+		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		String id = telephonyManager.getDeviceId();
+
+		// debug
+		id = "358848043355882";
+
+//		WebView myWebView = (WebView) findViewById(R.id.webView);
+//		myWebView.loadUrl("http://www.surfvind.se/Applet/" + id + "/graph_0.png");
+//		myWebView.setBackgroundColor(0x00000000);
+		WebView compassView = (WebView) findViewById(R.id.webViewCompass);
+		compassView.loadUrl("http://www.surfvind.se/Images/" + id + "_img_compass.png");
+		compassView.setBackgroundColor(0x00000000);
+		WebView compassViewBackground = (WebView) findViewById(R.id.webViewCompassBackground);
+		compassViewBackground.loadUrl("http://www.surfvind.se/Images/ws_compass.png");
+		compassViewBackground.setBackgroundColor(0x00000000);
+
+		WebView speedView = (WebView) findViewById(R.id.webViewSpeed);
+		speedView.loadUrl("http://www.surfvind.se/Images/" + id + "_img_speed.png");
+		speedView.setBackgroundColor(0x00000000);
+		WebView speedViewBackground = (WebView) findViewById(R.id.webViewSpeedBackground);
+		speedViewBackground.loadUrl("http://www.surfvind.se/Images/ws_speed.png");
+		speedViewBackground.setBackgroundColor(0x00000000);
+
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
 		textAnalogInput = (TextView) findViewById(R.id.textAnalogInput);
@@ -185,8 +208,7 @@ public class KrypgrundGUI extends Activity {
 		Intent service = new Intent(this, KrypgrundsService.class);
 		this.startService(service);
 
-		bindService(new Intent(this, KrypgrundsService.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, KrypgrundsService.class), mConnection, Context.BIND_AUTO_CREATE);
 
 		Timer timer = new Timer();
 
@@ -252,22 +274,15 @@ public class KrypgrundGUI extends Activity {
 
 					}
 
-					textAnalogInput.setText("Analog Input: "
-							+ String.format("%.2f", status.analogInput));
-					textWindDirection.setText("Vindriktning: "
-							+ status.windDirection);
-					textWindSpeed.setText("Vindhastighet: "
-							+ String.format("%.2f", status.windSpeed));
+					textAnalogInput.setText("Analog Input: " + String.format("%.2f", status.analogInput));
+					textWindDirection.setText("Vindriktning: " + status.windDirection);
+					textWindSpeed.setText("Vindhastighet: " + String.format("%.2f", status.windSpeed));
 					windSeekBar.setProgress(status.windDirection);
 
-					textTempUte.setText("Temp Ute: "
-							+ String.format("%.2f", status.temperatureUte));
-					textTempInne.setText("Temp Inne: "
-							+ String.format("%.2f", status.temperatureInne));
-					textFuktUte.setText("Fukt Ute: "
-							+ String.format("%.2f", status.moistureUte));
-					textFuktInne.setText("Fukt Inne: "
-							+ String.format("%.2f", status.moistureInne));
+					textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
+					textTempInne.setText("Temp Inne: " + String.format("%.2f", status.temperatureInne));
+					textFuktUte.setText("Fukt Ute: " + String.format("%.2f", status.moistureUte));
+					textFuktInne.setText("Fukt Inne: " + String.format("%.2f", status.moistureInne));
 					textFanOn.setText("Fan On =" + status.fanOn);
 
 					// Is ioio chip initialized etc
@@ -295,10 +310,8 @@ public class KrypgrundGUI extends Activity {
 
 					if (!debugButton.isChecked()) {
 
-						seekTempUte
-								.setProgress((int) status.temperatureUte + 20);
-						seekTempInne
-								.setProgress((int) status.temperatureInne + 20);
+						seekTempUte.setProgress((int) status.temperatureUte + 20);
+						seekTempInne.setProgress((int) status.temperatureInne + 20);
 						seekFuktInne.setProgress((int) status.moistureInne);
 						seekFuktUte.setProgress((int) status.moistureUte);
 					}

@@ -1,83 +1,13 @@
-<<<<<<< HEAD
-package se.tna.krypgrund;
-
-import android.app.Activity;
-import android.content.Context;
-import android.location.Criteria;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Looper;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
-public class SetupActivity extends Activity {
-	@Override
-	public void onBackPressed() {
-		// TODO Auto-generated method stub
-		super.onBackPressed();
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		return super.onContextItemSelected(item);
-	}
-
-	@Override
-	public void onContextMenuClosed(Menu menu) {
-		// TODO Auto-generated method stub
-		super.onContextMenuClosed(menu);
-	}
-
-	MyLocationListener locListner = null;
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		locListner = new MyLocationListener();
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		Criteria c = new Criteria();
-		c.setAccuracy(Criteria.ACCURACY_COARSE);
-
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5, locListner);
-
-	}
-
-	@Override
-	protected void onStop() {
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationManager.removeUpdates(locListner);
-		super.onStop();
-	}
-}
-=======
 package se.tna.krypgrund;
 
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -89,11 +19,16 @@ import android.widget.RadioGroup;
 public class SetupActivity extends Activity {
 
 	private static final String UPDATE_FREQ = "Time_Between_Reads";
-	private static final String SENSOR_TYPE = "Sensor_Type";
-	protected static final String READ_INTERVAL = "Read_Interval";
-	protected static final String STATION_NAME = "Station_Name";
+	public static final String SENSOR_TYPE = "Sensor_Type";
+	public static final String READ_INTERVAL = "Read_Interval";
+	public static final String STATION_NAME = "Station_Name";
 	private static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
 	private EditText name;
+	private EditText latitude;
+	private EditText longitude;
+	
+	
+	
 	private RadioGroup updateFrequency;
 	private RadioGroup sensorType;
 
@@ -102,12 +37,16 @@ public class SetupActivity extends Activity {
 	private SharedPreferences prefs;
 	private Editor prefsEditor;
 
+	MyLocationListener locListner = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setup);
 		
 		name = (EditText) findViewById(R.id.stationName);
+		latitude = (EditText) findViewById(R.id.latPosition);
+		longitude = (EditText) findViewById(R.id.longPosition);
 		updateFrequency = (RadioGroup) findViewById(R.id.updateFrequency);
 		sensorType = (RadioGroup) findViewById(R.id.sensorType);
 		prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
@@ -127,9 +66,12 @@ public class SetupActivity extends Activity {
 				prefsEditor.putLong(READ_INTERVAL, updateTime);
 				prefsEditor.putString(STATION_NAME, name.getText().toString());
 				prefsEditor.apply();
+				prefsEditor.commit();
 				finish();
 			}
-		});		
+		});	
+		locListner = new MyLocationListener(this);
+
 	}
 
 	public static int getSensorType(int radioId)
@@ -160,6 +102,29 @@ public class SetupActivity extends Activity {
 		prefsEditor.apply();
 		super.onDestroy();
 	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		System.out.println("Jodå");
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		Criteria c = new Criteria();
+		c.setAccuracy(Criteria.ACCURACY_MEDIUM);
+		
+
+		locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListner,null);
+		
+		
+
+	}
+
+	@Override
+	protected void onStop() {
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.removeUpdates(locListner);
+		super.onStop();
+	}
+
 
 	public void onRadioButtonClicked(View view) {
 		// Is the button now checked?
@@ -201,5 +166,9 @@ public class SetupActivity extends Activity {
 			break;
 		}
 	}
+
+	public void setPosition(double lat, double longi) {
+		latitude.setText(String.valueOf(lat));
+		longitude.setText(String.valueOf(longi));
+	}
 }
->>>>>>> 87234e83150471c07c2457b7e93730e1bc46cfd5

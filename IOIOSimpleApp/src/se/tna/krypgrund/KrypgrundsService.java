@@ -14,6 +14,8 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -21,12 +23,12 @@ import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
-	protected static final long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
+	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
 			.toMillis(5);
-	protected static final long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
+	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
 			.toMillis(2);
-	protected static final long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
-	protected static final long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
+	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
+	protected long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
 			.toMillis(3);
 
 	private long timeForLastSendData = 0;
@@ -342,6 +344,13 @@ public class KrypgrundsService extends IOIOService {
 	public void setForceSendData(boolean checked) {
 		forceSendData = checked;
 
+	}
+	public void updateSettings() {
+		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
+		Editor prefsEditor = prefs.edit();
+		int type = prefs.getInt(SetupActivity.SENSOR_TYPE, SURFVIND);
+		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
+		
 	}
 
 	public void setForceFan(boolean on) {

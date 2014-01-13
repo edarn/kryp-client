@@ -97,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:minWidth="100dp"
                 android:onClick="onRadioButtonClicked"
                 android:text="WeatherStation" />
 
@@ -108,11 +109,60 @@
                 android:text="CrawlSpace" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Position of sensors:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f6fa91"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/latLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="80dp"
+                android:text="Latitude:" />
+
+            <EditText
+                android:id="@+id/latPosition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="aquieringPosition" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/longLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="80dp"
+                android:text="Longitude:" />
+
+            <EditText
+                android:id="@+id/longPosition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="aquieringPosition" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="Save and update" />
     </LinearLayout>
 
 </LinearLayout>
