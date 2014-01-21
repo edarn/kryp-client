@@ -262,7 +262,7 @@ public class IOIOImpl implements IOIO, DisconnectListener {
 		case APP_FIRMWARE_VER:
 			return incomingState_.firmwareId_;
 		case IOIOLIB_VER:
-			return "IOIO0500";
+			return "IOIO0501";
 		}
 		return null;
 	}
@@ -366,7 +366,7 @@ public class IOIOImpl implements IOIO, DisconnectListener {
 			throws ConnectionLostException {
 		checkState();
 		hardware_.checkSupportsCapSense(pinNum);
-		Resource pin = new Resource(ResourceType.PIN);
+		Resource pin = new Resource(ResourceType.PIN, pinNum);
 		resourceManager_.alloc(pin);
 		CapSenseImpl result = new CapSenseImpl(this, pin, filterCoef);
 		addDisconnectListener(result);
