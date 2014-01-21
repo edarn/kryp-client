@@ -1,5 +1,6 @@
 package se.tna.krypgrund;
 
+import ioio.lib.api.CapSense;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
@@ -72,6 +73,8 @@ public class KrypgrundsService extends IOIOService {
 
 		return new BaseIOIOLooper() {
 
+			private CapSense capSense;
+
 			@Override
 			public void disconnected() {
 				super.disconnected();
@@ -92,10 +95,15 @@ public class KrypgrundsService extends IOIOService {
 				id = telephonyManager.getDeviceId();
 
 				helper = new Helper(ioio_, KrypgrundsService.this);
+//				try {
+//					capSense = ioio_.openCapSense(40);
+//				} catch (ConnectionLostException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				if (helper.SetupGpioChip()) {
 					isInitialized = true;
 				}
-
 			}
 
 			Random r = new Random();
@@ -103,9 +111,13 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void loop() {
 				try {
+				//	helper.GetI2CTemp();
 					if (!isInitialized) {
 						// initialize();
 					}
+					helper.GetI2CTemp();
+					
+					//System.out.println("Hej: " + capSense.read());
 					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
 
 						// Always create a new object, as this is added to the

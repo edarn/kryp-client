@@ -81,6 +81,8 @@ public class Helper {
 					// Do nothing as open and close will be done at every call.
 				}
 
+				i2c = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
+
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
 				 * Standby.write(true); // Activate chip
@@ -150,26 +152,49 @@ public class Helper {
 	byte receive[];
 
 	public boolean SendI2CCommand(final int adress, int register, int data) {
+		final byte toSend[] = new byte[2];
+		receive = new byte[1];
+		toSend[0] = (byte) register;
+		toSend[1] = (byte) data;
+
+		if (i2c == null) {
+			krypService.isInitialized = false;
+			return false;
+		}
+		Thread a = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					if (i2c != null) {
+						i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
+					} else {
+						Log.e("Helper", "I2C is null, no command sent!");
+					}
+				} catch (ConnectionLostException e) { // TODO Auto-generated
+														// catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) { // TODO Auto-generated catch
+													// block
+					e.printStackTrace();
+				}
+			}
+		});
+		a.start();
+
+		try {
+			a.join(5000);
+			if (a.isAlive()) {
+				a.interrupt();
+				krypService.isInitialized = false;
+				return false;
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return true;
-		/*
-		 * final byte toSend[] = new byte[2]; receive = new byte[1]; toSend[0] =
-		 * (byte) register; toSend[1] = (byte) data;
-		 * 
-		 * if (i2c == null) { krypService.isInitialized = false; return false; }
-		 * Thread a = new Thread(new Runnable() {
-		 * 
-		 * @Override public void run() { try { if (i2c != null) {
-		 * i2c.writeRead(adress / 2, false, toSend, 2, receive, 0); } else {
-		 * Log.e("Helper", "I2C is null, no command sent!"); } } catch
-		 * (ConnectionLostException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } catch (InterruptedException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } } }); a.start();
-		 * 
-		 * try { a.join(5000); if (a.isAlive()) { a.interrupt();
-		 * krypService.isInitialized = false; return false; } } catch
-		 * (InterruptedException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } return true;
-		 */
+
 	}
 
 	public int ReadI2CData(int adress, int register) {
@@ -194,14 +219,50 @@ public class Helper {
 
 	public boolean SetupGpioChip() {
 
-		if (!SendI2CCommand(0x40, 1, 255))
-			return false;
-		if (!SendI2CCommand(0x40, 2, 255))
-			return false;
-		if (!SendI2CCommand(0x40, 3, 0xC0))
-			return false;
+//		
+//		if (!SendI2CCommand(0x40, 1, 255))
+//			return false;
+//		if (!SendI2CCommand(0x40, 2, 255))
+//			return false;
+//		if (!SendI2CCommand(0x40, 3, 0xC0))
+//			return false;
 
 		return true;
+	}
+	
+	final int add=0x50;
+	public int GetI2CTemp()
+	{
+		//ReadI2CData(add, 0);
+		
+		byte toSend[] = new byte[1];
+		byte toReceive[] = new byte[4];
+		toSend[0] = (byte) 0;
+		System.out.println("Humid: ++");
+
+		try {
+			i2c.writeRead(add / 2, false, toSend, 1, toReceive, 4);
+		} catch (ConnectionLostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		
+		float humid = ((toReceive[0]& 0x3F)*256 + (toReceive[1]&0xff));
+		humid /=  Math.pow(2, 14);
+		humid *= 100;
+		float temp = ((toReceive[2]& 0xfF)*64 + (toReceive[3]>>2)&0x3f)/4;
+		temp /= Math.pow(2, 14);
+		temp *= 165;
+		temp-=40;
+			
+		System.out.println("Humid: " + humid + "temp " +temp);
+
+		return (int) (toReceive[0] & 0xFF);
 	}
 
 	public float GetTemperatureNew(SensorType type) {
