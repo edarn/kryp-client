@@ -42,7 +42,9 @@ public class Helper {
 	CapSense humidityOutside = null;
 
 	DigitalOutput Standby = null;
-	TwiMaster i2c = null;
+	TwiMaster i2cInne = null;
+	TwiMaster i2cUte = null;
+
 	KrypgrundsService krypService = null;
 
 	PulseInput pulseCounter = null;
@@ -81,7 +83,8 @@ public class Helper {
 					// Do nothing as open and close will be done at every call.
 				}
 
-				i2c = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
+				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
+				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
 
 				/*
 				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
@@ -101,8 +104,8 @@ public class Helper {
 	}
 
 	public void Destroy() {
-		if (i2c != null)
-			i2c.close();
+		if (i2cInne != null)
+			i2cInne.close();
 		if (Standby != null)
 			Standby.close();
 		if (A1 != null)
@@ -157,7 +160,7 @@ public class Helper {
 		toSend[0] = (byte) register;
 		toSend[1] = (byte) data;
 
-		if (i2c == null) {
+		if (i2cInne == null) {
 			krypService.isInitialized = false;
 			return false;
 		}
@@ -166,8 +169,8 @@ public class Helper {
 			@Override
 			public void run() {
 				try {
-					if (i2c != null) {
-						i2c.writeRead(adress / 2, false, toSend, 2, receive, 0);
+					if (i2cInne != null) {
+						i2cInne.writeRead(adress / 2, false, toSend, 2, receive, 0);
 					} else {
 						Log.e("Helper", "I2C is null, no command sent!");
 					}
@@ -203,7 +206,7 @@ public class Helper {
 		toSend[0] = (byte) register;
 
 		try {
-			i2c.writeRead(adress / 2, false, toSend, 1, toReceive, 1);
+			i2cInne.writeRead(adress / 2, false, toSend, 1, toReceive, 1);
 		} catch (ConnectionLostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -219,34 +222,39 @@ public class Helper {
 
 	public boolean SetupGpioChip() {
 
-//		
-//		if (!SendI2CCommand(0x40, 1, 255))
-//			return false;
-//		if (!SendI2CCommand(0x40, 2, 255))
-//			return false;
-//		if (!SendI2CCommand(0x40, 3, 0xC0))
-//			return false;
+		//
+		// if (!SendI2CCommand(0x40, 1, 255))
+		// return false;
+		// if (!SendI2CCommand(0x40, 2, 255))
+		// return false;
+		// if (!SendI2CCommand(0x40, 3, 0xC0))
+		// return false;
 
 		return true;
 	}
-	
-	final int add=0x50;
-	public class ChipCap2
-	{
-		float humidity =0;
-		float temperature= 0;
+
+	final int add = 0x50;
+
+	public class ChipCap2 {
+		float humidity = 0;
+		float temperature = 0;
 	}
-	public ChipCap2 GetChipCap2TempAndHumidity(SensorLocation type)
-	{
+
+	private ChipCap2 GetChipCap2(SensorLocation type) {
 		ChipCap2 result = new ChipCap2();
-		
+
 		byte toSend[] = new byte[1];
 		byte toReceive[] = new byte[4];
 		toSend[0] = (byte) 0;
 		System.out.println("Humid: ++");
 
 		try {
-			i2c.writeRead(add / 2, false, toSend, 1, toReceive, 4);
+			Thread.sleep(200);
+			if (type == SensorLocation.SensorInne) {
+				i2cInne.writeRead(add / 2, false, toSend, 1, toReceive, 4);
+			} else if (type == SensorLocation.SensorUte) {
+				i2cUte.writeRead(add / 2, false, toSend, 1, toReceive, 4);
+			}
 		} catch (ConnectionLostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -256,21 +264,53 @@ public class Helper {
 			e.printStackTrace();
 			return null;
 		}
-		
-		float humid = ((toReceive[0]& 0x3F)*256 + (toReceive[1]&0xFF));
-		humid /=  Math.pow(2, 14);
+
+		float humid = ((toReceive[0] & 0x3F) * 256 + (toReceive[1] & 0xFF));
+		humid /= Math.pow(2, 14);
 		humid *= 100;
-		float temp = (toReceive[2]& 0xFF)*64 + ((toReceive[3]>>2)&0x3F)/4;
+		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F) / 4;
 		temp /= Math.pow(2, 14);
 		temp *= 165;
-		temp-=40;
-		
+		temp -= 40;
+
 		result.humidity = humid;
 		result.temperature = temp;
-			
-		System.out.println("Humid: " + humid + "temp " +temp);
+
+		System.out.println("Humid: " + humid + "temp " + temp);
 
 		return result;
+	}
+
+	ChipCap2 tusse;
+
+	public ChipCap2 GetChipCap2TempAndHumidity(final SensorLocation type) {
+		Thread commandExecutor = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					tusse = GetChipCap2(type);
+
+				} catch (Exception e) {
+					Log.e("Helper", "An IOIO command failed: GetChipCap2");
+					e.printStackTrace();
+
+				}
+			}
+		});
+		commandExecutor.start();
+		try {
+			// Give command 4 seconds for command to finish
+			commandExecutor.join(4000);
+			if (commandExecutor.isAlive()) {
+				commandExecutor.interrupt();
+
+			}
+			commandExecutor = null;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return tusse;
 	}
 
 	public float GetTemperatureNew(SensorLocation type) {

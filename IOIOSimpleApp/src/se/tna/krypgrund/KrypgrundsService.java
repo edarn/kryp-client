@@ -53,7 +53,7 @@ public class KrypgrundsService extends IOIOService {
 	public final static int SURFVIND = 0x1;
 	public final static int KRYPGRUND = 0x2;
 	public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
-	private int serviceMode = SURFVIND;
+	private int serviceMode = KRYPGRUND;
 
 	public enum HumidSensor {
 		OldAnalog, Capacitive, ChipCap2
@@ -424,10 +424,15 @@ public class KrypgrundsService extends IOIOService {
 		}
 		if (helper != null)
 			status.fanOn = helper.IsFanOn();
-		if (krypgrundHistory != null)
+		if (surfvindHistory != null)
 			status.historySize = surfvindHistory.size();
-		if (rawMeasurements != null)
+		if (rawSurfvindsMeasurements != null)
 			status.readingSize = rawSurfvindsMeasurements.size();
+		if (krypgrundHistory != null)
+			status.historySize = krypgrundHistory.size();
+		if (rawMeasurements != null)
+			status.readingSize = rawMeasurements.size();
+		
 		status.statusMessage = debugText;
 		status.timeForLastSendData = timeForLastSendData;
 		status.timeBetweenSendingDataToServer = timeBetweenSendingDataToServer;
