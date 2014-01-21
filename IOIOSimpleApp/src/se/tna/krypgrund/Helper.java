@@ -145,7 +145,7 @@ public class Helper {
 	 * Auto-generated catch block e.printStackTrace(); } return (int) SensorRF;
 	 * }
 	 */
-	public enum SensorType {
+	public enum SensorLocation {
 		SensorInne, SensorUte;
 	}
 
@@ -231,9 +231,14 @@ public class Helper {
 	}
 	
 	final int add=0x50;
-	public int GetI2CTemp()
+	public class ChipCap2
 	{
-		//ReadI2CData(add, 0);
+		float humidity =0;
+		float temperature= 0;
+	}
+	public ChipCap2 GetChipCap2TempAndHumidity(SensorLocation type)
+	{
+		ChipCap2 result = new ChipCap2();
 		
 		byte toSend[] = new byte[1];
 		byte toReceive[] = new byte[4];
@@ -245,37 +250,40 @@ public class Helper {
 		} catch (ConnectionLostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return -1;
+			return null;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return -1;
+			return null;
 		}
 		
-		float humid = ((toReceive[0]& 0x3F)*256 + (toReceive[1]&0xff));
+		float humid = ((toReceive[0]& 0x3F)*256 + (toReceive[1]&0xFF));
 		humid /=  Math.pow(2, 14);
 		humid *= 100;
-		float temp = ((toReceive[2]& 0xfF)*64 + (toReceive[3]>>2)&0x3f)/4;
+		float temp = (toReceive[2]& 0xFF)*64 + ((toReceive[3]>>2)&0x3F)/4;
 		temp /= Math.pow(2, 14);
 		temp *= 165;
 		temp-=40;
+		
+		result.humidity = humid;
+		result.temperature = temp;
 			
 		System.out.println("Humid: " + humid + "temp " +temp);
 
-		return (int) (toReceive[0] & 0xFF);
+		return result;
 	}
 
-	public float GetTemperatureNew(SensorType type) {
+	public float GetTemperatureNew(SensorLocation type) {
 		float temperature = -1; // Result in %
 		// float supply = 5;
 
 		int high = 0, low = 0, total = 0;
 		float voltage = (float) 4.93;
 
-		if (type == SensorType.SensorInne)
+		if (type == SensorLocation.SensorInne)
 			SendI2CCommand(0x40, 0, 0x3); // Request ADC measurement from AD0
 											// channel
-		else if (type == SensorType.SensorUte)
+		else if (type == SensorLocation.SensorUte)
 			SendI2CCommand(0x40, 0, 0x5); // Request ADC measurement from AD2
 											// channel
 
@@ -288,19 +296,19 @@ public class Helper {
 		return temperature;
 	}
 
-	public float GetTemperature(SensorType type) {
+	public float GetTemperature(SensorLocation type) {
 		float temperature = -1; // Result in %
 		float supply = 5;
 
 		int high = 0, low = 0, total = 0;
 		float voltage = (float) 4.93;
 
-		if (type == SensorType.SensorInne)
+		if (type == SensorLocation.SensorInne)
 			SendI2CCommand(0x40, 0, 0x3); // Request ADC measurement from AD0
 											// channel
 		// SendI2CCommand(0x40,0,0x4); //Request ADC measurement from AD0
 		// channel
-		else if (type == SensorType.SensorUte)
+		else if (type == SensorLocation.SensorUte)
 			SendI2CCommand(0x40, 0, 0x5); // Request ADC measurement from AD2
 											// channel
 		// SendI2CCommand(0x40,0,0x6); //Request ADC measurement from AD2
@@ -335,14 +343,14 @@ public class Helper {
 	public final static float CalibrationDataHumidity = 0.00000000000330f;
 	public final static float CalibrationDataHumiditySensitivity = 0.000000000000006f;
 
-	public float GetMoistureCap(SensorType type, float temperature) {
+	public float GetMoistureCap(SensorLocation type, float temperature) {
 		float moisture = -1; // Result in %
 
 		float capacitance = 0;
 		try {
-			if (type == SensorType.SensorInne) {
+			if (type == SensorLocation.SensorInne) {
 				capacitance = humidityInside.read();
-			} else if (type == SensorType.SensorUte) {
+			} else if (type == SensorLocation.SensorUte) {
 				capacitance = humidityOutside.read();
 			}
 			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
@@ -358,7 +366,7 @@ public class Helper {
 		return moisture;
 	}
 
-	public float GetMoisture(SensorType type, float temperature) {
+	public float GetMoisture(SensorLocation type, float temperature) {
 		float moisture = -1; // Result in %
 		float rawMoisture = -1;
 		float supply = (float) 4.93;
@@ -366,10 +374,10 @@ public class Helper {
 		int high = 0, low = 0, total = 0;
 		float voltage = 0;
 
-		if (type == SensorType.SensorInne)
+		if (type == SensorLocation.SensorInne)
 			SendI2CCommand(0x40, 0, 0x4); // Request ADC measurement from AD1
 											// channel
-		else if (type == SensorType.SensorUte)
+		else if (type == SensorLocation.SensorUte)
 			SendI2CCommand(0x40, 0, 0x6); // Request ADC measurement from AD3
 											// channel
 

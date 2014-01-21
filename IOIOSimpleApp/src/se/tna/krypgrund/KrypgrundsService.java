@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import se.tna.krypgrund.Helper.ChipCap2;
+import se.tna.krypgrund.Helper.SensorLocation;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
@@ -19,18 +21,14 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Binder;
 import android.os.IBinder;
-
 import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
-	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES
-			.toMillis(5);
-	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES
-			.toMillis(2);
+	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
+	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
 	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
-	protected long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES
-			.toMillis(3);
+	protected long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES.toMillis(3);
 
 	private long timeForLastSendData = 0;
 	private long timeBetweenSendingDataToServer = TIME_BETWEEN_SEND_DATA;
@@ -56,6 +54,12 @@ public class KrypgrundsService extends IOIOService {
 	public final static int KRYPGRUND = 0x2;
 	public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
 	private int serviceMode = SURFVIND;
+
+	public enum HumidSensor {
+		OldAnalog, Capacitive, ChipCap2
+	, Random}
+
+	private HumidSensor krypgrundSensor = HumidSensor.ChipCap2;
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
@@ -95,12 +99,12 @@ public class KrypgrundsService extends IOIOService {
 				id = telephonyManager.getDeviceId();
 
 				helper = new Helper(ioio_, KrypgrundsService.this);
-//				try {
-//					capSense = ioio_.openCapSense(40);
-//				} catch (ConnectionLostException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				// try {
+				// capSense = ioio_.openCapSense(40);
+				// } catch (ConnectionLostException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
 				if (helper.SetupGpioChip()) {
 					isInitialized = true;
 				}
@@ -111,13 +115,12 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void loop() {
 				try {
-				//	helper.GetI2CTemp();
+					// helper.GetI2CTemp();
 					if (!isInitialized) {
 						// initialize();
 					}
-					helper.GetI2CTemp();
-					
-					//System.out.println("Hej: " + capSense.read());
+
+					// System.out.println("Hej: " + capSense.read());
 					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
 
 						// Always create a new object, as this is added to the
@@ -129,15 +132,34 @@ public class KrypgrundsService extends IOIOService {
 								// temp = debugStats;
 							}
 						} else {
-							temp.temperatureUte = 10 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorUte);
-							temp.temperatureInne = 5 + r.nextInt(5);// helper.GetTemperature(SensorType.SensorInne);
-							temp.moistureUte = 23 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorUte,
-							// temp.temperatureUte);
-							temp.moistureInne = 56 + r.nextInt(30);// helper.GetMoisture(SensorType.SensorInne,
-							// temp.temperatureInne);
+							if (krypgrundSensor == HumidSensor.ChipCap2) {
+								ChipCap2 inne = helper
+										.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+								ChipCap2 ute = helper
+										.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+								temp.temperatureInne = inne.temperature;
+								temp.moistureInne = inne.humidity;
+								temp.temperatureUte = ute.temperature;
+								temp.moistureUte = ute.humidity;
+							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
+								temp.temperatureUte = helper.GetTemperature(SensorLocation.SensorUte);
+								temp.temperatureInne = helper.GetTemperature(SensorLocation.SensorInne);
+								temp.moistureUte =helper.GetMoisture(SensorLocation.SensorUte,temp.temperatureUte);
+								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
+							}else if (krypgrundSensor == HumidSensor.Capacitive) {
+								//TODO: Implement.
+							
+							}else if (krypgrundSensor == HumidSensor.Random) {
+								temp.temperatureUte = 10 + r.nextInt(5);
+								temp.temperatureInne = 5 + r.nextInt(5);
+								temp.moistureUte = 23 + r.nextInt(30);
+								temp.moistureInne = 56 + r.nextInt(30);
+							}
+							
+
 							/*
-							 * y = 4.632248129 e6.321315927ï¿½10-2 x y=max fukt
-							 * i gram/m3
+							 * y = 4.632248129 e6.321315927ï¿½10-2 x y=max fukt i
+							 * gram/m3
 							 */
 
 							temp.absolutFuktUte = (float) (4.632248129 * (Math
@@ -173,7 +195,7 @@ public class KrypgrundsService extends IOIOService {
 								&& temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
 						}
-						
+
 					}
 
 					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
@@ -221,12 +243,13 @@ public class KrypgrundsService extends IOIOService {
 
 							Collections.sort(rawSurfvindsMeasurements);
 
-						/*	if (rawSurfvindsMeasurements.size() > 7) {
-								for (int i = 0; i < 3; i++) {
-									rawSurfvindsMeasurements.remove(0);
-									rawSurfvindsMeasurements.remove(rawSurfvindsMeasurements.size() - 1);
-								}
-							}*/
+							/*
+							 * if (rawSurfvindsMeasurements.size() > 7) { for
+							 * (int i = 0; i < 3; i++) {
+							 * rawSurfvindsMeasurements.remove(0);
+							 * rawSurfvindsMeasurements
+							 * .remove(rawSurfvindsMeasurements.size() - 1); } }
+							 */
 
 							// Calculate an averagevalue of all the readings.
 							for (SurfvindStats stat : rawSurfvindsMeasurements) {
@@ -245,7 +268,7 @@ public class KrypgrundsService extends IOIOService {
 								if (stat.windSpeedAvg > total.windSpeedMax) {
 									total.windSpeedMax = stat.windSpeedAvg;
 								}
-								total.temperature +=stat.temperature;
+								total.temperature += stat.temperature;
 								total.batteryVoltage += stat.batteryVoltage;
 							}
 							int size = rawSurfvindsMeasurements.size();
@@ -261,9 +284,9 @@ public class KrypgrundsService extends IOIOService {
 						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
 							debugText = helper.SendKrypgrundsDataToServer(
 									krypgrundHistory, forceSendData, id);
-							// Reset time even if it fails - don´t hesitate to
+							// Reset time even if it fails - donï¿½t hesitate to
 							// retry sending.
-						//	helper.trim(surfvindHistory);
+							// helper.trim(surfvindHistory);
 							debugText += helper
 									.SendSurfvindDataToServer(surfvindHistory,
 											forceSendData, id, version);
@@ -357,12 +380,15 @@ public class KrypgrundsService extends IOIOService {
 		forceSendData = checked;
 
 	}
+
 	public void updateSettings() {
-		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
+				MODE_PRIVATE);
 		Editor prefsEditor = prefs.edit();
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE, SURFVIND);
-		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
-		
+		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
+				TimeUnit.MINUTES.toMillis(5));
+
 	}
 
 	public void setForceFan(boolean on) {
