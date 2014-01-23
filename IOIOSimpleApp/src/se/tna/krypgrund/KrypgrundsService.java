@@ -9,6 +9,8 @@ import ioio.lib.util.android.IOIOService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import se.tna.krypgrund.Helper.ChipCap2;
@@ -17,6 +19,7 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.PeriodicSync;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Binder;
@@ -56,13 +59,14 @@ public class KrypgrundsService extends IOIOService {
 	private int serviceMode = KRYPGRUND;
 
 	public enum HumidSensor {
-		OldAnalog, Capacitive, ChipCap2
-	, Random}
+		OldAnalog, Capacitive, ChipCap2, Random
+	}
 
 	private HumidSensor krypgrundSensor = HumidSensor.ChipCap2;
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
+	protected boolean isIOIOConnected = false;
 
 	public void setDebugMode(boolean enable) {
 		debugMode = enable;
@@ -82,6 +86,7 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void disconnected() {
 				super.disconnected();
+				isIOIOConnected = false;
 				isInitialized = false;
 			}
 
@@ -95,6 +100,7 @@ public class KrypgrundsService extends IOIOService {
 			}
 
 			private synchronized void initialize() {
+				isIOIOConnected = true;
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				id = telephonyManager.getDeviceId();
 
@@ -142,20 +148,25 @@ public class KrypgrundsService extends IOIOService {
 								temp.temperatureUte = ute.temperature;
 								temp.moistureUte = ute.humidity;
 							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
-								temp.temperatureUte = helper.GetTemperature(SensorLocation.SensorUte);
-								temp.temperatureInne = helper.GetTemperature(SensorLocation.SensorInne);
-								temp.moistureUte =helper.GetMoisture(SensorLocation.SensorUte,temp.temperatureUte);
-								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
-							}else if (krypgrundSensor == HumidSensor.Capacitive) {
-								//TODO: Implement.
-							
-							}else if (krypgrundSensor == HumidSensor.Random) {
+								temp.temperatureUte = helper
+										.GetTemperature(SensorLocation.SensorUte);
+								temp.temperatureInne = helper
+										.GetTemperature(SensorLocation.SensorInne);
+								temp.moistureUte = helper.GetMoisture(
+										SensorLocation.SensorUte,
+										temp.temperatureUte);
+								temp.moistureInne = helper.GetMoisture(
+										SensorLocation.SensorInne,
+										temp.temperatureInne);
+							} else if (krypgrundSensor == HumidSensor.Capacitive) {
+								// TODO: Implement.
+
+							} else if (krypgrundSensor == HumidSensor.Random) {
 								temp.temperatureUte = 10 + r.nextInt(5);
 								temp.temperatureInne = 5 + r.nextInt(5);
 								temp.moistureUte = 23 + r.nextInt(30);
 								temp.moistureInne = 56 + r.nextInt(30);
 							}
-							
 
 							/*
 							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt i
@@ -356,6 +367,18 @@ public class KrypgrundsService extends IOIOService {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		TimerTask connectTask = new TimerTask() {
+
+			@Override
+			public void run() {
+				if (!isIOIOConnected) {
+					KrypgrundsService.this.restart();
+				}
+
+			}
+		};
+		Timer timer = new Timer("IOIOConnector");
+		timer.scheduleAtFixedRate(connectTask, 10000, 60000);
 
 	}
 

@@ -82,6 +82,11 @@ public abstract class IOIOService extends Service implements
 		super.onCreate();
 		helper_.create();
 	}
+	
+	public void restart()
+	{
+	    helper_.restart();
+	}
 
 	/**
 	 * Subclasses should call this method from their own onDestroy() if
