@@ -2,13 +2,23 @@ package se.tna.krypgrund;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Criteria;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -67,12 +77,60 @@ public class SetupActivity extends Activity {
 				prefsEditor.putString(STATION_NAME, name.getText().toString());
 				prefsEditor.apply();
 				prefsEditor.commit();
+				
+				LocationData l = new LocationData();
+				
+				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+				l.Imei = telephonyManager.getDeviceId();
+				l.Latitude = locListner.latitude;
+				l.Longitude = locListner.longitude;
+				l.SensorName = name.getText().toString();
+				SendLocationDataToServer(l);
 				finish();
 			}
 		});	
 		locListner = new MyLocationListener(this);
 
 	}
+	private void SendLocationDataToServer(final LocationData locData)
+	{
+		new AsyncTask<Void, Void, Boolean>() {
+
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				HttpClient client = null;
+				JSONObject data;
+			
+				try {
+						data = new JSONObject();
+
+						client = new DefaultHttpClient();
+						HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
+						message.addHeader("content-type", "application/x-www-form-urlencoded");
+						data.put("Imei", locData.Imei);
+						data.put("Latitude", locData.Latitude);
+						data.put("Longitude", locData.Longitude);
+						data.put("SensorName", locData.SensorName);
+						message.setEntity(new StringEntity(data.toString()));
+						HttpResponse response = client.execute(message);
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							
+						} else {
+						///	SendSuccess = false;
+						}
+				} catch (Exception e) {
+				
+				} finally {
+					if (null != client)
+						client.getConnectionManager().shutdown();
+				}
+				return true;
+			}
+		}.execute();
+		
+		
+	}
+
 
 	public static int getSensorType(int radioId)
 	{

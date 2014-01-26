@@ -243,7 +243,7 @@ public class KrypgrundGUI extends Activity {
 
 		};
 
-		timer.scheduleAtFixedRate(t, 0, 400);
+		timer.scheduleAtFixedRate(t, 0, 5000);
 
 	}
 

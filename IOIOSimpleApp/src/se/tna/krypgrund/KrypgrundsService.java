@@ -66,7 +66,10 @@ public class KrypgrundsService extends IOIOService {
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
-	protected boolean isIOIOConnected = false;
+	protected static boolean isIOIOConnected = false;
+	static {
+
+	}
 
 	public void setDebugMode(boolean enable) {
 		debugMode = enable;
@@ -91,8 +94,7 @@ public class KrypgrundsService extends IOIOService {
 			}
 
 			@Override
-			public void setup() throws ConnectionLostException,
-					InterruptedException {
+			public void setup() throws ConnectionLostException, InterruptedException {
 				timeForLastSendData = System.currentTimeMillis();
 				timeForLastAddToHistory = System.currentTimeMillis();
 				timeForLastFanControl = System.currentTimeMillis();
@@ -139,25 +141,17 @@ public class KrypgrundsService extends IOIOService {
 							}
 						} else {
 							if (krypgrundSensor == HumidSensor.ChipCap2) {
-								ChipCap2 inne = helper
-										.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
-								ChipCap2 ute = helper
-										.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+								ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+								ChipCap2 ute = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 								temp.temperatureInne = inne.temperature;
 								temp.moistureInne = inne.humidity;
 								temp.temperatureUte = ute.temperature;
 								temp.moistureUte = ute.humidity;
 							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
-								temp.temperatureUte = helper
-										.GetTemperature(SensorLocation.SensorUte);
-								temp.temperatureInne = helper
-										.GetTemperature(SensorLocation.SensorInne);
-								temp.moistureUte = helper.GetMoisture(
-										SensorLocation.SensorUte,
-										temp.temperatureUte);
-								temp.moistureInne = helper.GetMoisture(
-										SensorLocation.SensorInne,
-										temp.temperatureInne);
+								temp.temperatureUte = helper.GetTemperature(SensorLocation.SensorUte);
+								temp.temperatureInne = helper.GetTemperature(SensorLocation.SensorInne);
+								temp.moistureUte = helper.GetMoisture(SensorLocation.SensorUte, temp.temperatureUte);
+								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
 							} else if (krypgrundSensor == HumidSensor.Capacitive) {
 								// TODO: Implement.
 
@@ -169,16 +163,12 @@ public class KrypgrundsService extends IOIOService {
 							}
 
 							/*
-							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt i
-							 * gram/m3
+							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt
+							 * i gram/m3
 							 */
 
-							temp.absolutFuktUte = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * temp.temperatureUte) + 1))
-									* temp.moistureUte;
-							temp.absolutFuktInne = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * temp.temperatureInne) + 1))
-									* temp.moistureInne;
+							temp.absolutFuktUte = (float) (4.632248129 * (Math.expm1(0.06321315927 * temp.temperatureUte) + 1)) * temp.moistureUte;
+							temp.absolutFuktInne = (float) (4.632248129 * (Math.expm1(0.06321315927 * temp.temperatureInne) + 1)) * temp.moistureInne;
 						}
 						rawMeasurements.add(temp);
 
@@ -202,8 +192,7 @@ public class KrypgrundsService extends IOIOService {
 																			// //
 						temp.batteryVoltage = helper.getBatteryVoltage();
 						temp.temperature = helper.getTemp();
-						if (temp.windDirectionAvg != -1
-								&& temp.windSpeedAvg != -1) {
+						if (temp.windDirectionAvg != -1 && temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
 						}
 
@@ -293,14 +282,11 @@ public class KrypgrundsService extends IOIOService {
 
 						// How often should we connect to server?
 						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
-							debugText = helper.SendKrypgrundsDataToServer(
-									krypgrundHistory, forceSendData, id);
+							debugText = helper.SendKrypgrundsDataToServer(krypgrundHistory, forceSendData, id);
 							// Reset time even if it fails - don�t hesitate to
 							// retry sending.
 							// helper.trim(surfvindHistory);
-							debugText += helper
-									.SendSurfvindDataToServer(surfvindHistory,
-											forceSendData, id, version);
+							debugText += helper.SendSurfvindDataToServer(surfvindHistory, forceSendData, id, version);
 							timeForLastSendData = System.currentTimeMillis();
 						}
 						rawMeasurements = new ArrayList<KrypgrundStats>();
@@ -367,24 +353,28 @@ public class KrypgrundsService extends IOIOService {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		TimerTask connectTask = new TimerTask() {
-
-			@Override
-			public void run() {
-				if (!isIOIOConnected) {
-					KrypgrundsService.this.restart();
-				}
-
-			}
-		};
-		Timer timer = new Timer("IOIOConnector");
-		timer.scheduleAtFixedRate(connectTask, 10000, 60000);
 
 	}
+
+	private TimerTask mConnectTask = null;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		if (mConnectTask != null) {
+			mConnectTask = new TimerTask() {
+
+				@Override
+				public void run() {
+					if (!isIOIOConnected) {
+						KrypgrundsService.this.restart();
+					}
+
+				}
+			};
+			Timer timer = new Timer("IOIOConnector");
+			timer.scheduleAtFixedRate(mConnectTask, 10000, 60000);
+		}
 		return Service.START_NOT_STICKY;
 	}
 
@@ -405,12 +395,10 @@ public class KrypgrundsService extends IOIOService {
 	}
 
 	public void updateSettings() {
-		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
-				MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
 		Editor prefsEditor = prefs.edit();
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE, SURFVIND);
-		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
-				TimeUnit.MINUTES.toMillis(5));
+		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
 
 	}
 
@@ -455,7 +443,7 @@ public class KrypgrundsService extends IOIOService {
 			status.historySize = krypgrundHistory.size();
 		if (rawMeasurements != null)
 			status.readingSize = rawMeasurements.size();
-		
+
 		status.statusMessage = debugText;
 		status.timeForLastSendData = timeForLastSendData;
 		status.timeBetweenSendingDataToServer = timeBetweenSendingDataToServer;

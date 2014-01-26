@@ -734,7 +734,8 @@ public class Helper {
 	public boolean IsFanOn() {
 		return FanOn;
 	}
-
+	
+	
 	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history, boolean forceSendData, String id) {
 		String retVal = "Trying to send " + history.size() + " items.\n";
 		HttpClient client = null;
