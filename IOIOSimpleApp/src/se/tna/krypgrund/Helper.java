@@ -30,10 +30,7 @@ import ioio.lib.api.exception.ConnectionLostException;
 
 public class Helper {
 	IOIO ioio = null;
-	DigitalOutput A1 = null;
-	DigitalOutput A2 = null;
-	PwmOutput ASpeed = null;
-
+	
 	DigitalOutput B1 = null;
 	DigitalOutput B2 = null;
 	PwmOutput BSpeed = null;
@@ -82,21 +79,8 @@ public class Helper {
 				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
 					// Do nothing as open and close will be done at every call.
 				}
-
 				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
 				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
-
-				/*
-				 * // Thread.sleep(1000); Standby = ioio.openDigitalOutput(6);
-				 * Standby.write(true); // Activate chip
-				 * 
-				 * A1 = ioio.openDigitalOutput(5); A1.write(false); A2 =
-				 * ioio.openDigitalOutput(4); A2.write(false);
-				 * 
-				 * humidityOutside = ioio.openCapSense(31); humidityInside =
-				 * ioio.openCapSense(32);
-				 */
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			} // USE FALSE for I2C otherwise to high voltage!!!
@@ -106,14 +90,6 @@ public class Helper {
 	public void Destroy() {
 		if (i2cInne != null)
 			i2cInne.close();
-		if (Standby != null)
-			Standby.close();
-		if (A1 != null)
-			A1.close();
-		if (A2 != null)
-			A2.close();
-		if (ASpeed != null)
-			ASpeed.close();
 		if (anemometer != null)
 			anemometer.close();
 		if (pulseCounter != null)
@@ -193,7 +169,6 @@ public class Helper {
 				return false;
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
@@ -208,7 +183,6 @@ public class Helper {
 		try {
 			i2cInne.writeRead(adress / 2, false, toSend, 1, toReceive, 1);
 		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		} catch (InterruptedException e) {
@@ -218,19 +192,6 @@ public class Helper {
 		}
 
 		return (int) (toReceive[0] & 0xFF);
-	}
-
-	public boolean SetupGpioChip() {
-
-		//
-		// if (!SendI2CCommand(0x40, 1, 255))
-		// return false;
-		// if (!SendI2CCommand(0x40, 2, 255))
-		// return false;
-		// if (!SendI2CCommand(0x40, 3, 0xC0))
-		// return false;
-
-		return true;
 	}
 
 	final int add = 0x50;
@@ -275,9 +236,6 @@ public class Helper {
 
 		result.humidity = humid;
 		result.temperature = temp;
-
-		System.out.println("Humid: " + humid + "temp " + temp);
-
 		return result;
 	}
 
@@ -474,29 +432,29 @@ public class Helper {
 
 	boolean ControlFan(int Speed, boolean Clockwise) {
 		boolean retVal = true;
-		if (A1 != null && A2 != null && ASpeed != null) {
-			try {
-				if (Speed == FanStop) {
-					A1.write(false);
-					A2.write(false);
-					FanOn = false;
-				} else if (Clockwise) {
-					A1.write(true);
-					A2.write(false);
-					FanOn = true;
-				} else {
-					A1.write(false);
-					A2.write(true);
-					FanOn = true;
-				}
-				ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
-			} catch (ConnectionLostException e) {
-				retVal = false;
-				e.printStackTrace();
-			}
-		} else {
-			retVal = false;
-		}
+//		if (A1 != null && A2 != null && ASpeed != null) {
+//			try {
+//				if (Speed == FanStop) {
+//					A1.write(false);
+//					A2.write(false);
+//					FanOn = false;
+//				} else if (Clockwise) {
+//					A1.write(true);
+//					A2.write(false);
+//					FanOn = true;
+//				} else {
+//					A1.write(false);
+//					A2.write(true);
+//					FanOn = true;
+//				}
+//				ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
+//			} catch (ConnectionLostException e) {
+//				retVal = false;
+//				e.printStackTrace();
+//			}
+//		} else {
+//			retVal = false;
+//		}
 		return retVal;
 	}
 

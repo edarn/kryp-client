@@ -1,5 +1,6 @@
 package se.tna.krypgrund;
 
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
@@ -82,8 +83,8 @@ public class SetupActivity extends Activity {
 				
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				l.Imei = telephonyManager.getDeviceId();
-				l.Latitude = locListner.latitude;
-				l.Longitude = locListner.longitude;
+				l.Latitude = Double.parseDouble(latitude.getText().toString());
+				l.Longitude = Double.parseDouble(longitude.getText().toString());
 				l.SensorName = name.getText().toString();
 				SendLocationDataToServer(l);
 				finish();
@@ -111,9 +112,17 @@ public class SetupActivity extends Activity {
 						data.put("Latitude", locData.Latitude);
 						data.put("Longitude", locData.Longitude);
 						data.put("SensorName", locData.SensorName);
+						data.put("Version", "Setup1.0");
 						message.setEntity(new StringEntity(data.toString()));
 						HttpResponse response = client.execute(message);
 						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							InputStreamReader r = new InputStreamReader(response.getEntity().getContent());
+							char c[] = new char[100];
+							while (r.read() != -1)
+							{
+								r.read(c);
+								System.out.println(c);
+							}
 							
 						} else {
 						///	SendSuccess = false;

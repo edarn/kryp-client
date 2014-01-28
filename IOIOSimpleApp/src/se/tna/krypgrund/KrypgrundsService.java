@@ -53,8 +53,8 @@ public class KrypgrundsService extends IOIOService {
 	private Helper helper;
 	private String id = "";
 	boolean clockwise = true;
-	public final static int SURFVIND = 0x1;
-	public final static int KRYPGRUND = 0x2;
+	public final static int SURFVIND = R.id.weatherStation;
+	public final static int KRYPGRUND = R.id.crawlspaceStation;
 	public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
 	private int serviceMode = KRYPGRUND;
 
@@ -113,9 +113,8 @@ public class KrypgrundsService extends IOIOService {
 				// // TODO Auto-generated catch block
 				// e.printStackTrace();
 				// }
-				if (helper.SetupGpioChip()) {
 					isInitialized = true;
-				}
+				
 			}
 
 			Random r = new Random();
@@ -123,13 +122,7 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void loop() {
 				try {
-					// helper.GetI2CTemp();
-					if (!isInitialized) {
-						// initialize();
-					}
-
-					// System.out.println("Hej: " + capSense.read());
-					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+						if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
 
 						// Always create a new object, as this is added to the
 						// list.
@@ -396,10 +389,10 @@ public class KrypgrundsService extends IOIOService {
 
 	public void updateSettings() {
 		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
-		Editor prefsEditor = prefs.edit();
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE, SURFVIND);
+		serviceMode=type;
 		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
-
+		timeBetweenSendingDataToServer= readInterval;
 	}
 
 	public void setForceFan(boolean on) {
