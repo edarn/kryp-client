@@ -4,165 +4,173 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.47"
-        android:orientation="vertical" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:singleLine="true"
-            android:text="Name of sensor:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#f6fa91"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/stationName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:maxLength="100" >
-
-            <requestFocus />
-        </EditText>
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Update frequency:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#f6fa91"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/updateFrequency"
-            android:layout_width="194dp"
-            android:layout_height="wrap_content" >
-
-            <RadioButton
-                android:id="@+id/oneMinute"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:onClick="onRadioButtonClicked"
-                android:text="1 Min" />
-
-            <RadioButton
-                android:id="@+id/threeMinutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"
-                android:text="3 Min" />
-
-            <RadioButton
-                android:id="@+id/fiveMinutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"
-                android:text="5 Min" />
-
-            <RadioButton
-                android:id="@+id/tenMinutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"
-                android:text="10 Min" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Sensors to use:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#f6fa91"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/sensorType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <RadioButton
-                android:id="@+id/weatherStation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:minWidth="100dp"
-                android:onClick="onRadioButtonClicked"
-                android:text="WeatherStation" />
-
-            <RadioButton
-                android:id="@+id/crawlspaceStation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"
-                android:text="CrawlSpace" />
-        </RadioGroup>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Position of sensors:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#f6fa91"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/latLabel"
+                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="80dp"
-                android:text="Latitude:" />
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:text="Name of sensor:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#f6fa91"
+                android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/latPosition"
-                android:layout_width="wrap_content"
+                android:id="@+id/stationName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="aquieringPosition" />
-        </LinearLayout>
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:maxLength="100" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+                <requestFocus />
+            </EditText>
 
             <TextView
-                android:id="@+id/longLabel"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="80dp"
-                android:text="Longitude:" />
+                android:layout_marginTop="10dp"
+                android:text="Update frequency:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#f6fa91"
+                android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/longPosition"
+            <RadioGroup
+                android:id="@+id/updateFrequency"
+                android:layout_width="194dp"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/oneMinute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="1 Min" />
+
+                <RadioButton
+                    android:id="@+id/threeMinutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="3 Min" />
+
+                <RadioButton
+                    android:id="@+id/fiveMinutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="5 Min" />
+
+                <RadioButton
+                    android:id="@+id/tenMinutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="10 Min" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="aquieringPosition" />
+                android:layout_marginTop="10dp"
+                android:text="Sensors to use:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#f6fa91"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/sensorType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/weatherStation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:minWidth="100dp"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="WeatherStation" />
+
+                <RadioButton
+                    android:id="@+id/crawlspaceStation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="CrawlSpace" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Position of sensors:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#f6fa91"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/latLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="80dp"
+                    android:text="Latitude:" />
+
+                <EditText
+                    android:id="@+id/latPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:text="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/longLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="80dp"
+                    android:text="Longitude:" />
+
+                <EditText
+                    android:id="@+id/longPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:text="0" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Save and update" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:text="Save and update" />
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

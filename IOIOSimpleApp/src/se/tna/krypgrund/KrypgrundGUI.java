@@ -65,42 +65,21 @@ public class KrypgrundGUI extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.settings, menu);
-		/*
-		 * preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		 * MenuItem item = null; item = menu.findItem(R.id.setup); if (null !=
-		 * item) { item.setChecked(preferences.getBoolean("useSurfvind",
-		 * false)); // item.setChecked(true); } item =
-		 * menu.findItem(R.id.useKrypgrund); if (null != item) {
-		 * item.setChecked(preferences.getBoolean("useKrypgrund", false)); }
-		 */
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-
-		/*
-		 * preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		 * 
-		 * PopupMenu popup = new PopupMenu(this, forceSendDataButton);
-		 * MenuInflater inflater = popup.getMenuInflater(); Editor s =
-		 * preferences.edit(); switch (item.getItemId()) { case
-		 * R.id.useKrypgrund: inflater.inflate(R.menu.krypgrund_actions,
-		 * popup.getMenu()); s.putBoolean("useKrypgrund", true); break; case
-		 * R.id.useSurfvind: inflater.inflate(R.menu.surfvind_actions,
-		 * popup.getMenu()); s.putBoolean("useSurfvind",
-		 * !preferences.getBoolean("useSurfvind", false)); break; default:
-		 * return super.onOptionsItemSelected(item); } s.apply();
-		 * 
-		 * popup.show();
-		 */
 		startActivity(new Intent(this, SetupActivity.class));
 		return true;
 	}
 
-	public void showPopup(View v) {
-
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (kryp != null) {
+			kryp.updateSettings();
+		}
 	}
 
 	@Override
@@ -108,13 +87,13 @@ public class KrypgrundGUI extends Activity {
 		super.onDestroy();
 		if (serviceBound && mConnection != null) {
 			unbindService(mConnection);
+			serviceBound = false;
 			mConnection = null;
-
 		}
 	}
 
 	boolean serviceBound = false;
-	SharedPreferences preferences;
+//	SharedPreferences preferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -138,16 +117,17 @@ public class KrypgrundGUI extends Activity {
 
 			}
 		};
+		
 
-		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-
-			@Override
-			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-				preferences = sharedPreferences;
-
-			}
-		});
+//		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
+//		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+//
+//			@Override
+//			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//				preferences = sharedPreferences;
+//
+//			}
+//		});
 
 		setContentView(R.layout.main);
 
@@ -157,9 +137,10 @@ public class KrypgrundGUI extends Activity {
 		// debug
 		id = "358848043355882";
 
-//		WebView myWebView = (WebView) findViewById(R.id.webView);
-//		myWebView.loadUrl("http://www.surfvind.se/Applet/" + id + "/graph_0.png");
-//		myWebView.setBackgroundColor(0x00000000);
+		// WebView myWebView = (WebView) findViewById(R.id.webView);
+		// myWebView.loadUrl("http://www.surfvind.se/Applet/" + id +
+		// "/graph_0.png");
+		// myWebView.setBackgroundColor(0x00000000);
 		WebView compassView = (WebView) findViewById(R.id.webViewCompass);
 		compassView.loadUrl("http://www.surfvind.se/Images/" + id + "_img_compass.png");
 		compassView.setBackgroundColor(0x00000000);

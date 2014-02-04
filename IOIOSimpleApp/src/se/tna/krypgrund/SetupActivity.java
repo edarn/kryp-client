@@ -30,16 +30,16 @@ import android.widget.RadioGroup;
 public class SetupActivity extends Activity {
 
 	private static final String UPDATE_FREQ = "Time_Between_Reads";
-	public static final String SENSOR_TYPE = "Sensor_Type";
+	//public static final String SENSOR_TYPE = "Sensor_Type";
 	public static final String READ_INTERVAL = "Read_Interval";
 	public static final String STATION_NAME = "Station_Name";
-	private static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
+	public static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
+	private static final String GPS_LONGITUDE = "Longitude";
+	private static final String GPS_LATITUDE = "Latitude";
 	private EditText name;
 	private EditText latitude;
 	private EditText longitude;
-	
-	
-	
+
 	private RadioGroup updateFrequency;
 	private RadioGroup sensorType;
 
@@ -54,33 +54,46 @@ public class SetupActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setup);
-		
+
+		// Find views
 		name = (EditText) findViewById(R.id.stationName);
 		latitude = (EditText) findViewById(R.id.latPosition);
 		longitude = (EditText) findViewById(R.id.longPosition);
 		updateFrequency = (RadioGroup) findViewById(R.id.updateFrequency);
 		sensorType = (RadioGroup) findViewById(R.id.sensorType);
+
+		// Find stored settings
 		prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
 		prefsEditor = prefs.edit();
-		int type = prefs.getInt(SENSOR_TYPE_RADIO, R.id.weatherStation);
+		int type = prefs.getInt(SENSOR_TYPE_RADIO, R.id.crawlspaceStation);
 		sensorType.check(type);
 		int readInterval = prefs.getInt(UPDATE_FREQ, R.id.oneMinute);
 		updateFrequency.check(readInterval);
 		String sensorName = prefs.getString(STATION_NAME, "");
 		name.setText(sensorName);
+		
+		String lat = prefs.getString(GPS_LATITUDE, "55");
+		String lon = prefs.getString(GPS_LONGITUDE, "13");
+		
+		latitude.setText(lat);
+		longitude.setText(lon);
+
 		Button b = (Button) findViewById(R.id.saveButton);
 		b.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				prefsEditor.putInt(SENSOR_TYPE, stationType);
+				//prefsEditor.putInt(SENSOR_TYPE, stationType);
 				prefsEditor.putLong(READ_INTERVAL, updateTime);
 				prefsEditor.putString(STATION_NAME, name.getText().toString());
+				prefsEditor.putString(GPS_LATITUDE, latitude.getText().toString());
+				prefsEditor.putString(GPS_LONGITUDE, latitude.getText().toString());
+				
 				prefsEditor.apply();
 				prefsEditor.commit();
-				
+
 				LocationData l = new LocationData();
-				
+
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				l.Imei = telephonyManager.getDeviceId();
 				l.Latitude = Double.parseDouble(latitude.getText().toString());
@@ -89,46 +102,45 @@ public class SetupActivity extends Activity {
 				SendLocationDataToServer(l);
 				finish();
 			}
-		});	
+		});
 		locListner = new MyLocationListener(this);
 
 	}
-	private void SendLocationDataToServer(final LocationData locData)
-	{
+
+	private void SendLocationDataToServer(final LocationData locData) {
 		new AsyncTask<Void, Void, Boolean>() {
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				HttpClient client = null;
 				JSONObject data;
-			
-				try {
-						data = new JSONObject();
 
-						client = new DefaultHttpClient();
-						HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
-						message.addHeader("content-type", "application/x-www-form-urlencoded");
-						data.put("Imei", locData.Imei);
-						data.put("Latitude", locData.Latitude);
-						data.put("Longitude", locData.Longitude);
-						data.put("SensorName", locData.SensorName);
-						data.put("Version", "Setup1.0");
-						message.setEntity(new StringEntity(data.toString()));
-						HttpResponse response = client.execute(message);
-						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-							InputStreamReader r = new InputStreamReader(response.getEntity().getContent());
-							char c[] = new char[100];
-							while (r.read() != -1)
-							{
-								r.read(c);
-								System.out.println(c);
-							}
-							
-						} else {
-						///	SendSuccess = false;
+				try {
+					data = new JSONObject();
+
+					client = new DefaultHttpClient();
+					HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
+					message.addHeader("content-type", "application/x-www-form-urlencoded");
+					data.put("Imei", locData.Imei);
+					data.put("Latitude", locData.Latitude);
+					data.put("Longitude", locData.Longitude);
+					data.put("SensorName", locData.SensorName);
+					data.put("Version", "Setup1.0");
+					message.setEntity(new StringEntity(data.toString()));
+					HttpResponse response = client.execute(message);
+					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						InputStreamReader r = new InputStreamReader(response.getEntity().getContent());
+						char c[] = new char[100];
+						while (r.read() != -1) {
+							r.read(c);
+							System.out.println(c);
 						}
+
+					} else {
+						// / SendSuccess = false;
+					}
 				} catch (Exception e) {
-				
+
 				} finally {
 					if (null != client)
 						client.getConnectionManager().shutdown();
@@ -136,13 +148,10 @@ public class SetupActivity extends Activity {
 				return true;
 			}
 		}.execute();
-		
-		
+
 	}
 
-
-	public static int getSensorType(int radioId)
-	{
+	public static int getSensorType(int radioId) {
 		int stationType = R.id.weatherStation; // Default
 		if (radioId == R.id.weatherStation)
 			stationType = KrypgrundsService.SURFVIND;
@@ -150,9 +159,9 @@ public class SetupActivity extends Activity {
 			stationType = KrypgrundsService.KRYPGRUND;
 		return stationType;
 	}
-	public static long getUpdateInterval(int radioId)
-	{
-		long readInterval = TimeUnit.MINUTES.toMillis(1); //Default
+
+	public static long getUpdateInterval(int radioId) {
+		long readInterval = TimeUnit.MINUTES.toMillis(1); // Default
 		if (radioId == R.id.oneMinute)
 			readInterval = TimeUnit.MINUTES.toMillis(1);
 		else if (radioId == R.id.threeMinutes)
@@ -169,7 +178,7 @@ public class SetupActivity extends Activity {
 		prefsEditor.apply();
 		super.onDestroy();
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -177,11 +186,7 @@ public class SetupActivity extends Activity {
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria c = new Criteria();
 		c.setAccuracy(Criteria.ACCURACY_MEDIUM);
-		
-
-		locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListner,null);
-		
-		
+		locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListner, null);
 
 	}
 
@@ -191,7 +196,6 @@ public class SetupActivity extends Activity {
 		locationManager.removeUpdates(locListner);
 		super.onStop();
 	}
-
 
 	public void onRadioButtonClicked(View view) {
 		// Is the button now checked?

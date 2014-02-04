@@ -25,6 +25,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
+import android.util.TimeUtils;
 
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
@@ -55,8 +56,10 @@ public class KrypgrundsService extends IOIOService {
 	boolean clockwise = true;
 	public final static int SURFVIND = R.id.weatherStation;
 	public final static int KRYPGRUND = R.id.crawlspaceStation;
-	public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
+	// public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
 	private int serviceMode = KRYPGRUND;
+
+	private long watchdog_TimeSinceLastOkData;
 
 	public enum HumidSensor {
 		OldAnalog, Capacitive, ChipCap2, Random
@@ -107,14 +110,8 @@ public class KrypgrundsService extends IOIOService {
 				id = telephonyManager.getDeviceId();
 
 				helper = new Helper(ioio_, KrypgrundsService.this);
-				// try {
-				// capSense = ioio_.openCapSense(40);
-				// } catch (ConnectionLostException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
-					isInitialized = true;
-				
+				isInitialized = true;
+				watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 			}
 
 			Random r = new Random();
@@ -122,7 +119,12 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void loop() {
 				try {
-						if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+					if (System.currentTimeMillis() - watchdog_TimeSinceLastOkData > TimeUnit.MINUTES.toMillis(10)) {
+						System.out.println("Restarting ioio due to no good data for a long time.");
+						ioio_.hardReset();
+					}
+
+					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
 
 						// Always create a new object, as this is added to the
 						// list.
@@ -140,6 +142,10 @@ public class KrypgrundsService extends IOIOService {
 								temp.moistureInne = inne.humidity;
 								temp.temperatureUte = ute.temperature;
 								temp.moistureUte = ute.humidity;
+								if (inne.okReading && ute.okReading) {
+									// Update the watchdog.
+									watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+								}
 							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
 								temp.temperatureUte = helper.GetTemperature(SensorLocation.SensorUte);
 								temp.temperatureInne = helper.GetTemperature(SensorLocation.SensorInne);
@@ -154,6 +160,7 @@ public class KrypgrundsService extends IOIOService {
 								temp.moistureUte = 23 + r.nextInt(30);
 								temp.moistureInne = 56 + r.nextInt(30);
 							}
+							temp.batteryVoltage = helper.getBatteryVoltage();
 
 							/*
 							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt
@@ -167,29 +174,33 @@ public class KrypgrundsService extends IOIOService {
 
 					}
 
-					if ((serviceMode & SURFVIND) == SURFVIND) {
-
-						// Always create a new object, as this is added to the
-						// list.
-						SurfvindStats temp = new SurfvindStats();
-
-						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);// helper.getWindDirection();
-																				// //
-																				// 180
-																				// +
-																				// r.nextInt(30);
-						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); // getWindSpeed();
-																			// //8
-																			// +
-																			// r.nextInt(10)/10f;
-																			// //
-						temp.batteryVoltage = helper.getBatteryVoltage();
-						temp.temperature = helper.getTemp();
-						if (temp.windDirectionAvg != -1 && temp.windSpeedAvg != -1) {
-							rawSurfvindsMeasurements.add(temp);
-						}
-
-					}
+					// if ((serviceMode & SURFVIND) == SURFVIND) {
+					//
+					// // Always create a new object, as this is added to the
+					// // list.
+					// SurfvindStats temp = new SurfvindStats();
+					//
+					// temp.windDirectionAvg =
+					// helper.queryIOIO(Helper.ANALOG);//
+					// helper.getWindDirection();
+					// // //
+					// // 180
+					// // +
+					// // r.nextInt(30);
+					// temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); //
+					// getWindSpeed();
+					// // //8
+					// // +
+					// // r.nextInt(10)/10f;
+					// // //
+					// temp.batteryVoltage = helper.getBatteryVoltage();
+					// temp.temperature = helper.getTemp();
+					// if (temp.windDirectionAvg != -1 && temp.windSpeedAvg !=
+					// -1) {
+					// rawSurfvindsMeasurements.add(temp);
+					// }
+					//
+					// }
 
 					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
 						// Reset time, so that we will soon add a new value to
@@ -226,52 +237,52 @@ public class KrypgrundsService extends IOIOService {
 							rawMeasurements.clear();
 						}
 
-						if ((serviceMode & SURFVIND) == SURFVIND) {
-
-							// Always create a new object, as it is added to the
-							// history list.
-							SurfvindStats total = new SurfvindStats();
-							total.windDirectionMin = 999999;
-							total.windSpeedMin = 999999;
-
-							Collections.sort(rawSurfvindsMeasurements);
-
-							/*
-							 * if (rawSurfvindsMeasurements.size() > 7) { for
-							 * (int i = 0; i < 3; i++) {
-							 * rawSurfvindsMeasurements.remove(0);
-							 * rawSurfvindsMeasurements
-							 * .remove(rawSurfvindsMeasurements.size() - 1); } }
-							 */
-
-							// Calculate an averagevalue of all the readings.
-							for (SurfvindStats stat : rawSurfvindsMeasurements) {
-
-								total.windDirectionAvg += stat.windDirectionAvg;
-								if (stat.windDirectionAvg < total.windDirectionMin) {
-									total.windDirectionMin = stat.windDirectionAvg;
-								}
-								if (stat.windDirectionAvg > total.windDirectionMax) {
-									total.windDirectionMax = stat.windDirectionAvg;
-								}
-								total.windSpeedAvg += stat.windSpeedAvg;
-								if (stat.windSpeedAvg < total.windSpeedMin) {
-									total.windSpeedMin = stat.windSpeedAvg;
-								}
-								if (stat.windSpeedAvg > total.windSpeedMax) {
-									total.windSpeedMax = stat.windSpeedAvg;
-								}
-								total.temperature += stat.temperature;
-								total.batteryVoltage += stat.batteryVoltage;
-							}
-							int size = rawSurfvindsMeasurements.size();
-							total.windDirectionAvg /= size;
-							total.windSpeedAvg /= size;
-							total.temperature /= size;
-							total.batteryVoltage /= size;
-							surfvindHistory.add(total);
-							rawSurfvindsMeasurements.clear();
-						}
+						// if ((serviceMode & SURFVIND) == SURFVIND) {
+						//
+						// // Always create a new object, as it is added to the
+						// // history list.
+						// SurfvindStats total = new SurfvindStats();
+						// total.windDirectionMin = 999999;
+						// total.windSpeedMin = 999999;
+						//
+						// Collections.sort(rawSurfvindsMeasurements);
+						//
+						// /*
+						// * if (rawSurfvindsMeasurements.size() > 7) { for
+						// * (int i = 0; i < 3; i++) {
+						// * rawSurfvindsMeasurements.remove(0);
+						// * rawSurfvindsMeasurements
+						// * .remove(rawSurfvindsMeasurements.size() - 1); } }
+						// */
+						//
+						// // Calculate an averagevalue of all the readings.
+						// for (SurfvindStats stat : rawSurfvindsMeasurements) {
+						//
+						// total.windDirectionAvg += stat.windDirectionAvg;
+						// if (stat.windDirectionAvg < total.windDirectionMin) {
+						// total.windDirectionMin = stat.windDirectionAvg;
+						// }
+						// if (stat.windDirectionAvg > total.windDirectionMax) {
+						// total.windDirectionMax = stat.windDirectionAvg;
+						// }
+						// total.windSpeedAvg += stat.windSpeedAvg;
+						// if (stat.windSpeedAvg < total.windSpeedMin) {
+						// total.windSpeedMin = stat.windSpeedAvg;
+						// }
+						// if (stat.windSpeedAvg > total.windSpeedMax) {
+						// total.windSpeedMax = stat.windSpeedAvg;
+						// }
+						// total.temperature += stat.temperature;
+						// total.batteryVoltage += stat.batteryVoltage;
+						// }
+						// int size = rawSurfvindsMeasurements.size();
+						// total.windDirectionAvg /= size;
+						// total.windSpeedAvg /= size;
+						// total.temperature /= size;
+						// total.batteryVoltage /= size;
+						// surfvindHistory.add(total);
+						// rawSurfvindsMeasurements.clear();
+						// }
 
 						// How often should we connect to server?
 						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
@@ -354,12 +365,14 @@ public class KrypgrundsService extends IOIOService {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		if (mConnectTask != null) {
+		watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+		if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
 
 				@Override
 				public void run() {
 					if (!isIOIOConnected) {
+						System.out.println("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
 
@@ -368,7 +381,8 @@ public class KrypgrundsService extends IOIOService {
 			Timer timer = new Timer("IOIOConnector");
 			timer.scheduleAtFixedRate(mConnectTask, 10000, 60000);
 		}
-		return Service.START_NOT_STICKY;
+
+		return Service.START_STICKY;
 	}
 
 	@Override
@@ -389,10 +403,10 @@ public class KrypgrundsService extends IOIOService {
 
 	public void updateSettings() {
 		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
-		int type = prefs.getInt(SetupActivity.SENSOR_TYPE, SURFVIND);
-		serviceMode=type;
+		int type = prefs.getInt(SetupActivity.SENSOR_TYPE_RADIO, SURFVIND);
+		serviceMode = type;
 		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
-		timeBetweenSendingDataToServer= readInterval;
+		timeBetweenSendingDataToServer = readInterval;
 	}
 
 	public void setForceFan(boolean on) {
