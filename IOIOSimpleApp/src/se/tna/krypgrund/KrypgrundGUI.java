@@ -4,17 +4,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import android.telephony.TelephonyManager;
 import android.text.format.Time;
 import android.view.Menu;
@@ -22,17 +18,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.PopupMenu;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class KrypgrundGUI extends Activity {
-	private SeekBar seekFuktInne;
-	private SeekBar seekTempInne;
-	private SeekBar seekFuktUte;
-	private SeekBar seekTempUte;
 	private TextView textFuktInne;
 	private TextView textFuktUte;
 	private TextView textTempInne;
@@ -42,9 +36,7 @@ public class KrypgrundGUI extends Activity {
 	private TextView fanStatus;
 	private TextView phoneId;
 
-	private ToggleButton toggleButton_;
 	private ToggleButton debugButton;
-	private ToggleButton forceSendDataButton;
 	private ToggleButton toggleFanButton;
 
 	private KrypgrundsService kryp = null;
@@ -93,7 +85,8 @@ public class KrypgrundGUI extends Activity {
 	}
 
 	boolean serviceBound = false;
-//	SharedPreferences preferences;
+
+	// SharedPreferences preferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,43 +110,36 @@ public class KrypgrundGUI extends Activity {
 
 			}
 		};
-		
-
-//		preferences = getSharedPreferences("Menus", Activity.MODE_PRIVATE);
-//		preferences.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-//
-//			@Override
-//			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//				preferences = sharedPreferences;
-//
-//			}
-//		});
 
 		setContentView(R.layout.main);
 
 		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String id = telephonyManager.getDeviceId();
 
-		// debug
-		id = "358848043355882";
-
-		// WebView myWebView = (WebView) findViewById(R.id.webView);
-		// myWebView.loadUrl("http://www.surfvind.se/Applet/" + id +
-		// "/graph_0.png");
-		// myWebView.setBackgroundColor(0x00000000);
-		WebView compassView = (WebView) findViewById(R.id.webViewCompass);
-		compassView.loadUrl("http://www.surfvind.se/Images/" + id + "_img_compass.png");
-		compassView.setBackgroundColor(0x00000000);
-		WebView compassViewBackground = (WebView) findViewById(R.id.webViewCompassBackground);
-		compassViewBackground.loadUrl("http://www.surfvind.se/Images/ws_compass.png");
-		compassViewBackground.setBackgroundColor(0x00000000);
-
-		WebView speedView = (WebView) findViewById(R.id.webViewSpeed);
-		speedView.loadUrl("http://www.surfvind.se/Images/" + id + "_img_speed.png");
-		speedView.setBackgroundColor(0x00000000);
-		WebView speedViewBackground = (WebView) findViewById(R.id.webViewSpeedBackground);
-		speedViewBackground.loadUrl("http://www.surfvind.se/Images/ws_speed.png");
-		speedViewBackground.setBackgroundColor(0x00000000);
+		/*
+		 * // debug id = "358848043355882";
+		 * 
+		 * // WebView myWebView = (WebView) findViewById(R.id.webView); //
+		 * myWebView.loadUrl("http://www.surfvind.se/Applet/" + id + //
+		 * "/graph_0.png"); // myWebView.setBackgroundColor(0x00000000); WebView
+		 * compassView = (WebView) findViewById(R.id.webViewCompass);
+		 * compassView.loadUrl("http://www.surfvind.se/Images/" + id +
+		 * "_img_compass.png"); compassView.setBackgroundColor(0x00000000);
+		 * WebView compassViewBackground = (WebView)
+		 * findViewById(R.id.webViewCompassBackground);
+		 * compassViewBackground.loadUrl
+		 * ("http://www.surfvind.se/Images/ws_compass.png");
+		 * compassViewBackground.setBackgroundColor(0x00000000);
+		 * 
+		 * WebView speedView = (WebView) findViewById(R.id.webViewSpeed);
+		 * speedView.loadUrl("http://www.surfvind.se/Images/" + id +
+		 * "_img_speed.png"); speedView.setBackgroundColor(0x00000000); WebView
+		 * speedViewBackground = (WebView)
+		 * findViewById(R.id.webViewSpeedBackground);
+		 * speedViewBackground.loadUrl
+		 * ("http://www.surfvind.se/Images/ws_speed.png");
+		 * speedViewBackground.setBackgroundColor(0x00000000);
+		 */
 
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
@@ -163,11 +149,7 @@ public class KrypgrundGUI extends Activity {
 
 		fanStatus = (TextView) findViewById(R.id.fanStatus);
 		debugText = (TextView) findViewById(R.id.debugText);
-		seekFuktInne = (SeekBar) findViewById(R.id.seekFuktInne);
-		seekFuktUte = (SeekBar) findViewById(R.id.seekFuktUte);
-		seekTempInne = (SeekBar) findViewById(R.id.seekTempInne);
-		seekTempUte = (SeekBar) findViewById(R.id.seekTempUte);
-
+	
 		textFuktInne = (TextView) findViewById(R.id.textFuktInne);
 		textFuktUte = (TextView) findViewById(R.id.textFuktUte);
 		textTempInne = (TextView) findViewById(R.id.textTempInne);
@@ -175,24 +157,25 @@ public class KrypgrundGUI extends Activity {
 		textFanOn = (TextView) findViewById(R.id.textFanOn);
 		initializedText = (TextView) findViewById(R.id.connectedText);
 		phoneId = (TextView) findViewById(R.id.phoneId);
-		seekFuktInne.setMax(400);
-		seekFuktUte.setMax(100);
-		seekTempInne.setMax(60);
-		seekTempUte.setMax(60);
-		toggleButton_ = (ToggleButton) findViewById(R.id.ToggleButton);
 		toggleFanButton = (ToggleButton) findViewById(R.id.toggleFanButton);
 		debugButton = (ToggleButton) findViewById(R.id.DebugButton1);
-		forceSendDataButton = (ToggleButton) findViewById(R.id.ForceSendDataButton);
 
-		enableUi(false);
+		debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					toggleFanButton.setVisibility(View.VISIBLE);
+				} else {
+					toggleFanButton.setVisibility(View.GONE);
+				}
+			}
+		});
+	
 		Intent service = new Intent(this, KrypgrundsService.class);
 		this.startService(service);
-
 		bindService(new Intent(this, KrypgrundsService.class), mConnection, Context.BIND_AUTO_CREATE);
-
 		Timer timer = new Timer();
-
 		TimerTask t = new TimerTask() {
 
 			@Override
@@ -202,44 +185,36 @@ public class KrypgrundGUI extends Activity {
 					updateUI();
 					// setStatusText(kryp.statusText, kryp.isInitialized);
 					kryp.setDebugMode(debugButton.isChecked());
-					enableUi(debugButton.isChecked());
 					if (debugButton.isChecked()) {
 
-						KrypgrundStats debugData = null;
-						// Must this be run on the UI thread?
-						debugData = new KrypgrundStats();
-						debugData.moistureInne = seekFuktInne.getProgress();
-						debugData.moistureUte = seekFuktUte.getProgress();
-						debugData.temperatureInne = seekTempInne.getProgress();
-						debugData.temperatureUte = seekTempUte.getProgress();
-
-						kryp.setDebugStats(debugData);
-						kryp.setForceFan(toggleFanButton.isChecked());
+						if (debugButton.isChecked()) {
+							kryp.setForceFan(toggleFanButton.isChecked());
+						}
 
 					}
-					kryp.setForceSendData(forceSendDataButton.isChecked());
-
 				}
 			}
-
 		};
 
 		timer.scheduleAtFixedRate(t, 0, 5000);
 
 	}
 
-	private void enableUi(final boolean enable) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				toggleButton_.setEnabled(enable);
-				seekTempUte.setEnabled(enable);
-				seekTempInne.setEnabled(enable);
-				seekFuktInne.setEnabled(enable);
-				seekFuktUte.setEnabled(enable);
+	@Override
+	protected void onStart() {
 
+		super.onStart();
+
+		LinearLayout l = (LinearLayout) findViewById(R.id.weatherStationContainer);
+		SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
+		int type = preferences.getInt(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
+		if (l != null) {
+			if (type == KrypgrundsService.KRYPGRUND) {
+				l.setVisibility(View.GONE);
+			} else {
+				l.setVisibility(View.VISIBLE);
 			}
-		});
+		}
 	}
 
 	private void updateUI() {
@@ -288,15 +263,6 @@ public class KrypgrundGUI extends Activity {
 
 					debugText.setText(sb.toString());
 					// debugText.setText(status.)
-
-					if (!debugButton.isChecked()) {
-
-						seekTempUte.setProgress((int) status.temperatureUte + 20);
-						seekTempInne.setProgress((int) status.temperatureInne + 20);
-						seekFuktInne.setProgress((int) status.moistureInne);
-						seekFuktUte.setProgress((int) status.moistureUte);
-					}
-
 				}
 			});
 		}

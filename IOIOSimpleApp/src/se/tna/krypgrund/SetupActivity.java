@@ -44,7 +44,6 @@ public class SetupActivity extends Activity {
 	private RadioGroup sensorType;
 
 	private long updateTime = 0;
-	private int stationType = 0;
 	private SharedPreferences prefs;
 	private Editor prefsEditor;
 
@@ -87,7 +86,7 @@ public class SetupActivity extends Activity {
 				prefsEditor.putLong(READ_INTERVAL, updateTime);
 				prefsEditor.putString(STATION_NAME, name.getText().toString());
 				prefsEditor.putString(GPS_LATITUDE, latitude.getText().toString());
-				prefsEditor.putString(GPS_LONGITUDE, latitude.getText().toString());
+				prefsEditor.putString(GPS_LONGITUDE, longitude.getText().toString());
 				
 				prefsEditor.apply();
 				prefsEditor.commit();
@@ -225,13 +224,11 @@ public class SetupActivity extends Activity {
 		// Station type
 		case R.id.weatherStation:
 			if (checked) {
-				stationType = KrypgrundsService.SURFVIND;
 				prefsEditor.putInt(SENSOR_TYPE_RADIO, view.getId());
 			}
 			break;
 		case R.id.crawlspaceStation:
 			if (checked) {
-				stationType = KrypgrundsService.KRYPGRUND;
 				prefsEditor.putInt(SENSOR_TYPE_RADIO, view.getId());
 			}
 			break;

@@ -1,13 +1,11 @@
 package se.tna.krypgrund;
 
-import ioio.lib.api.CapSense;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,19 +17,16 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.PeriodicSync;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
-import android.util.TimeUtils;
 
 public class KrypgrundsService extends IOIOService {
 	private static final String version = "IOIO_R1A";
 	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
 	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
-	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(2);
+	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(5);
 	protected long TIME_BETWEEN_FAN_ON_OFF = TimeUnit.MINUTES.toMillis(3);
 
 	private long timeForLastSendData = 0;
@@ -86,8 +81,6 @@ public class KrypgrundsService extends IOIOService {
 	protected IOIOLooper createIOIOLooper() {
 
 		return new BaseIOIOLooper() {
-
-			private CapSense capSense;
 
 			@Override
 			public void disconnected() {
@@ -308,10 +301,10 @@ public class KrypgrundsService extends IOIOService {
 					e.printStackTrace();
 					if (helper != null) {
 						try {
-							helper.ControlFan(0, clockwise); // will not work if
-																// connection
-																// Lost
-																// exception.
+							helper.ControlFan(false); // will not work if
+														// connection
+														// Lost
+														// exception.
 						} catch (Exception ee) {
 							ee.printStackTrace();
 						}
@@ -336,16 +329,15 @@ public class KrypgrundsService extends IOIOService {
 					timeForLastFanControl = System.currentTimeMillis();
 					// Dont start fans if inside temp is close to
 					// freezeingpoint.
-					if (data.temperatureInne < 0.9) {
-						helper.ControlFan(Helper.FanStop, true);
+					if (data.temperatureInne < 0.5) {
+						helper.ControlFan(false);
 					} else {
 						// Start the fans!!
 
-						if (data.absolutFuktInne > data.absolutFuktUte * 1.02) {
-							float speed = (float) (Helper.FanMaxSpeed);// /*seekBar_.getProgress()/99);
-							helper.ControlFan((int) speed, clockwise);
+						if (data.absolutFuktInne > data.absolutFuktUte + 15) {
+							helper.ControlFan(true);
 						} else {
-							helper.ControlFan(Helper.FanStop, true);
+							helper.ControlFan(false);
 						}
 					}
 				}
@@ -375,7 +367,6 @@ public class KrypgrundsService extends IOIOService {
 						System.out.println("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
-
 				}
 			};
 			Timer timer = new Timer("IOIOConnector");
@@ -410,10 +401,8 @@ public class KrypgrundsService extends IOIOService {
 	}
 
 	public void setForceFan(boolean on) {
-		if (on) {
-			helper.ControlFan(Helper.FanMaxSpeed, true);
-		} else {
-			helper.ControlFan(Helper.FanStop, true);
+		if (helper != null) {
+			helper.ControlFan(on);
 		}
 	}
 

@@ -1,6 +1,5 @@
 package se.tna.krypgrund;
 
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;

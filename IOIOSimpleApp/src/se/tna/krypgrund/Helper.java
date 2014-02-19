@@ -1,7 +1,19 @@
 package se.tna.krypgrund;
 
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput.Spec;
+import ioio.lib.api.DigitalInput.Spec.Mode;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.IOIO;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PulseInput.ClockRate;
+import ioio.lib.api.PulseInput.PulseMode;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.TwiMaster;
+import ioio.lib.api.exception.ConnectionLostException;
+
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -13,20 +25,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.util.Log;
-
-import ioio.lib.api.AnalogInput;
-import ioio.lib.api.CapSense;
-import ioio.lib.api.DigitalInput;
-import ioio.lib.api.DigitalInput.Spec;
-import ioio.lib.api.DigitalInput.Spec.Mode;
-import ioio.lib.api.DigitalOutput;
-import ioio.lib.api.IOIO;
-import ioio.lib.api.PulseInput;
-import ioio.lib.api.PulseInput.ClockRate;
-import ioio.lib.api.PulseInput.PulseMode;
-import ioio.lib.api.PwmOutput;
-import ioio.lib.api.TwiMaster;
-import ioio.lib.api.exception.ConnectionLostException;
 
 public class Helper {
 	IOIO ioio = null;
@@ -83,6 +81,10 @@ public class Helper {
 				}
 				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
 				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+
+				B1 = ioio.openDigitalOutput(19);
+				B2 = ioio.openDigitalOutput(20);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			} // USE FALSE for I2C otherwise to high voltage!!!
@@ -183,42 +185,23 @@ public class Helper {
 		return tempAndHumidity;
 	}
 
-	public static int FanMaxSpeed = 100;
-	public static int Fan30Percent = (int) (FanMaxSpeed * 0.3);
-	public static int FanStop = 0;
-	public static boolean FanOn = false;
+	private static boolean mFanOn = false;
 
-	boolean ControlFan(int Speed, boolean Clockwise) {
-		boolean retVal = true;
-		// if (A1 != null && A2 != null && ASpeed != null) {
-		// try {
-		// if (Speed == FanStop) {
-		// A1.write(false);
-		// A2.write(false);
-		// FanOn = false;
-		// } else if (Clockwise) {
-		// A1.write(true);
-		// A2.write(false);
-		// FanOn = true;
-		// } else {
-		// A1.write(false);
-		// A2.write(true);
-		// FanOn = true;
-		// }
-		// ASpeed.setDutyCycle((float) (((float) Speed) / FanMaxSpeed));
-		// } catch (ConnectionLostException e) {
-		// retVal = false;
-		// e.printStackTrace();
-		// }
-		// } else {
-		// retVal = false;
-		// }
-		return retVal;
+	void ControlFan(boolean on) {
+
+		try {
+			B1.write(on);
+			B2.write(on);
+			mFanOn = on;
+		} catch (ConnectionLostException e) {
+			e.printStackTrace();
+		}
+
 	}
 
-	float freq;
-
 	public float getWindSpeed2() throws ConnectionLostException {
+		float freq = 0;
+
 		float speedMeterPerSecond = 0;
 		try {
 			// Thread.sleep(200);
@@ -241,7 +224,8 @@ public class Helper {
 
 	public static final int FREQ = 0;
 	public static final int ANALOG = 1;
-	float result = 0;
+
+	private float result = 0;
 
 	public synchronized float queryIOIO(final int command) {
 		result = -1;
@@ -345,7 +329,7 @@ public class Helper {
 	}
 
 	public boolean IsFanOn() {
-		return FanOn;
+		return mFanOn;
 	}
 
 	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history, boolean forceSendData, String id) {
@@ -642,6 +626,7 @@ public class Helper {
 		ArrayList<Boolean> values = new ArrayList<Boolean>();
 		float speedMeterPerSecond = 0;
 		final int NBR_READINGS_TO_ANALYZE = 2000;
+		float freq = 0;
 		values.clear();
 		try {
 			while (values.size() < NBR_READINGS_TO_ANALYZE) {
@@ -695,6 +680,7 @@ public class Helper {
 
 	public float getWindSpeed() throws ConnectionLostException {
 		float speedMeterPerSecond = 0;
+		float freq = 0;
 		Spec spec = new Spec(ANEMOMETER_SPEED);
 		spec.mode = Mode.PULL_UP;
 
