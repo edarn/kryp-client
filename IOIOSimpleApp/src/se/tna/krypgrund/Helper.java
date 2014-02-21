@@ -2,6 +2,7 @@ package se.tna.krypgrund;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalInput.Spec;
 import ioio.lib.api.DigitalInput.Spec.Mode;
 import ioio.lib.api.DigitalOutput;
@@ -82,8 +83,12 @@ public class Helper {
 				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
 				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
 
-				B1 = ioio.openDigitalOutput(19);
+				// B1 = ioio.openDigitalOutput(19);
 				B2 = ioio.openDigitalOutput(20);
+				B1 = ioio.openDigitalOutput(19);
+				B1.write(mFanOn);
+				B2.write(mFanOn);
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -190,9 +195,11 @@ public class Helper {
 	void ControlFan(boolean on) {
 
 		try {
-			B1.write(on);
-			B2.write(on);
-			mFanOn = on;
+			if (on != mFanOn) {
+				B1.write(on);
+				B2.write(on);
+				mFanOn = on;
+			}
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
 		}

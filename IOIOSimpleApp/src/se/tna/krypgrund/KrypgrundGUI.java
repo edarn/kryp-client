@@ -149,7 +149,7 @@ public class KrypgrundGUI extends Activity {
 
 		fanStatus = (TextView) findViewById(R.id.fanStatus);
 		debugText = (TextView) findViewById(R.id.debugText);
-	
+
 		textFuktInne = (TextView) findViewById(R.id.textFuktInne);
 		textFuktUte = (TextView) findViewById(R.id.textFuktUte);
 		textTempInne = (TextView) findViewById(R.id.textTempInne);
@@ -171,7 +171,7 @@ public class KrypgrundGUI extends Activity {
 				}
 			}
 		});
-	
+
 		Intent service = new Intent(this, KrypgrundsService.class);
 		this.startService(service);
 		bindService(new Intent(this, KrypgrundsService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -186,11 +186,7 @@ public class KrypgrundGUI extends Activity {
 					// setStatusText(kryp.statusText, kryp.isInitialized);
 					kryp.setDebugMode(debugButton.isChecked());
 					if (debugButton.isChecked()) {
-
-						if (debugButton.isChecked()) {
-							kryp.setForceFan(toggleFanButton.isChecked());
-						}
-
+						kryp.setForceFan(toggleFanButton.isChecked());
 					}
 				}
 			}

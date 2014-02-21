@@ -145,8 +145,7 @@ public class KrypgrundsService extends IOIOService {
 								temp.moistureUte = helper.GetMoisture(SensorLocation.SensorUte, temp.temperatureUte);
 								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
 							} else if (krypgrundSensor == HumidSensor.Capacitive) {
-								// TODO: Implement.
-
+				
 							} else if (krypgrundSensor == HumidSensor.Random) {
 								temp.temperatureUte = 10 + r.nextInt(5);
 								temp.temperatureInne = 5 + r.nextInt(5);
