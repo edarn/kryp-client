@@ -18,8 +18,10 @@ import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -88,7 +90,6 @@ public class Helper {
 				B1 = ioio.openDigitalOutput(19);
 				B1.write(mFanOn);
 				B2.write(mFanOn);
-				
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -363,29 +364,41 @@ public class Helper {
 				// Dont send more than 50 measures in one post.
 				for (int i = 0; i < itemsToSend; i++) {
 					Stats temp = history.get(i);
-					dataArray.put(temp.getJSON());
+					if (temp != null) {
+						dataArray.put(temp.getJSON());
+					}
 				}
 				data.put("measure", dataArray);
 				data.put("id", id);
 				message.setEntity(new StringEntity(data.toString()));
 				HttpResponse response = client.execute(message);
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					// Delete the reading that are sent.
-					for (int i = 0; i < itemsToSend; i++) {
-						history.remove(0);
+				if (response != null) {
+					StatusLine line = response.getStatusLine();
+					if (line != null) {
+						if (line.getStatusCode() == HttpStatus.SC_OK) {
+							// Delete the reading that are sent.
+							for (int i = 0; i < itemsToSend; i++) {
+								history.remove(0);
+							}
+							retVal += "Success";
+						} else {
+							SendSuccess = false;
+							retVal += "F: " + line.getStatusCode();
+						}
 					}
-					retVal += "Success";
-				} else {
-					SendSuccess = false;
-					retVal += "F: " + response.getStatusLine().getStatusCode();
 				}
 			}
+		} catch (RuntimeException runtime) {
+			retVal += "RuntimeException" + runtime.toString();
 		} catch (Exception e) {
 			retVal += "Ex:" + e.toString();
-
 		} finally {
-			if (null != client)
-				client.getConnectionManager().shutdown();
+			if (null != client) {
+				ClientConnectionManager manager = client.getConnectionManager();
+				if (manager != null) {
+					manager.shutdown();
+				}
+			}
 		}
 		return retVal;
 	}
