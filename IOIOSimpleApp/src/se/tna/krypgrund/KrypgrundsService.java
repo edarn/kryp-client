@@ -5,7 +5,14 @@ import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,7 +30,7 @@ import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
-	private static final String version = "IOIO_R1A";
+	private static final String version = "IOIO_R1A01";
 	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
 	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
 	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(5);
@@ -145,7 +152,7 @@ public class KrypgrundsService extends IOIOService {
 								temp.moistureUte = helper.GetMoisture(SensorLocation.SensorUte, temp.temperatureUte);
 								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
 							} else if (krypgrundSensor == HumidSensor.Capacitive) {
-				
+
 							} else if (krypgrundSensor == HumidSensor.Random) {
 								temp.temperatureUte = 10 + r.nextInt(5);
 								temp.temperatureInne = 5 + r.nextInt(5);
@@ -166,33 +173,32 @@ public class KrypgrundsService extends IOIOService {
 
 					}
 
-					// if ((serviceMode & SURFVIND) == SURFVIND) {
-					//
-					// // Always create a new object, as this is added to the
-					// // list.
-					// SurfvindStats temp = new SurfvindStats();
-					//
-					// temp.windDirectionAvg =
-					// helper.queryIOIO(Helper.ANALOG);//
-					// helper.getWindDirection();
-					// // //
-					// // 180
-					// // +
-					// // r.nextInt(30);
-					// temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); //
-					// getWindSpeed();
-					// // //8
-					// // +
-					// // r.nextInt(10)/10f;
-					// // //
-					// temp.batteryVoltage = helper.getBatteryVoltage();
-					// temp.temperature = helper.getTemp();
-					// if (temp.windDirectionAvg != -1 && temp.windSpeedAvg !=
-					// -1) {
-					// rawSurfvindsMeasurements.add(temp);
-					// }
-					//
-					// }
+					if ((serviceMode & SURFVIND) == SURFVIND) {
+
+						// Always create a new object, as this is added to the
+						// list.
+						SurfvindStats temp = new SurfvindStats();
+
+						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);//
+						// helper.getWindDirection();
+						// //
+						// 180
+						// +
+						// r.nextInt(30);
+						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
+						// getWindSpeed();
+						// //8
+						// +
+						// r.nextInt(10)/10f;
+						// //
+
+						// temp.batteryVoltage = helper.getBatteryVoltage();
+						// temp.temperature = helper.getTemp();
+						if (temp.windDirectionAvg != -1 && temp.windSpeedAvg != -1) {
+							rawSurfvindsMeasurements.add(temp);
+						}
+
+					}
 
 					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
 						// Reset time, so that we will soon add a new value to
@@ -229,52 +235,52 @@ public class KrypgrundsService extends IOIOService {
 							rawMeasurements.clear();
 						}
 
-						// if ((serviceMode & SURFVIND) == SURFVIND) {
-						//
-						// // Always create a new object, as it is added to the
-						// // history list.
-						// SurfvindStats total = new SurfvindStats();
-						// total.windDirectionMin = 999999;
-						// total.windSpeedMin = 999999;
-						//
-						// Collections.sort(rawSurfvindsMeasurements);
-						//
-						// /*
-						// * if (rawSurfvindsMeasurements.size() > 7) { for
-						// * (int i = 0; i < 3; i++) {
-						// * rawSurfvindsMeasurements.remove(0);
-						// * rawSurfvindsMeasurements
-						// * .remove(rawSurfvindsMeasurements.size() - 1); } }
-						// */
-						//
-						// // Calculate an averagevalue of all the readings.
-						// for (SurfvindStats stat : rawSurfvindsMeasurements) {
-						//
-						// total.windDirectionAvg += stat.windDirectionAvg;
-						// if (stat.windDirectionAvg < total.windDirectionMin) {
-						// total.windDirectionMin = stat.windDirectionAvg;
-						// }
-						// if (stat.windDirectionAvg > total.windDirectionMax) {
-						// total.windDirectionMax = stat.windDirectionAvg;
-						// }
-						// total.windSpeedAvg += stat.windSpeedAvg;
-						// if (stat.windSpeedAvg < total.windSpeedMin) {
-						// total.windSpeedMin = stat.windSpeedAvg;
-						// }
-						// if (stat.windSpeedAvg > total.windSpeedMax) {
-						// total.windSpeedMax = stat.windSpeedAvg;
-						// }
-						// total.temperature += stat.temperature;
-						// total.batteryVoltage += stat.batteryVoltage;
-						// }
-						// int size = rawSurfvindsMeasurements.size();
-						// total.windDirectionAvg /= size;
-						// total.windSpeedAvg /= size;
-						// total.temperature /= size;
-						// total.batteryVoltage /= size;
-						// surfvindHistory.add(total);
-						// rawSurfvindsMeasurements.clear();
-						// }
+						if ((serviceMode & SURFVIND) == SURFVIND) {
+
+							// Always create a new object, as it is added to the
+							// history list.
+							SurfvindStats total = new SurfvindStats();
+							total.windDirectionMin = 999999;
+							total.windSpeedMin = 999999;
+
+							Collections.sort(rawSurfvindsMeasurements);
+
+							/*
+							 * if (rawSurfvindsMeasurements.size() > 7) { for
+							 * (int i = 0; i < 3; i++) {
+							 * rawSurfvindsMeasurements.remove(0);
+							 * rawSurfvindsMeasurements
+							 * .remove(rawSurfvindsMeasurements.size() - 1); } }
+							 */
+
+							// Calculate an averagevalue of all the readings.
+							for (SurfvindStats stat : rawSurfvindsMeasurements) {
+
+								total.windDirectionAvg += stat.windDirectionAvg;
+								if (stat.windDirectionAvg < total.windDirectionMin) {
+									total.windDirectionMin = stat.windDirectionAvg;
+								}
+								if (stat.windDirectionAvg > total.windDirectionMax) {
+									total.windDirectionMax = stat.windDirectionAvg;
+								}
+								total.windSpeedAvg += stat.windSpeedAvg;
+								if (stat.windSpeedAvg < total.windSpeedMin) {
+									total.windSpeedMin = stat.windSpeedAvg;
+								}
+								if (stat.windSpeedAvg > total.windSpeedMax) {
+									total.windSpeedMax = stat.windSpeedAvg;
+								}
+								total.temperature += stat.temperature;
+								total.batteryVoltage += stat.batteryVoltage;
+							}
+							int size = rawSurfvindsMeasurements.size();
+							total.windDirectionAvg /= size;
+							total.windSpeedAvg /= size;
+							total.temperature /= size;
+							total.batteryVoltage /= size;
+							surfvindHistory.add(total);
+							rawSurfvindsMeasurements.clear();
+						}
 
 						// How often should we connect to server?
 						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
@@ -295,8 +301,10 @@ public class KrypgrundsService extends IOIOService {
 						// debugText = text;
 					}
 					Thread.sleep(timeBetweenReading);
+					mWatchdogTime = System.currentTimeMillis();
 
 				} catch (Exception e) {
+					appendLog(e.getMessage());
 					e.printStackTrace();
 					if (helper != null) {
 						try {
@@ -305,6 +313,7 @@ public class KrypgrundsService extends IOIOService {
 														// Lost
 														// exception.
 						} catch (Exception ee) {
+							appendLog(ee.getMessage());
 							ee.printStackTrace();
 						}
 					}
@@ -345,6 +354,32 @@ public class KrypgrundsService extends IOIOService {
 
 	}
 
+	public void appendLog(String text) {
+		if (text != null) {
+			System.out.println(text);
+			File logFile = new File("sdcard/thomas_log.file");
+			if (!logFile.exists()) {
+				try {
+					logFile.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			try {
+				// BufferedWriter for performance, true to set append to file
+				// flag
+				BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+				buf.append(text);
+				buf.newLine();
+				buf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -352,17 +387,43 @@ public class KrypgrundsService extends IOIOService {
 	}
 
 	private TimerTask mConnectTask = null;
+	private long mWatchdogTime;
+
+	public void handleUncaughtException(Thread thread, Throwable e) {
+		e.printStackTrace(); // not all Android versions will print the stack
+								// trace automatically
+		appendLog("Uncaught execption\n" + e.getMessage());
+		appendLog(e.toString());
+		
+		try {
+			e.printStackTrace(new PrintWriter("sdcard/UncaughtEx"+ Long.toString(System.currentTimeMillis()) + ".txt"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		KrypgrundsService.this.restart();
+
+	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		
+			// Setup handler for uncaught exceptions.
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread thread, Throwable e) {
+				handleUncaughtException(thread, e);
+			}
+		});		
+
 		watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 		if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected) {
+					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(10)) {
 						System.out.println("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
@@ -434,6 +495,7 @@ public class KrypgrundsService extends IOIOService {
 			status.historySize = surfvindHistory.size();
 		if (rawSurfvindsMeasurements != null)
 			status.readingSize = rawSurfvindsMeasurements.size();
+
 		if (krypgrundHistory != null)
 			status.historySize = krypgrundHistory.size();
 		if (rawMeasurements != null)
