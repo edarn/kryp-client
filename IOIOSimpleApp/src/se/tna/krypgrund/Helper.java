@@ -2,7 +2,6 @@ package se.tna.krypgrund;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.CapSense;
-import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalInput.Spec;
 import ioio.lib.api.DigitalInput.Spec.Mode;
 import ioio.lib.api.DigitalOutput;
@@ -21,7 +20,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
@@ -65,39 +63,51 @@ public class Helper {
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
 	};
+	public enum SensorLocation {
+		SensorInne, SensorUte;
+	}
+
+	public class ChipCap2 {
+		float humidity = 0;
+		float temperature = 0;
+		boolean okReading = true;
+	}
 
 	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Continuos_Reading;
 
-	public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver) {
-
+	public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver,
+			ServiceMode mode) {
 		ioio = _ioio;
 		krypService = kryp;
 		imei = id;
 		version = ver;
 		if (ioio != null) {
 			try {
-				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+				if (mode == ServiceMode.Survfind) {
+					anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+					if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
+						mAnalogPulsecounter = ioio
+								.openAnalogInput(ANEMOMETER_SPEED);
+					} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
+						Spec spec = new Spec(ANEMOMETER_SPEED);
+						spec.mode = Mode.PULL_UP;
+						pulseCounter = ioio.openPulseInput(spec,
+								ClockRate.RATE_16MHz, PulseMode.FREQ, true);
+					} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
+						// Do nothing as open and close will be done at every
+						// call.
+					}
+				} else if (mode == ServiceMode.Krypgrund) {
+					i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
+							false);
+					i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
+							false);
+				}
 
+				// On board sensors. Are they used?
 				power = ioio.openAnalogInput(42);
 				temp = ioio.openAnalogInput(43);
 
-				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
-					mAnalogPulsecounter = ioio
-							.openAnalogInput(ANEMOMETER_SPEED);
-				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
-					Spec spec = new Spec(ANEMOMETER_SPEED);
-					spec.mode = Mode.PULL_UP;
-					pulseCounter = ioio.openPulseInput(spec,
-							ClockRate.RATE_16MHz, PulseMode.FREQ, true);
-				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
-					// Do nothing as open and close will be done at every call.
-				}
-				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
-						false);
-				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
-						false);
-
-				// B1 = ioio.openDigitalOutput(19);
 				B2 = ioio.openDigitalOutput(20);
 				B1 = ioio.openDigitalOutput(19);
 				B1.write(mFanOn);
@@ -110,23 +120,22 @@ public class Helper {
 	}
 
 	public void Destroy() {
+		
 		if (i2cInne != null)
 			i2cInne.close();
+		if (i2cUte != null)
+			i2cUte.close();
 		if (anemometer != null)
 			anemometer.close();
 		if (pulseCounter != null)
 			pulseCounter.close();
+		B1.close();
+		B2.close();
+		power.close();
+		temp.close();
 	}
 
-	public enum SensorLocation {
-		SensorInne, SensorUte;
-	}
-
-	public class ChipCap2 {
-		float humidity = 0;
-		float temperature = 0;
-		boolean okReading = true;
-	}
+	
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
 		ChipCap2 result = new ChipCap2();
@@ -360,15 +369,16 @@ public class Helper {
 	}
 
 	/**
-	 * Sends the measurements to the webserver. If there are many measurements this functions
-	 * will send it as multiple requests.
+	 * Sends the measurements to the webserver. If there are many measurements
+	 * this functions will send it as multiple requests.
 	 * 
-	 * @param measurements The measurements to send.
-	 * @param mode Which server to send to.
+	 * @param measurements
+	 *            The measurements to send.
+	 * @param mode
+	 *            Which server to send to.
 	 * @return A readable status line.
 	 */
-	public String SendDataToServer(ArrayList<?> measurements,
-			ServiceMode mode) {
+	public String SendDataToServer(ArrayList<?> measurements, ServiceMode mode) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Trying to send ");
 		sb.append(measurements.size());
@@ -684,17 +694,12 @@ public class Helper {
 		spec.mode = Mode.PULL_UP;
 
 		try {
-			// pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED,
-			// PulseMode.FREQ);
+
 			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz,
 					PulseMode.FREQ, true);
 			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
-			// float duration = pulseCounter.getDuration();
-
 			freq = 1 / duration;
-			// freq = pulseCounter.getFrequency();
-
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

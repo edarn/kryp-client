@@ -39,7 +39,7 @@ public class KrypgrundsService extends IOIOService {
 	private final IBinder mBinder = new MyBinder();
 	private boolean debugMode = false;
 	private Stats debugStats = null;
-	private boolean forceSendData = false;
+
 	ArrayList<KrypgrundStats> rawMeasurements = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
 
@@ -51,14 +51,14 @@ public class KrypgrundsService extends IOIOService {
 	boolean clockwise = true;
 	public final static int SURFVIND = R.id.weatherStation;
 	public final static int KRYPGRUND = R.id.crawlspaceStation;
-	// public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
-	public int serviceMode = KRYPGRUND;
-
+	
 	private long watchdog_TimeSinceLastOkData;
 
 	public enum ServiceMode {
 		Survfind, Krypgrund
 	};
+
+	public ServiceMode serviceMode = ServiceMode.Krypgrund;
 
 	public enum HumidSensor {
 		OldAnalog, Capacitive, ChipCap2, Random
@@ -102,8 +102,8 @@ public class KrypgrundsService extends IOIOService {
 				isIOIOConnected = true;
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				id = telephonyManager.getDeviceId();
-
-				helper = new Helper(ioio_, KrypgrundsService.this, id, version);
+				updateSettings();
+				helper = new Helper(ioio_, KrypgrundsService.this, id, version, serviceMode);
 				isInitialized = true;
 				watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 			}
@@ -121,7 +121,7 @@ public class KrypgrundsService extends IOIOService {
 						ioio_.hardReset();
 					}
 
-					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+					if (serviceMode== ServiceMode.Krypgrund) {
 
 						// Always create a new object, as this is added to the
 						// list.
@@ -216,7 +216,7 @@ public class KrypgrundsService extends IOIOService {
 						// the history
 						timeForLastAddToHistory = System.currentTimeMillis();
 
-						if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+						if (serviceMode == ServiceMode.Krypgrund) {
 
 							// Always create a new object, as it is added to the
 							// history list.
@@ -404,16 +404,12 @@ public class KrypgrundsService extends IOIOService {
 		}
 	}
 
-	public void setForceSendData(boolean checked) {
-		forceSendData = checked;
-
-	}
-
 	public void updateSettings() {
 		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
 				MODE_PRIVATE);
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE_RADIO, SURFVIND);
-		serviceMode = type;
+		if (type == SURFVIND) serviceMode = ServiceMode.Survfind;
+		else if ( type == KRYPGRUND) serviceMode = ServiceMode.Krypgrund;
 		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
 				TimeUnit.MINUTES.toMillis(5));
 		timeBetweenSendingDataToServer = readInterval;
