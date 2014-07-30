@@ -14,19 +14,23 @@ import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import se.tna.krypgrund.KrypgrundsService.ServiceMode;
 import android.util.Log;
 
 public class Helper {
@@ -55,6 +59,8 @@ public class Helper {
 	private static final int ANEMOMETER_SPEED = 46;
 
 	private static final int chipCap2Adress = 0x50;
+	private String imei = "123456789";
+	private String version = "NotSet";
 
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
@@ -62,10 +68,12 @@ public class Helper {
 
 	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Continuos_Reading;
 
-	public Helper(IOIO _ioio, KrypgrundsService kryp) {
+	public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver) {
 
 		ioio = _ioio;
 		krypService = kryp;
+		imei = id;
+		version = ver;
 		if (ioio != null) {
 			try {
 				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
@@ -74,16 +82,20 @@ public class Helper {
 				temp = ioio.openAnalogInput(43);
 
 				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
-					mAnalogPulsecounter = ioio.openAnalogInput(ANEMOMETER_SPEED);
+					mAnalogPulsecounter = ioio
+							.openAnalogInput(ANEMOMETER_SPEED);
 				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
 					Spec spec = new Spec(ANEMOMETER_SPEED);
 					spec.mode = Mode.PULL_UP;
-					pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz, PulseMode.FREQ, true);
+					pulseCounter = ioio.openPulseInput(spec,
+							ClockRate.RATE_16MHz, PulseMode.FREQ, true);
 				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
 					// Do nothing as open and close will be done at every call.
 				}
-				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
-				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
+						false);
+				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
+						false);
 
 				// B1 = ioio.openDigitalOutput(19);
 				B2 = ioio.openDigitalOutput(20);
@@ -127,9 +139,11 @@ public class Helper {
 		try {
 			Thread.sleep(200);
 			if (type == SensorLocation.SensorInne) {
-				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
+				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1,
+						toReceive, 4);
 			} else if (type == SensorLocation.SensorUte) {
-				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
+				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1,
+						toReceive, 4);
 			}
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
@@ -142,7 +156,8 @@ public class Helper {
 		float humid = ((toReceive[0] & 0x3F) * 256 + (toReceive[1] & 0xFF));
 		humid /= Math.pow(2, 14);
 		humid *= 100;
-		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F) / 4;
+		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F)
+				/ 4;
 		temp /= Math.pow(2, 14);
 		temp *= 165;
 		temp -= 40;
@@ -262,7 +277,8 @@ public class Helper {
 						break;
 					}
 				} catch (Exception e) {
-					Log.e("Helper", "An IOIO command failed: Command = " + command);
+					Log.e("Helper", "An IOIO command failed: Command = "
+							+ command);
 					e.printStackTrace();
 
 				}
@@ -290,7 +306,8 @@ public class Helper {
 			anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 			Thread.sleep(200);
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: "
+					+ anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -299,7 +316,8 @@ public class Helper {
 			Log.e("Helper", "Now issuing a hard reset on IOIO");
 			ioio.hardReset();
 		} finally {
-			System.out.println("======= GetWindDirection anemometer close.----");
+			System.out
+					.println("======= GetWindDirection anemometer close.----");
 			anemometer.close();
 		}
 		return direction;
@@ -311,7 +329,8 @@ public class Helper {
 			// Thread.sleep(200);
 
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: "
+					+ anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -340,36 +359,59 @@ public class Helper {
 		return mFanOn;
 	}
 
-	public String SendKrypgrundsDataToServer(ArrayList<KrypgrundStats> history, boolean forceSendData, String id) {
-		String retVal = "Trying to send " + history.size() + " items.\n";
-		HttpClient client = null;
+	/**
+	 * Sends the measurements to the webserver. If there are many measurements this functions
+	 * will send it as multiple requests.
+	 * 
+	 * @param measurements The measurements to send.
+	 * @param mode Which server to send to.
+	 * @return A readable status line.
+	 */
+	public String SendDataToServer(ArrayList<?> measurements,
+			ServiceMode mode) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Trying to send ");
+		sb.append(measurements.size());
+		sb.append(" items. \n");
+		DefaultHttpClient client = null;
 		JSONObject data;
 		boolean SendSuccess = true;
 
 		try {
 			/*
 			 * Keep sending data until there is a send failure or the history is
-			 * emptied.
+			 * empty.
 			 */
-			while (SendSuccess && history.size() > 0) {
+			while (SendSuccess && measurements.size() > 0) {
 				data = new JSONObject();
 
 				client = new DefaultHttpClient();
-				HttpPost message = new HttpPost("http://www.surfvind.se/Krypgrund.php");
-				message.addHeader("content-type", "application/x-www-form-urlencoded");
+
+				String postUrl = "";
+				if (mode == ServiceMode.Krypgrund) {
+					postUrl = "http://www.surfvind.se/Krypgrund.php";
+				} else if (mode == ServiceMode.Survfind) {
+					postUrl = "http://www.surfvind.se/AddSurfvindDataIOIOv1.php";
+				}
+
+				HttpPost message = new HttpPost(postUrl);
+				message.addHeader("content-type",
+						"application/x-www-form-urlencoded");
+
 				JSONArray dataArray = new JSONArray();
 
-				int itemsToSend = Math.min(history.size(), 50);
+				int nbrOfItemsToSend = Math.min(measurements.size(), 50);
 				/* Create a JSON Array that contains the data. */
 				// Dont send more than 50 measures in one post.
-				for (int i = 0; i < itemsToSend; i++) {
-					Stats temp = history.get(i);
+				for (int i = 0; i < nbrOfItemsToSend; i++) {
+					Stats temp = (Stats) measurements.get(i);
 					if (temp != null) {
 						dataArray.put(temp.getJSON());
 					}
 				}
 				data.put("measure", dataArray);
-				data.put("id", id);
+				data.put("id", imei);
+				data.put("version", version);
 				message.setEntity(new StringEntity(data.toString()));
 				HttpResponse response = client.execute(message);
 				if (response != null) {
@@ -377,21 +419,25 @@ public class Helper {
 					if (line != null) {
 						if (line.getStatusCode() == HttpStatus.SC_OK) {
 							// Delete the reading that are sent.
-							for (int i = 0; i < itemsToSend; i++) {
-								history.remove(0);
-							}
-							retVal += "Success";
+							measurements.subList(0, nbrOfItemsToSend).clear();
+							sb.append(" Success");
 						} else {
 							SendSuccess = false;
-							retVal += "F: " + line.getStatusCode();
+							sb.append("Fail: ");
+							sb.append(line.getStatusCode());
+							sb.append(EntityUtils.toString(response.getEntity()));
 						}
 					}
 				}
 			}
 		} catch (RuntimeException runtime) {
-			retVal += "RuntimeException" + runtime.toString();
+			sb.append("RuntimeException" + runtime.toString());
+		} catch (ClientProtocolException e) {
+			sb.append("ClientProtocolException" + e.toString());
+		} catch (IOException io) {
+			sb.append("IOException" + io.toString());
 		} catch (Exception e) {
-			retVal += "Ex:" + e.toString();
+			sb.append("Ex:" + e.toString());
 		} finally {
 			if (null != client) {
 				ClientConnectionManager manager = client.getConnectionManager();
@@ -400,77 +446,7 @@ public class Helper {
 				}
 			}
 		}
-		return retVal;
-	}
-
-	public void trim(ArrayList<SurfvindStats> history) {
-		SurfvindStats temp = null;
-		ArrayList<SurfvindStats> toRemove = new ArrayList<SurfvindStats>();
-		for (int i = 0; i < history.size(); i++) {
-			temp = history.get(i);
-			if (temp.windSpeedAvg <= 3 && temp.windSpeedMax > 10) {
-				toRemove.add(temp);
-			} else if (temp.windSpeedAvg <= 5 && temp.windSpeedMax > 12) {
-				toRemove.add(temp);
-			} else if (temp.windSpeedAvg * 2 < temp.windSpeedMax) {
-				toRemove.add(temp);
-			}
-		}
-		for (SurfvindStats s : toRemove) {
-			history.remove(s);
-		}
-	}
-
-	public String SendSurfvindDataToServer(ArrayList<SurfvindStats> history, boolean forceSendData, String id, String version) {
-		String retVal = "Trying to send " + history.size() + " items.\n";
-		HttpClient client = null;
-		JSONObject data;
-		boolean SendSuccess = true;
-
-		try {
-			/*
-			 * Keep sending data until there is a send failure or the history is
-			 * emptied.
-			 */
-			while (SendSuccess && history.size() > 0) {
-				data = new JSONObject();
-
-				client = new DefaultHttpClient();
-				HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindDataIOIOv1.php");
-				message.addHeader("content-type", "application/x-www-form-urlencoded");
-				JSONArray dataArray = new JSONArray();
-
-				int itemsToSend = Math.min(history.size(), 50);
-				/* Create a JSON Array that contains the data. */
-				// Dont send more than 50 measures in one post.
-				for (int i = 0; i < itemsToSend; i++) {
-					Stats temp = history.get(i);
-					dataArray.put(temp.getJSON());
-				}
-				data.put("measure", dataArray);
-				data.put("id", id);
-				data.put("version", version);
-				message.setEntity(new StringEntity(data.toString()));
-				HttpResponse response = client.execute(message);
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					// Delete the reading that are sent.
-					for (int i = 0; i < itemsToSend; i++) {
-						history.remove(0);
-					}
-					retVal += "Success";
-				} else {
-					SendSuccess = false;
-					retVal += "F: " + response.getStatusLine().getStatusCode();
-				}
-			}
-		} catch (Exception e) {
-			retVal += "Ex:" + e.toString();
-
-		} finally {
-			if (null != client)
-				client.getConnectionManager().shutdown();
-		}
-		return retVal;
+		return sb.toString();
 	}
 
 	public float GetTemperatureNew(SensorLocation type) {
@@ -530,7 +506,8 @@ public class Helper {
 		// WriteText("Volt:" + Float.toString(voltage));
 		// temperature =
 		// (float)(((float)((float)voltage/(float)supply)-(float)0.16)/(float)0.0062);
-		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375)) / (float) 0.0225;
+		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375))
+				/ (float) 0.0225;
 		// Temperature compensation for moisture
 		// int temperature = xxx;
 		// moisture =
@@ -553,7 +530,8 @@ public class Helper {
 			} else if (type == SensorLocation.SensorUte) {
 				capacitance = humidityOutside.read();
 			}
-			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
+			moisture = (capacitance - CalibrationDataHumidity)
+					/ CalibrationDataHumiditySensitivity + 55;
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -683,7 +661,8 @@ public class Helper {
 					status = false;
 				}
 			}
-			freq = NBR_READINGS_TO_ANALYZE - (endPulse - startPulse) / (float) (anemometer.getSampleRate() * nbrPulses);
+			freq = NBR_READINGS_TO_ANALYZE - (endPulse - startPulse)
+					/ (float) (anemometer.getSampleRate() * nbrPulses);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -707,7 +686,8 @@ public class Helper {
 		try {
 			// pulseCounter = ioio.openPulseInput(ANEMOMETER_SPEED,
 			// PulseMode.FREQ);
-			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
+			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz,
+					PulseMode.FREQ, true);
 			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
 			// float duration = pulseCounter.getDuration();
@@ -751,7 +731,8 @@ public class Helper {
 			public void run() {
 				try {
 					if (i2cInne != null) {
-						i2cInne.writeRead(adress / 2, false, toSend, 2, receive, 0);
+						i2cInne.writeRead(adress / 2, false, toSend, 2,
+								receive, 0);
 					} else {
 						Log.e("Helper", "I2C is null, no command sent!");
 					}
