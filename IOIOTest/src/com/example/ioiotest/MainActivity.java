@@ -1,5 +1,16 @@
 package com.example.ioiotest;
 
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PulseInput.PulseMode;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.util.BaseIOIOLooper;
+import ioio.lib.util.IOIOLooper;
+import ioio.lib.util.android.IOIOActivity;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,21 +19,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ioio.lib.api.AnalogInput;
-import ioio.lib.api.CapSense;
-import ioio.lib.api.DigitalOutput;
-import ioio.lib.api.DigitalInput.Spec;
-import ioio.lib.api.DigitalInput.Spec.Mode;
-import ioio.lib.api.PulseInput;
-import ioio.lib.api.PulseInput.ClockRate;
-import ioio.lib.api.PulseInput.PulseMode;
-import ioio.lib.api.PwmOutput;
-import ioio.lib.api.exception.ConnectionLostException;
-import ioio.lib.util.BaseIOIOLooper;
-import ioio.lib.util.IOIOLooper;
-import ioio.lib.util.android.IOIOActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 

@@ -17,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
@@ -183,8 +182,6 @@ public class KrypgrundGUI extends Activity {
 				// TODO Auto-generated method stub
 				if (null != kryp) {
 					updateUI();
-					// setStatusText(kryp.statusText, kryp.isInitialized);
-					kryp.setDebugMode(debugButton.isChecked());
 					if (debugButton.isChecked()) {
 						kryp.setForceFan(toggleFanButton.isChecked());
 					}

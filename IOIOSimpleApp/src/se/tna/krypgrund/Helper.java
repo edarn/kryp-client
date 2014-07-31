@@ -13,6 +13,9 @@ import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -63,6 +66,7 @@ public class Helper {
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
 	};
+
 	public enum SensorLocation {
 		SensorInne, SensorUte;
 	}
@@ -120,7 +124,7 @@ public class Helper {
 	}
 
 	public void Destroy() {
-		
+
 		if (i2cInne != null)
 			i2cInne.close();
 		if (i2cUte != null)
@@ -135,7 +139,50 @@ public class Helper {
 		temp.close();
 	}
 
-	
+	static File logFile = null;
+	static BufferedWriter bufWriter;
+
+	public static void appendLog(String text) {
+		System.out.println(text);
+		try {
+			if (logFile == null) {
+				logFile = new File("sdcard/krypgrund_log.file");
+				if (!logFile.exists()) {
+					try {
+						logFile.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (bufWriter == null) {
+				// BufferedWriter for performance, true to set append to file
+				// flag
+				bufWriter = new BufferedWriter(new FileWriter(logFile, true));
+			}
+
+			bufWriter.append(text);
+			bufWriter.newLine();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+			try {
+				if (bufWriter != null) {
+					bufWriter.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			finally
+			{
+				bufWriter = null;
+				logFile =null;
+			}
+		}
+	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
 		ChipCap2 result = new ChipCap2();

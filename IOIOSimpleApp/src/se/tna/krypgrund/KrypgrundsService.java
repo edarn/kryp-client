@@ -5,8 +5,11 @@ import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -37,8 +40,6 @@ public class KrypgrundsService extends IOIOService {
 	private long timeForLastFanControl = 0;
 
 	private final IBinder mBinder = new MyBinder();
-	private boolean debugMode = false;
-	private Stats debugStats = null;
 
 	ArrayList<KrypgrundStats> rawMeasurements = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
@@ -51,11 +52,18 @@ public class KrypgrundsService extends IOIOService {
 	boolean clockwise = true;
 	public final static int SURFVIND = R.id.weatherStation;
 	public final static int KRYPGRUND = R.id.crawlspaceStation;
-	
+
 	private long watchdog_TimeSinceLastOkData;
 
 	public enum ServiceMode {
-		Survfind, Krypgrund
+		Survfind, Krypgrund;
+
+		public String toString() {
+			if (this == ServiceMode.Survfind)
+				return "Surfvind";
+			else
+				return "Krypgrund";
+		}
 	};
 
 	public ServiceMode serviceMode = ServiceMode.Krypgrund;
@@ -64,6 +72,8 @@ public class KrypgrundsService extends IOIOService {
 		OldAnalog, Capacitive, ChipCap2, Random
 	}
 
+	Stats oneMeasurement;
+
 	private HumidSensor krypgrundSensor = HumidSensor.ChipCap2;
 	@SuppressLint("UseSparseArrays")
 	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
@@ -71,14 +81,6 @@ public class KrypgrundsService extends IOIOService {
 	protected static boolean isIOIOConnected = false;
 	static {
 
-	}
-
-	public void setDebugMode(boolean enable) {
-		debugMode = enable;
-	}
-
-	public void setDebugStats(Stats data) {
-		debugStats = data;
 	}
 
 	@Override
@@ -91,6 +93,9 @@ public class KrypgrundsService extends IOIOService {
 				super.disconnected();
 				isIOIOConnected = false;
 				isInitialized = false;
+				helper = null;
+				id = "123456789";
+				Helper.appendLog("*** IOIO disconnected. ***");
 			}
 
 			@Override
@@ -103,12 +108,13 @@ public class KrypgrundsService extends IOIOService {
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				id = telephonyManager.getDeviceId();
 				updateSettings();
-				helper = new Helper(ioio_, KrypgrundsService.this, id, version, serviceMode);
+				helper = new Helper(ioio_, KrypgrundsService.this, id, version,
+						serviceMode);
 				isInitialized = true;
 				watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+				Helper.appendLog("*** IOIO connected OK. ***");
+				Helper.appendLog("Service mode is: " + serviceMode.toString());
 			}
-
-			Random r = new Random();
 
 			@Override
 			public void loop() {
@@ -116,250 +122,76 @@ public class KrypgrundsService extends IOIOService {
 					if (System.currentTimeMillis()
 							- watchdog_TimeSinceLastOkData > TimeUnit.MINUTES
 								.toMillis(10)) {
-						System.out
-								.println("Restarting ioio due to no good data for a long time.");
+						Helper.appendLog("Restarting ioio due to no good data for a long time.");
 						ioio_.hardReset();
 					}
 
-					if (serviceMode== ServiceMode.Krypgrund) {
+					if (serviceMode == ServiceMode.Krypgrund) {
 
 						// Always create a new object, as this is added to the
 						// list.
-						KrypgrundStats temp = new KrypgrundStats();
+						oneMeasurement = new KrypgrundStats();
 
-						if (debugMode) {
-							if (debugStats != null) {
-								// temp = debugStats;
+						if (krypgrundSensor == HumidSensor.ChipCap2) {
+							KrypgrundStats oneKrypgrundMeasurement = (KrypgrundStats) oneMeasurement;
+							ChipCap2 inne = helper
+									.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+							ChipCap2 ute = helper
+									.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+							oneKrypgrundMeasurement.temperatureInne = inne.temperature;
+							oneKrypgrundMeasurement.moistureInne = inne.humidity;
+							oneKrypgrundMeasurement.temperatureUte = ute.temperature;
+							oneKrypgrundMeasurement.moistureUte = ute.humidity;
+							if (inne.okReading && ute.okReading) {
+								// Update the watchdog.
+								watchdog_TimeSinceLastOkData = System
+										.currentTimeMillis();
 							}
-						} else {
-							if (krypgrundSensor == HumidSensor.ChipCap2) {
-								ChipCap2 inne = helper
-										.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
-								ChipCap2 ute = helper
-										.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
-								temp.temperatureInne = inne.temperature;
-								temp.moistureInne = inne.humidity;
-								temp.temperatureUte = ute.temperature;
-								temp.moistureUte = ute.humidity;
-								if (inne.okReading && ute.okReading) {
-									// Update the watchdog.
-									watchdog_TimeSinceLastOkData = System
-											.currentTimeMillis();
-								}
-							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
-								temp.temperatureUte = helper
-										.GetTemperature(SensorLocation.SensorUte);
-								temp.temperatureInne = helper
-										.GetTemperature(SensorLocation.SensorInne);
-								temp.moistureUte = helper.GetMoisture(
-										SensorLocation.SensorUte,
-										temp.temperatureUte);
-								temp.moistureInne = helper.GetMoisture(
-										SensorLocation.SensorInne,
-										temp.temperatureInne);
-							} else if (krypgrundSensor == HumidSensor.Capacitive) {
-
-							} else if (krypgrundSensor == HumidSensor.Random) {
-								temp.temperatureUte = 10 + r.nextInt(5);
-								temp.temperatureInne = 5 + r.nextInt(5);
-								temp.moistureUte = 23 + r.nextInt(30);
-								temp.moistureInne = 56 + r.nextInt(30);
-							}
-							temp.batteryVoltage = helper.getBatteryVoltage();
 
 							/*
 							 * y = 4.632248129 e6.321315927�10-2 x y=max fukt
 							 * i gram/m3
 							 */
 
-							temp.absolutFuktUte = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * temp.temperatureUte) + 1))
-									* temp.moistureUte;
-							temp.absolutFuktInne = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * temp.temperatureInne) + 1))
-									* temp.moistureInne;
+							oneKrypgrundMeasurement.absolutFuktUte = (float) (4.632248129 * (Math
+									.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureUte) + 1))
+									* oneKrypgrundMeasurement.moistureUte;
+							oneKrypgrundMeasurement.absolutFuktInne = (float) (4.632248129 * (Math
+									.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureInne) + 1))
+									* oneKrypgrundMeasurement.moistureInne;
+							rawMeasurements.add(oneKrypgrundMeasurement);
 						}
-						rawMeasurements.add(temp);
+					} else if (serviceMode == ServiceMode.Survfind) {
+
+						// Always create a new object, as this is added to the
+						// list.
+						SurfvindStats temp = new SurfvindStats();
+						oneMeasurement = temp;
+						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
+						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
+						if (temp.windDirectionAvg != -1
+								&& temp.windSpeedAvg != -1) {
+							rawSurfvindsMeasurements.add(temp);
+						}
 
 					}
+					oneMeasurement.batteryVoltage = helper.getBatteryVoltage();
+					oneMeasurement.temperature = helper.getTemp();
 
-					// if ((serviceMode & SURFVIND) == SURFVIND) {
-					//
-					// // Always create a new object, as this is added to the
-					// // list.
-					// SurfvindStats temp = new SurfvindStats();
-					//
-					// temp.windDirectionAvg =
-					// helper.queryIOIO(Helper.ANALOG);//
-					// helper.getWindDirection();
-					// // //
-					// // 180
-					// // +
-					// // r.nextInt(30);
-					// temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ); //
-					// getWindSpeed();
-					// // //8
-					// // +
-					// // r.nextInt(10)/10f;
-					// // //
-					// temp.batteryVoltage = helper.getBatteryVoltage();
-					// temp.temperature = helper.getTemp();
-					// if (temp.windDirectionAvg != -1 && temp.windSpeedAvg !=
-					// -1) {
-					// rawSurfvindsMeasurements.add(temp);
-					// }
-					//
-					// }
-
-					if (System.currentTimeMillis() - timeForLastAddToHistory > timeBetweenAddToHistory) {
-						// Reset time, so that we will soon add a new value to
-						// the history
-						timeForLastAddToHistory = System.currentTimeMillis();
-
-						if (serviceMode == ServiceMode.Krypgrund) {
-
-							// Always create a new object, as it is added to the
-							// history list.
-							KrypgrundStats total = new KrypgrundStats();
-
-							// Calculate an averagevalue of all the readings.
-							for (KrypgrundStats stat : rawMeasurements) {
-								total.moistureInne += stat.moistureInne;
-								total.moistureUte += stat.moistureUte;
-								total.temperatureInne += stat.temperatureInne;
-								total.temperatureUte += stat.temperatureUte;
-								total.absolutFuktInne += stat.absolutFuktInne;
-								total.absolutFuktUte += stat.absolutFuktUte;
-
-							}
-							float size = rawMeasurements.size();
-							total.moistureInne /= size;
-							total.moistureUte /= size;
-							total.temperatureInne /= size;
-							total.temperatureUte /= size;
-							total.absolutFuktInne /= size;
-							total.absolutFuktUte /= size;
-
-							ControlFan(total);
-							total.fanOn = helper.IsFanOn();
-							krypgrundHistory.add(total);
-							rawMeasurements.clear();
-						}
-
-						// if ((serviceMode & SURFVIND) == SURFVIND) {
-						//
-						// // Always create a new object, as it is added to the
-						// // history list.
-						// SurfvindStats total = new SurfvindStats();
-						// total.windDirectionMin = 999999;
-						// total.windSpeedMin = 999999;
-						//
-						// Collections.sort(rawSurfvindsMeasurements);
-						//
-						// /*
-						// * if (rawSurfvindsMeasurements.size() > 7) { for
-						// * (int i = 0; i < 3; i++) {
-						// * rawSurfvindsMeasurements.remove(0);
-						// * rawSurfvindsMeasurements
-						// * .remove(rawSurfvindsMeasurements.size() - 1); } }
-						// */
-						//
-						// // Calculate an averagevalue of all the readings.
-						// for (SurfvindStats stat : rawSurfvindsMeasurements) {
-						//
-						// total.windDirectionAvg += stat.windDirectionAvg;
-						// if (stat.windDirectionAvg < total.windDirectionMin) {
-						// total.windDirectionMin = stat.windDirectionAvg;
-						// }
-						// if (stat.windDirectionAvg > total.windDirectionMax) {
-						// total.windDirectionMax = stat.windDirectionAvg;
-						// }
-						// total.windSpeedAvg += stat.windSpeedAvg;
-						// if (stat.windSpeedAvg < total.windSpeedMin) {
-						// total.windSpeedMin = stat.windSpeedAvg;
-						// }
-						// if (stat.windSpeedAvg > total.windSpeedMax) {
-						// total.windSpeedMax = stat.windSpeedAvg;
-						// }
-						// total.temperature += stat.temperature;
-						// total.batteryVoltage += stat.batteryVoltage;
-						// }
-						// int size = rawSurfvindsMeasurements.size();
-						// total.windDirectionAvg /= size;
-						// total.windSpeedAvg /= size;
-						// total.temperature /= size;
-						// total.batteryVoltage /= size;
-						// surfvindHistory.add(total);
-						// rawSurfvindsMeasurements.clear();
-						// }
-
-						// How often should we connect to server?
-						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
-							debugText = helper.SendDataToServer(
-									krypgrundHistory, ServiceMode.Krypgrund);
-							debugText += helper.SendDataToServer(
-									surfvindHistory, ServiceMode.Krypgrund);
-							// Reset time even if it fails.
-							timeForLastSendData = System.currentTimeMillis();
-						}
-						rawMeasurements = new ArrayList<KrypgrundStats>();
-
-					} else {
-						// String text = "HSize=" + history.size() + " Succ="
-						// + Boolean.toString(helper.GetSendSuccess())
-						// + " fDelay:"
-						// + Integer.toString(helper.GetFailureDelay());
-						// debugText = text;
-					}
 					Thread.sleep(timeBetweenReading);
 
 				} catch (Exception e) {
 					e.printStackTrace();
 					if (helper != null) {
 						try {
-							helper.ControlFan(false); // will not work if
-														// connection
-														// Lost
-														// exception.
+							helper.ControlFan(false);
 						} catch (Exception ee) {
 							ee.printStackTrace();
 						}
 					}
 				}
-
-			}
-
-			/**
-			 * Starts or stops the fan depending on the Stats data.
-			 * 
-			 * - We should not change the On/Off to often. - If inside
-			 * temperature is less than 1 degree, fan should not run. - If the
-			 * moisture inside is at least 2 % larger than outside, then start
-			 * the fan.
-			 * 
-			 * @param data
-			 */
-			public void ControlFan(KrypgrundStats data) {
-
-				if (System.currentTimeMillis() - timeForLastFanControl > TIME_BETWEEN_FAN_ON_OFF) {
-					timeForLastFanControl = System.currentTimeMillis();
-					// Dont start fans if inside temp is close to
-					// freezeingpoint.
-					if (data.temperatureInne < 0.5) {
-						helper.ControlFan(false);
-					} else {
-						// Start the fans!!
-
-						if (data.absolutFuktInne > data.absolutFuktUte + 15) {
-							helper.ControlFan(true);
-						} else {
-							helper.ControlFan(false);
-						}
-					}
-				}
 			}
 		};
-
 	}
 
 	@Override
@@ -368,11 +200,63 @@ public class KrypgrundsService extends IOIOService {
 
 	}
 
+	/**
+	 * Starts or stops the fan depending on the Stats data.
+	 * 
+	 * - We should not change the On/Off to often. - If inside temperature is
+	 * less than 1 degree, fan should not run. - If the moisture inside is at
+	 * least 2 % larger than outside, then start the fan.
+	 * 
+	 * @param data
+	 */
+	public void ControlFan(KrypgrundStats data) {
+
+		if (System.currentTimeMillis() - timeForLastFanControl > TIME_BETWEEN_FAN_ON_OFF) {
+			timeForLastFanControl = System.currentTimeMillis();
+			// Dont start fans if inside temp is close to
+			// freezeingpoint.
+			if (data.temperatureInne < 0.5) {
+				helper.ControlFan(false);
+			} else {
+				// Start the fans!!
+
+				if (data.absolutFuktInne > data.absolutFuktUte + 15) {
+					helper.ControlFan(true);
+				} else {
+					helper.ControlFan(false);
+				}
+			}
+		}
+	}
+
 	private TimerTask mConnectTask = null;
+	private TimerTask mSendDataTask = null;
+	private TimerTask mAddToHistoryTask = null;
+	Timer addToHistoryTimer;
+	Timer ioioConnectorTimer;
+	Timer dataSenderTimer;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		Helper.appendLog("\n\n\n\nKrypgrundService Started");
+		UncaughtExceptionHandler s = new UncaughtExceptionHandler() {
+
+			@Override
+			public void uncaughtException(Thread thread, Throwable ex) {
+				StringBuffer sb = new StringBuffer();
+				sb.append("Uncaught excepion:\n");
+				sb.append("ThreadName: " + thread.getName() + "\n");
+				sb.append("Message: " + ex.getMessage() + "\n");
+				Writer writer = new StringWriter();
+				PrintWriter printWriter = new PrintWriter(writer);
+				ex.printStackTrace(printWriter);
+				sb.append("StackTrace: \n" + writer.toString());
+				Helper.appendLog(sb.toString());
+			}
+		};
+		Thread.setDefaultUncaughtExceptionHandler(s);
+
 		watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 		if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
@@ -380,16 +264,69 @@ public class KrypgrundsService extends IOIOService {
 				@Override
 				public void run() {
 					if (!isIOIOConnected) {
-						System.out
-								.println("IOIO is not connected, lets restart to try to connect.");
+						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
 						// KrypgrundsService.this.restart();
 					}
 				}
 			};
-			Timer timer = new Timer("IOIOConnector");
-			timer.scheduleAtFixedRate(mConnectTask, 10000, 60000);
+			ioioConnectorTimer = new Timer("IOIOConnector");
+			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, 10000, 60000);
 		}
 
+		if (mSendDataTask == null) {
+			mSendDataTask = new TimerTask() {
+
+				@Override
+				public void run() {
+					if (serviceMode == ServiceMode.Krypgrund) {
+						debugText = helper.SendDataToServer(krypgrundHistory,
+								ServiceMode.Krypgrund);
+					} else if (serviceMode == ServiceMode.Survfind) {
+						debugText += helper.SendDataToServer(surfvindHistory,
+								ServiceMode.Survfind);
+					}
+					timeForLastSendData = System.currentTimeMillis();
+				}
+			};
+			dataSenderTimer = new Timer("DataSender");
+			dataSenderTimer.scheduleAtFixedRate(mSendDataTask,
+					timeBetweenSendingDataToServer,
+					timeBetweenSendingDataToServer);
+		}
+
+		if (mAddToHistoryTask == null) {
+			mAddToHistoryTask = new TimerTask() {
+
+				@Override
+				public void run() {
+					// Reset time, so that we will soon add a new value to
+					// the history
+					timeForLastAddToHistory = System.currentTimeMillis();
+
+					if (serviceMode == ServiceMode.Krypgrund) {
+
+						KrypgrundStats average = KrypgrundStats
+								.getAverage(rawMeasurements);
+						ControlFan(average);
+						average.fanOn = helper.IsFanOn();
+						krypgrundHistory.add(average);
+						rawMeasurements.clear();
+					}
+
+					if (serviceMode == ServiceMode.Survfind) {
+						SurfvindStats average = SurfvindStats
+								.getAverage(rawSurfvindsMeasurements);
+						surfvindHistory.add(average);
+						rawSurfvindsMeasurements.clear();
+					}
+
+					rawMeasurements = new ArrayList<KrypgrundStats>();
+				}
+			};
+			addToHistoryTimer = new Timer("AddToHistory");
+			addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask,
+					timeBetweenAddToHistory, timeBetweenAddToHistory);
+		}
 		return Service.START_STICKY;
 	}
 
@@ -408,11 +345,27 @@ public class KrypgrundsService extends IOIOService {
 		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
 				MODE_PRIVATE);
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE_RADIO, SURFVIND);
-		if (type == SURFVIND) serviceMode = ServiceMode.Survfind;
-		else if ( type == KRYPGRUND) serviceMode = ServiceMode.Krypgrund;
+		if (type == SURFVIND)
+			serviceMode = ServiceMode.Survfind;
+		else if (type == KRYPGRUND)
+			serviceMode = ServiceMode.Krypgrund;
 		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
 				TimeUnit.MINUTES.toMillis(5));
 		timeBetweenSendingDataToServer = readInterval;
+		Helper.appendLog("Settings refreshed in Service:");
+		Helper.appendLog("ServiceMode =" + serviceMode.toString());
+		Helper.appendLog("TimeBetweenSendingDataToServer = "
+				+ timeBetweenSendingDataToServer);
+		Helper.appendLog("ReadInterval = " + readInterval);
+		// helper.Destroy();
+		// helper
+		dataSenderTimer.cancel();
+		dataSenderTimer.scheduleAtFixedRate(mSendDataTask,
+				timeBetweenSendingDataToServer, timeBetweenSendingDataToServer);
+		addToHistoryTimer.cancel();
+		addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask,
+				timeBetweenAddToHistory, timeBetweenAddToHistory);
+
 	}
 
 	public void setForceFan(boolean on) {
