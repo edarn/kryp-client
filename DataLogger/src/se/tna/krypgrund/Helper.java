@@ -164,6 +164,7 @@ public class Helper {
 
 			bufWriter.append(text);
 			bufWriter.newLine();
+			bufWriter.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();

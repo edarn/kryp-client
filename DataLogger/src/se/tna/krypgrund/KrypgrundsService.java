@@ -239,14 +239,17 @@ public class KrypgrundsService extends IOIOService {
 	class SendDataTask extends TimerTask {
 		@Override
 		public void run() {
-			if (serviceMode == ServiceMode.Krypgrund) {
-				debugText = helper.SendDataToServer(krypgrundHistory,
-						ServiceMode.Krypgrund);
-			} else if (serviceMode == ServiceMode.Survfind) {
-				debugText += helper.SendDataToServer(surfvindHistory,
-						ServiceMode.Survfind);
+			if (helper != null) {
+				if (serviceMode == ServiceMode.Krypgrund) {
+					debugText = helper.SendDataToServer(krypgrundHistory,
+							ServiceMode.Krypgrund);
+				} else if (serviceMode == ServiceMode.Survfind) {
+					debugText += helper.SendDataToServer(surfvindHistory,
+							ServiceMode.Survfind);
+				}
+				timeForLastSendData = System.currentTimeMillis();
 			}
-			timeForLastSendData = System.currentTimeMillis();
+
 		}
 
 	}
@@ -259,23 +262,28 @@ public class KrypgrundsService extends IOIOService {
 			timeForLastAddToHistory = System.currentTimeMillis();
 
 			if (serviceMode == ServiceMode.Krypgrund) {
-
-				KrypgrundStats average = KrypgrundStats
-						.getAverage(rawMeasurements);
-				ControlFan(average);
-				average.fanOn = helper.IsFanOn();
-				krypgrundHistory.add(average);
-				rawMeasurements.clear();
+				if (rawMeasurements != null && rawMeasurements.size() > 0) {
+					KrypgrundStats average = KrypgrundStats
+							.getAverage(rawMeasurements);
+					ControlFan(average);
+					average.fanOn = helper.IsFanOn();
+					krypgrundHistory.add(average);
+					rawMeasurements.clear();
+				}
+				rawMeasurements = new ArrayList<KrypgrundStats>();
 			}
 
 			if (serviceMode == ServiceMode.Survfind) {
-				SurfvindStats average = SurfvindStats
-						.getAverage(rawSurfvindsMeasurements);
-				surfvindHistory.add(average);
-				rawSurfvindsMeasurements.clear();
+				if (rawSurfvindsMeasurements != null
+						&& rawSurfvindsMeasurements.size() > 0) {
+					SurfvindStats average = SurfvindStats
+							.getAverage(rawSurfvindsMeasurements);
+					surfvindHistory.add(average);
+					rawSurfvindsMeasurements.clear();
+				}
+				rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
 			}
 
-			rawMeasurements = new ArrayList<KrypgrundStats>();
 		}
 	}
 
@@ -352,14 +360,26 @@ public class KrypgrundsService extends IOIOService {
 			serviceMode = ServiceMode.Survfind;
 		else if (type == KRYPGRUND)
 			serviceMode = ServiceMode.Krypgrund;
-		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
+		timeBetweenReading = prefs.getLong(SetupActivity.MEASUREMENT_DELAY_MS,
+				TimeUnit.SECONDS.toMillis(2));
+		if (timeBetweenReading == 0) {
+			timeBetweenReading = TimeUnit.SECONDS.toMillis(2);
+		}
+
+		timeBetweenSendingDataToServer = prefs.getLong(
+				SetupActivity.SEND_TO_SERVER_DELAY_MS,
 				TimeUnit.MINUTES.toMillis(5));
-		timeBetweenSendingDataToServer = readInterval;
+		if (timeBetweenSendingDataToServer == 0) {
+			timeBetweenSendingDataToServer = TimeUnit.MINUTES.toMillis(5);
+		}
+
+		timeBetweenAddToHistory = TimeUnit.SECONDS.toMillis(30);
+
 		Helper.appendLog("Settings refreshed in Service:");
 		Helper.appendLog("ServiceMode =" + serviceMode.toString());
 		Helper.appendLog("TimeBetweenSendingDataToServer = "
 				+ timeBetweenSendingDataToServer);
-		Helper.appendLog("ReadInterval = " + readInterval);
+		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
 		// helper.Destroy();
 		// helper
 

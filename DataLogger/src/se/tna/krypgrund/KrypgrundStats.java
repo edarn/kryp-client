@@ -40,27 +40,29 @@ public class KrypgrundStats extends Stats {
 		// history list.
 		KrypgrundStats total = new KrypgrundStats();
 
-		// Calculate an averagevalue of all the readings.
-		for (KrypgrundStats stat : rawMeasurements) {
-			total.moistureInne += stat.moistureInne;
-			total.moistureUte += stat.moistureUte;
-			total.temperatureInne += stat.temperatureInne;
-			total.temperatureUte += stat.temperatureUte;
-			total.absolutFuktInne += stat.absolutFuktInne;
-			total.absolutFuktUte += stat.absolutFuktUte;
-			total.temperature += stat.temperature;
-			total.batteryVoltage += stat.batteryVoltage;
-		}
+		if (rawMeasurements != null && rawMeasurements.size() > 0) {
+			// Calculate an averagevalue of all the readings.
+			for (KrypgrundStats stat : rawMeasurements) {
+				total.moistureInne += stat.moistureInne;
+				total.moistureUte += stat.moistureUte;
+				total.temperatureInne += stat.temperatureInne;
+				total.temperatureUte += stat.temperatureUte;
+				total.absolutFuktInne += stat.absolutFuktInne;
+				total.absolutFuktUte += stat.absolutFuktUte;
+				total.temperature += stat.temperature;
+				total.batteryVoltage += stat.batteryVoltage;
+			}
 
-		float size = rawMeasurements.size();
-		total.moistureInne /= size;
-		total.moistureUte /= size;
-		total.temperatureInne /= size;
-		total.temperatureUte /= size;
-		total.absolutFuktInne /= size;
-		total.absolutFuktUte /= size;
-		total.temperature /= size;
-		total.batteryVoltage /= size;
+			float size = rawMeasurements.size();
+			total.moistureInne /= size;
+			total.moistureUte /= size;
+			total.temperatureInne /= size;
+			total.temperatureUte /= size;
+			total.absolutFuktInne /= size;
+			total.absolutFuktUte /= size;
+			total.temperature /= size;
+			total.batteryVoltage /= size;
+		}
 		return total;
 	}
 

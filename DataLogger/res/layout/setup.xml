@@ -79,6 +79,45 @@
                     android:onClick="onRadioButtonClicked"
                     android:text="10 Min" />
             </RadioGroup>
+            
+            <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Measurement Delay:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#f6fa91"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/measurementDelay"
+                android:layout_width="194dp"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/twoSecondsMeasurement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="2 sec" />
+
+                <RadioButton
+                    android:id="@+id/tenSecondsMeasurement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="10 sec" />
+
+                <RadioButton
+                    android:id="@+id/oneMinuteMeasurement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="1 Min" />
+               
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/textView3"

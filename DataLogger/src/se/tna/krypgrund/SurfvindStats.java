@@ -53,36 +53,38 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 		// Always create a new object, as it is added to the
 		// history list.
 		SurfvindStats total = new SurfvindStats();
-		total.windDirectionMin = 999999;
-		total.windSpeedMin = 999999;
+		if (rawMeasurements != null && rawMeasurements.size() > 0) {
+			total.windDirectionMin = 999999;
+			total.windSpeedMin = 999999;
 
-		Collections.sort(rawMeasurements);
+			Collections.sort(rawMeasurements);
 
-		// Calculate an averagevalue of all the readings.
-		for (SurfvindStats stat : rawMeasurements) {
+			// Calculate an averagevalue of all the readings.
+			for (SurfvindStats stat : rawMeasurements) {
 
-			total.windDirectionAvg += stat.windDirectionAvg;
-			if (stat.windDirectionAvg < total.windDirectionMin) {
-				total.windDirectionMin = stat.windDirectionAvg;
+				total.windDirectionAvg += stat.windDirectionAvg;
+				if (stat.windDirectionAvg < total.windDirectionMin) {
+					total.windDirectionMin = stat.windDirectionAvg;
+				}
+				if (stat.windDirectionAvg > total.windDirectionMax) {
+					total.windDirectionMax = stat.windDirectionAvg;
+				}
+				total.windSpeedAvg += stat.windSpeedAvg;
+				if (stat.windSpeedAvg < total.windSpeedMin) {
+					total.windSpeedMin = stat.windSpeedAvg;
+				}
+				if (stat.windSpeedAvg > total.windSpeedMax) {
+					total.windSpeedMax = stat.windSpeedAvg;
+				}
+				total.temperature += stat.temperature;
+				total.batteryVoltage += stat.batteryVoltage;
 			}
-			if (stat.windDirectionAvg > total.windDirectionMax) {
-				total.windDirectionMax = stat.windDirectionAvg;
-			}
-			total.windSpeedAvg += stat.windSpeedAvg;
-			if (stat.windSpeedAvg < total.windSpeedMin) {
-				total.windSpeedMin = stat.windSpeedAvg;
-			}
-			if (stat.windSpeedAvg > total.windSpeedMax) {
-				total.windSpeedMax = stat.windSpeedAvg;
-			}
-			total.temperature += stat.temperature;
-			total.batteryVoltage += stat.batteryVoltage;
+			int size = rawMeasurements.size();
+			total.windDirectionAvg /= size;
+			total.windSpeedAvg /= size;
+			total.temperature /= size;
+			total.batteryVoltage /= size;
 		}
-		int size = rawMeasurements.size();
-		total.windDirectionAvg /= size;
-		total.windSpeedAvg /= size;
-		total.temperature /= size;
-		total.batteryVoltage /= size;
 		return total;
 	}
 }

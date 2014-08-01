@@ -29,9 +29,14 @@ import android.widget.RadioGroup;
 
 public class SetupActivity extends Activity {
 
-	private static final String UPDATE_FREQ = "Time_Between_Reads";
-	//public static final String SENSOR_TYPE = "Sensor_Type";
-	public static final String READ_INTERVAL = "Read_Interval";
+	public static final String SEND_TO_SERVER_DELAY_VIEW = "Time_Between_Send_To_Server_View";
+	public static final String SEND_TO_SERVER_DELAY_MS = "Time_Between_Send_To_Server_Ms";
+
+	// public static final String SENSOR_TYPE = "Sensor_Type";
+	public static final String MEASUREMENT_DELAY_VIEW = "Time_Between_Each_Measurement_View";
+	public static final String MEASUREMENT_DELAY_MS = "Time_Between_Each_Measurement_Ms";
+	// public static final String READ_INTERVAL =
+	// "Time_Between_Each_Measurement";
 	public static final String STATION_NAME = "Station_Name";
 	public static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
 	private static final String GPS_LONGITUDE = "Longitude";
@@ -40,10 +45,9 @@ public class SetupActivity extends Activity {
 	private EditText latitude;
 	private EditText longitude;
 
-	private RadioGroup updateFrequency;
-	private RadioGroup sensorType;
+	private long sendToServerDelayMs = 0;
+	private long measuremetDelayMs = 0;
 
-	private long updateTime = 0;
 	private SharedPreferences prefs;
 	private Editor prefsEditor;
 
@@ -54,11 +58,16 @@ public class SetupActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setup);
 
+		RadioGroup updateFrequency;
+		RadioGroup sensorType;
+		RadioGroup measurementDelay;
+
 		// Find views
 		name = (EditText) findViewById(R.id.stationName);
 		latitude = (EditText) findViewById(R.id.latPosition);
 		longitude = (EditText) findViewById(R.id.longPosition);
 		updateFrequency = (RadioGroup) findViewById(R.id.updateFrequency);
+		measurementDelay = (RadioGroup) findViewById(R.id.measurementDelay);
 		sensorType = (RadioGroup) findViewById(R.id.sensorType);
 
 		// Find stored settings
@@ -66,14 +75,17 @@ public class SetupActivity extends Activity {
 		prefsEditor = prefs.edit();
 		int type = prefs.getInt(SENSOR_TYPE_RADIO, R.id.crawlspaceStation);
 		sensorType.check(type);
-		int readInterval = prefs.getInt(UPDATE_FREQ, R.id.oneMinute);
-		updateFrequency.check(readInterval);
+		updateFrequency.check(prefs.getInt(SEND_TO_SERVER_DELAY_VIEW,
+				R.id.oneMinute));
+		measurementDelay.check(prefs.getInt(MEASUREMENT_DELAY_VIEW,
+				R.id.twoSecondsMeasurement));
+
 		String sensorName = prefs.getString(STATION_NAME, "");
 		name.setText(sensorName);
-		
+
 		String lat = prefs.getString(GPS_LATITUDE, "55");
 		String lon = prefs.getString(GPS_LONGITUDE, "13");
-		
+
 		latitude.setText(lat);
 		longitude.setText(lon);
 
@@ -82,12 +94,17 @@ public class SetupActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				//prefsEditor.putInt(SENSOR_TYPE, stationType);
-				prefsEditor.putLong(READ_INTERVAL, updateTime);
+				// prefsEditor.putInt(SENSOR_TYPE, stationType);
+				prefsEditor.putLong(SEND_TO_SERVER_DELAY_MS,
+						sendToServerDelayMs);
+				prefsEditor.putLong(MEASUREMENT_DELAY_MS, measuremetDelayMs);
+
 				prefsEditor.putString(STATION_NAME, name.getText().toString());
-				prefsEditor.putString(GPS_LATITUDE, latitude.getText().toString());
-				prefsEditor.putString(GPS_LONGITUDE, longitude.getText().toString());
-				
+				prefsEditor.putString(GPS_LATITUDE, latitude.getText()
+						.toString());
+				prefsEditor.putString(GPS_LONGITUDE, longitude.getText()
+						.toString());
+
 				prefsEditor.apply();
 				prefsEditor.commit();
 
@@ -96,7 +113,8 @@ public class SetupActivity extends Activity {
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				l.Imei = telephonyManager.getDeviceId();
 				l.Latitude = Double.parseDouble(latitude.getText().toString());
-				l.Longitude = Double.parseDouble(longitude.getText().toString());
+				l.Longitude = Double
+						.parseDouble(longitude.getText().toString());
 				l.SensorName = name.getText().toString();
 				SendLocationDataToServer(l);
 				finish();
@@ -118,8 +136,10 @@ public class SetupActivity extends Activity {
 					data = new JSONObject();
 
 					client = new DefaultHttpClient();
-					HttpPost message = new HttpPost("http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
-					message.addHeader("content-type", "application/x-www-form-urlencoded");
+					HttpPost message = new HttpPost(
+							"http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
+					message.addHeader("content-type",
+							"application/x-www-form-urlencoded");
 					data.put("Imei", locData.Imei);
 					data.put("Latitude", locData.Latitude);
 					data.put("Longitude", locData.Longitude);
@@ -128,7 +148,8 @@ public class SetupActivity extends Activity {
 					message.setEntity(new StringEntity(data.toString()));
 					HttpResponse response = client.execute(message);
 					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						InputStreamReader r = new InputStreamReader(response.getEntity().getContent());
+						InputStreamReader r = new InputStreamReader(response
+								.getEntity().getContent());
 						char c[] = new char[100];
 						while (r.read() != -1) {
 							r.read(c);
@@ -185,7 +206,9 @@ public class SetupActivity extends Activity {
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria c = new Criteria();
 		c.setAccuracy(Criteria.ACCURACY_MEDIUM);
-		locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locListner, null);
+		locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,locListner, null);
+		locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, TimeUnit.SECONDS.toMillis(5), 5 , locListner);
+		
 
 	}
 
@@ -205,20 +228,20 @@ public class SetupActivity extends Activity {
 		// Update interval
 		case R.id.oneMinute:
 			if (checked) {
-				updateTime = TimeUnit.MINUTES.toMillis(1);
-				prefsEditor.putInt(UPDATE_FREQ, view.getId());
+				sendToServerDelayMs = TimeUnit.MINUTES.toMillis(1);
+				prefsEditor.putInt(SEND_TO_SERVER_DELAY_VIEW, view.getId());
 			}
 			break;
 		case R.id.fiveMinutes:
 			if (checked) {
-				updateTime = TimeUnit.MINUTES.toMillis(5);
-				prefsEditor.putInt(UPDATE_FREQ, view.getId());
+				sendToServerDelayMs = TimeUnit.MINUTES.toMillis(5);
+				prefsEditor.putInt(SEND_TO_SERVER_DELAY_VIEW, view.getId());
 			}
 			break;
 		case R.id.tenMinutes:
 			if (checked) {
-				updateTime = TimeUnit.MINUTES.toMillis(10);
-				prefsEditor.putInt(UPDATE_FREQ, view.getId());
+				sendToServerDelayMs = TimeUnit.MINUTES.toMillis(10);
+				prefsEditor.putInt(SEND_TO_SERVER_DELAY_VIEW, view.getId());
 			}
 			break;
 		// Station type
@@ -230,6 +253,25 @@ public class SetupActivity extends Activity {
 		case R.id.crawlspaceStation:
 			if (checked) {
 				prefsEditor.putInt(SENSOR_TYPE_RADIO, view.getId());
+			}
+			break;
+		// Measurement speed
+		case R.id.twoSecondsMeasurement:
+			if (checked) {
+				measuremetDelayMs = TimeUnit.SECONDS.toMillis(2);
+				prefsEditor.putInt(MEASUREMENT_DELAY_VIEW, view.getId());
+			}
+			break;
+		case R.id.tenSecondsMeasurement:
+			if (checked) {
+				measuremetDelayMs = TimeUnit.SECONDS.toMillis(10);
+				prefsEditor.putInt(MEASUREMENT_DELAY_VIEW, view.getId());
+			}
+			break;
+		case R.id.oneMinuteMeasurement:
+			if (checked) {
+				measuremetDelayMs = TimeUnit.MINUTES.toMillis(1);
+				prefsEditor.putInt(MEASUREMENT_DELAY_VIEW, view.getId());
 			}
 			break;
 		}
