@@ -87,26 +87,26 @@ public class Helper {
 		version = ver;
 		if (ioio != null) {
 			try {
-				if (mode == ServiceMode.Survfind) {
-					anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
-					if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
-						mAnalogPulsecounter = ioio
-								.openAnalogInput(ANEMOMETER_SPEED);
-					} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
-						Spec spec = new Spec(ANEMOMETER_SPEED);
-						spec.mode = Mode.PULL_UP;
-						pulseCounter = ioio.openPulseInput(spec,
-								ClockRate.RATE_16MHz, PulseMode.FREQ, true);
-					} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
-						// Do nothing as open and close will be done at every
-						// call.
-					}
-				} else if (mode == ServiceMode.Krypgrund) {
-					i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
-							false);
-					i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
-							false);
+				// if (mode == ServiceMode.Survfind) {
+				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
+				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
+					mAnalogPulsecounter = ioio
+							.openAnalogInput(ANEMOMETER_SPEED);
+				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
+					Spec spec = new Spec(ANEMOMETER_SPEED);
+					spec.mode = Mode.PULL_UP;
+					pulseCounter = ioio.openPulseInput(spec,
+							ClockRate.RATE_16MHz, PulseMode.FREQ, true);
+				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
+					// Do nothing as open and close will be done at every
+					// call.
 				}
+				// } else if (mode == ServiceMode.Krypgrund) {
+				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
+						false);
+				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
+						false);
+				// }
 
 				// On board sensors. Are they used?
 				power = ioio.openAnalogInput(42);
@@ -175,11 +175,9 @@ public class Helper {
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}
-			finally
-			{
+			} finally {
 				bufWriter = null;
-				logFile =null;
+				logFile = null;
 			}
 		}
 	}

@@ -236,6 +236,49 @@ public class KrypgrundsService extends IOIOService {
 	Timer ioioConnectorTimer;
 	Timer dataSenderTimer;
 
+	class SendDataTask extends TimerTask {
+		@Override
+		public void run() {
+			if (serviceMode == ServiceMode.Krypgrund) {
+				debugText = helper.SendDataToServer(krypgrundHistory,
+						ServiceMode.Krypgrund);
+			} else if (serviceMode == ServiceMode.Survfind) {
+				debugText += helper.SendDataToServer(surfvindHistory,
+						ServiceMode.Survfind);
+			}
+			timeForLastSendData = System.currentTimeMillis();
+		}
+
+	}
+
+	class AddDataTask extends TimerTask {
+		@Override
+		public void run() {
+			// Reset time, so that we will soon add a new value to
+			// the history
+			timeForLastAddToHistory = System.currentTimeMillis();
+
+			if (serviceMode == ServiceMode.Krypgrund) {
+
+				KrypgrundStats average = KrypgrundStats
+						.getAverage(rawMeasurements);
+				ControlFan(average);
+				average.fanOn = helper.IsFanOn();
+				krypgrundHistory.add(average);
+				rawMeasurements.clear();
+			}
+
+			if (serviceMode == ServiceMode.Survfind) {
+				SurfvindStats average = SurfvindStats
+						.getAverage(rawSurfvindsMeasurements);
+				surfvindHistory.add(average);
+				rawSurfvindsMeasurements.clear();
+			}
+
+			rawMeasurements = new ArrayList<KrypgrundStats>();
+		}
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
@@ -274,20 +317,7 @@ public class KrypgrundsService extends IOIOService {
 		}
 
 		if (mSendDataTask == null) {
-			mSendDataTask = new TimerTask() {
-
-				@Override
-				public void run() {
-					if (serviceMode == ServiceMode.Krypgrund) {
-						debugText = helper.SendDataToServer(krypgrundHistory,
-								ServiceMode.Krypgrund);
-					} else if (serviceMode == ServiceMode.Survfind) {
-						debugText += helper.SendDataToServer(surfvindHistory,
-								ServiceMode.Survfind);
-					}
-					timeForLastSendData = System.currentTimeMillis();
-				}
-			};
+			mSendDataTask = new SendDataTask();
 			dataSenderTimer = new Timer("DataSender");
 			dataSenderTimer.scheduleAtFixedRate(mSendDataTask,
 					timeBetweenSendingDataToServer,
@@ -295,34 +325,7 @@ public class KrypgrundsService extends IOIOService {
 		}
 
 		if (mAddToHistoryTask == null) {
-			mAddToHistoryTask = new TimerTask() {
-
-				@Override
-				public void run() {
-					// Reset time, so that we will soon add a new value to
-					// the history
-					timeForLastAddToHistory = System.currentTimeMillis();
-
-					if (serviceMode == ServiceMode.Krypgrund) {
-
-						KrypgrundStats average = KrypgrundStats
-								.getAverage(rawMeasurements);
-						ControlFan(average);
-						average.fanOn = helper.IsFanOn();
-						krypgrundHistory.add(average);
-						rawMeasurements.clear();
-					}
-
-					if (serviceMode == ServiceMode.Survfind) {
-						SurfvindStats average = SurfvindStats
-								.getAverage(rawSurfvindsMeasurements);
-						surfvindHistory.add(average);
-						rawSurfvindsMeasurements.clear();
-					}
-
-					rawMeasurements = new ArrayList<KrypgrundStats>();
-				}
-			};
+			mAddToHistoryTask = new AddDataTask();
 			addToHistoryTimer = new Timer("AddToHistory");
 			addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask,
 					timeBetweenAddToHistory, timeBetweenAddToHistory);
@@ -359,13 +362,20 @@ public class KrypgrundsService extends IOIOService {
 		Helper.appendLog("ReadInterval = " + readInterval);
 		// helper.Destroy();
 		// helper
-		dataSenderTimer.cancel();
-		dataSenderTimer.scheduleAtFixedRate(mSendDataTask,
-				timeBetweenSendingDataToServer, timeBetweenSendingDataToServer);
-		addToHistoryTimer.cancel();
-		addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask,
-				timeBetweenAddToHistory, timeBetweenAddToHistory);
 
+		if (dataSenderTimer != null) {
+			dataSenderTimer.cancel();
+			dataSenderTimer = new Timer("DataSenderTimer");
+			dataSenderTimer.scheduleAtFixedRate(new SendDataTask(),
+					timeBetweenSendingDataToServer,
+					timeBetweenSendingDataToServer);
+		}
+		if (addToHistoryTimer != null) {
+			addToHistoryTimer.cancel();
+			addToHistoryTimer = new Timer("AddToHistoryTimer");
+			addToHistoryTimer.scheduleAtFixedRate(new AddDataTask(),
+					timeBetweenAddToHistory, timeBetweenAddToHistory);
+		}
 	}
 
 	public void setForceFan(boolean on) {
