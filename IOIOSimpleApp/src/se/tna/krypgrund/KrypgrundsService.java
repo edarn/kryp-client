@@ -46,7 +46,7 @@ public class KrypgrundsService extends IOIOService {
 	private final IBinder mBinder = new MyBinder();
 	private boolean debugMode = false;
 	private Stats debugStats = null;
-	private boolean forceSendData = false;
+
 	ArrayList<KrypgrundStats> rawMeasurements = new ArrayList<KrypgrundStats>();
 	ArrayList<SurfvindStats> rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
 
@@ -58,10 +58,14 @@ public class KrypgrundsService extends IOIOService {
 	boolean clockwise = true;
 	public final static int SURFVIND = R.id.weatherStation;
 	public final static int KRYPGRUND = R.id.crawlspaceStation;
-	// public final int SENSORS_ALL = SURFVIND | KRYPGRUND;
-	private int serviceMode = KRYPGRUND;
-
+	
 	private long watchdog_TimeSinceLastOkData;
+
+	public enum ServiceMode {
+		Survfind, Krypgrund
+	};
+
+	public ServiceMode serviceMode = ServiceMode.Krypgrund;
 
 	public enum HumidSensor {
 		OldAnalog, Capacitive, ChipCap2, Random
@@ -97,19 +101,16 @@ public class KrypgrundsService extends IOIOService {
 			}
 
 			@Override
-			public void setup() throws ConnectionLostException, InterruptedException {
+			public void setup() throws ConnectionLostException,
+					InterruptedException {
 				timeForLastSendData = System.currentTimeMillis();
 				timeForLastAddToHistory = System.currentTimeMillis();
 				timeForLastFanControl = System.currentTimeMillis();
-				initialize();
-			}
-
-			private synchronized void initialize() {
 				isIOIOConnected = true;
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				id = telephonyManager.getDeviceId();
-
-				helper = new Helper(ioio_, KrypgrundsService.this);
+				updateSettings();
+				helper = new Helper(ioio_, KrypgrundsService.this, id, version, serviceMode);
 				isInitialized = true;
 				watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 			}
@@ -119,12 +120,15 @@ public class KrypgrundsService extends IOIOService {
 			@Override
 			public void loop() {
 				try {
-					if (System.currentTimeMillis() - watchdog_TimeSinceLastOkData > TimeUnit.MINUTES.toMillis(10)) {
-						System.out.println("Restarting ioio due to no good data for a long time.");
+					if (System.currentTimeMillis()
+							- watchdog_TimeSinceLastOkData > TimeUnit.MINUTES
+								.toMillis(10)) {
+						System.out
+								.println("Restarting ioio due to no good data for a long time.");
 						ioio_.hardReset();
 					}
 
-					if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+					if (serviceMode== ServiceMode.Krypgrund) {
 
 						// Always create a new object, as this is added to the
 						// list.
@@ -136,21 +140,30 @@ public class KrypgrundsService extends IOIOService {
 							}
 						} else {
 							if (krypgrundSensor == HumidSensor.ChipCap2) {
-								ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
-								ChipCap2 ute = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+								ChipCap2 inne = helper
+										.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+								ChipCap2 ute = helper
+										.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 								temp.temperatureInne = inne.temperature;
 								temp.moistureInne = inne.humidity;
 								temp.temperatureUte = ute.temperature;
 								temp.moistureUte = ute.humidity;
 								if (inne.okReading && ute.okReading) {
 									// Update the watchdog.
-									watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+									watchdog_TimeSinceLastOkData = System
+											.currentTimeMillis();
 								}
 							} else if (krypgrundSensor == HumidSensor.OldAnalog) {
-								temp.temperatureUte = helper.GetTemperature(SensorLocation.SensorUte);
-								temp.temperatureInne = helper.GetTemperature(SensorLocation.SensorInne);
-								temp.moistureUte = helper.GetMoisture(SensorLocation.SensorUte, temp.temperatureUte);
-								temp.moistureInne = helper.GetMoisture(SensorLocation.SensorInne, temp.temperatureInne);
+								temp.temperatureUte = helper
+										.GetTemperature(SensorLocation.SensorUte);
+								temp.temperatureInne = helper
+										.GetTemperature(SensorLocation.SensorInne);
+								temp.moistureUte = helper.GetMoisture(
+										SensorLocation.SensorUte,
+										temp.temperatureUte);
+								temp.moistureInne = helper.GetMoisture(
+										SensorLocation.SensorInne,
+										temp.temperatureInne);
 							} else if (krypgrundSensor == HumidSensor.Capacitive) {
 
 							} else if (krypgrundSensor == HumidSensor.Random) {
@@ -166,8 +179,12 @@ public class KrypgrundsService extends IOIOService {
 							 * i gram/m3
 							 */
 
-							temp.absolutFuktUte = (float) (4.632248129 * (Math.expm1(0.06321315927 * temp.temperatureUte) + 1)) * temp.moistureUte;
-							temp.absolutFuktInne = (float) (4.632248129 * (Math.expm1(0.06321315927 * temp.temperatureInne) + 1)) * temp.moistureInne;
+							temp.absolutFuktUte = (float) (4.632248129 * (Math
+									.expm1(0.06321315927 * temp.temperatureUte) + 1))
+									* temp.moistureUte;
+							temp.absolutFuktInne = (float) (4.632248129 * (Math
+									.expm1(0.06321315927 * temp.temperatureInne) + 1))
+									* temp.moistureInne;
 						}
 						rawMeasurements.add(temp);
 
@@ -205,7 +222,7 @@ public class KrypgrundsService extends IOIOService {
 						// the history
 						timeForLastAddToHistory = System.currentTimeMillis();
 
-						if ((serviceMode & KRYPGRUND) == KRYPGRUND) {
+						if (serviceMode == ServiceMode.Krypgrund) {
 
 							// Always create a new object, as it is added to the
 							// history list.
@@ -284,11 +301,11 @@ public class KrypgrundsService extends IOIOService {
 
 						// How often should we connect to server?
 						if (System.currentTimeMillis() - timeForLastSendData > timeBetweenSendingDataToServer) {
-							debugText = helper.SendKrypgrundsDataToServer(krypgrundHistory, forceSendData, id);
-							// Reset time even if it fails - don�t hesitate to
-							// retry sending.
-							// helper.trim(surfvindHistory);
-							debugText += helper.SendSurfvindDataToServer(surfvindHistory, forceSendData, id, version);
+							debugText = helper.SendDataToServer(
+									krypgrundHistory, ServiceMode.Krypgrund);
+							debugText += helper.SendDataToServer(
+									surfvindHistory, ServiceMode.Krypgrund);
+							// Reset time even if it fails.
 							timeForLastSendData = System.currentTimeMillis();
 						}
 						rawMeasurements = new ArrayList<KrypgrundStats>();
@@ -424,8 +441,9 @@ public class KrypgrundsService extends IOIOService {
 				@Override
 				public void run() {
 					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(10)) {
-						System.out.println("IOIO is not connected, lets restart to try to connect.");
-						KrypgrundsService.this.restart();
+						System.out
+								.println("IOIO is not connected, lets restart to try to connect.");
+						// KrypgrundsService.this.restart();
 					}
 				}
 			};
@@ -447,16 +465,14 @@ public class KrypgrundsService extends IOIOService {
 		}
 	}
 
-	public void setForceSendData(boolean checked) {
-		forceSendData = checked;
-
-	}
-
 	public void updateSettings() {
-		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
+				MODE_PRIVATE);
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE_RADIO, SURFVIND);
-		serviceMode = type;
-		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL, TimeUnit.MINUTES.toMillis(5));
+		if (type == SURFVIND) serviceMode = ServiceMode.Survfind;
+		else if ( type == KRYPGRUND) serviceMode = ServiceMode.Krypgrund;
+		long readInterval = prefs.getLong(SetupActivity.READ_INTERVAL,
+				TimeUnit.MINUTES.toMillis(5));
 		timeBetweenSendingDataToServer = readInterval;
 	}
 
