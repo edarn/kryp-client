@@ -3,6 +3,11 @@ package se.tna.krypgrund;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewDataInterface;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
@@ -141,6 +145,43 @@ public class KrypgrundGUI extends Activity {
 		 * speedViewBackground.setBackgroundColor(0x00000000);
 		 */
 
+		class GraphViewData implements GraphViewDataInterface {
+			private double x;
+			private double y;
+
+			GraphViewData(double a, double b) {
+				x = a;
+				y = b;
+			}
+
+			@Override
+			public double getX() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public double getY() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+		}
+		// init example series data
+		GraphViewSeries exampleSeries = new GraphViewSeries(
+				new GraphViewData[] { new GraphViewData(1, 2.0d),
+						new GraphViewData(2, 1.5d), new GraphViewData(3, 2.5d),
+						new GraphViewData(4, 1.0d) });
+
+		GraphView graphView = new LineGraphView(this // context
+				, "GraphViewDemo" // heading
+		);
+		graphView.addSeries(exampleSeries); // data
+
+		LinearLayout layout = (LinearLayout) findViewById(R.id.mainContainer);
+		layout.addView(graphView);
+		
+
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
 		textAnalogInput = (TextView) findViewById(R.id.textAnalogInput);
@@ -183,8 +224,6 @@ public class KrypgrundGUI extends Activity {
 				// TODO Auto-generated method stub
 				if (null != kryp) {
 					updateUI();
-					// setStatusText(kryp.statusText, kryp.isInitialized);
-					kryp.setDebugMode(debugButton.isChecked());
 					if (debugButton.isChecked()) {
 						kryp.setForceFan(toggleFanButton.isChecked());
 					}
