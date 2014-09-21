@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
+import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,8 @@ public class KrypgrundGUI extends Activity {
 	private TextView initializedText;
 	private TextView fanStatus;
 	private TextView phoneId;
+	private TextView textVoltage;;
+	
 
 	private ToggleButton debugButton;
 	private ToggleButton toggleFanButton;
@@ -95,7 +98,7 @@ public class KrypgrundGUI extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		Helper.appendLog("App started");
 		mConnection = new ServiceConnection() {
 
 			@Override
@@ -181,6 +184,7 @@ public class KrypgrundGUI extends Activity {
 		LinearLayout layout = (LinearLayout) findViewById(R.id.mainContainer);
 		layout.addView(graphView);
 		
+		textVoltage = (TextView) findViewById(R.id.voltageText);
 
 		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
 		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
@@ -275,6 +279,7 @@ public class KrypgrundGUI extends Activity {
 					textFuktUte.setText("Fukt Ute: " + String.format("%.2f", status.moistureUte));
 					textFuktInne.setText("Fukt Inne: " + String.format("%.2f", status.moistureInne));
 					textFanOn.setText("Fan On =" + status.fanOn);
+					textVoltage.setText(String.format("%.2f",status.voltage));
 
 					// Is ioio chip initialized etc
 					initializedText.setText(status.statusMessage);
@@ -289,13 +294,13 @@ public class KrypgrundGUI extends Activity {
 
 					sb.append("TimeOfCreation: ");
 
-					Time tt = new Time();
-					tt.set(status.timeOfCreation);
-					sb.append(tt.format2445());
+					CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeOfCreation);
+					sb.append(cs.toString());
+					
 					sb.append("\nTimeSinceLastSend: ");
-					tt.set(status.timeForLastSendData);
-					sb.append(tt.format2445());
-
+					cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeForLastSendData);
+					sb.append(cs.toString());
+					
 					debugText.setText(sb.toString());
 					// debugText.setText(status.)
 				}

@@ -26,7 +26,7 @@ import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
-	private static final String version = "IOIO_R1A";
+	private static final String version = "IOIO_R1A03";
 	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
 	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
 	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(5);
@@ -54,6 +54,7 @@ public class KrypgrundsService extends IOIOService {
 	public final static int KRYPGRUND = R.id.crawlspaceStation;
 
 	private long watchdog_TimeSinceLastOkData;
+	private long mWatchdogTime;
 
 	public enum ServiceMode {
 		Survfind, Krypgrund;
@@ -99,29 +100,29 @@ public class KrypgrundsService extends IOIOService {
 			}
 
 			@Override
-			public void setup() throws ConnectionLostException,
-					InterruptedException {
+			public void setup() throws ConnectionLostException, InterruptedException {
+				isIOIOConnected = true;
 				timeForLastSendData = System.currentTimeMillis();
 				timeForLastAddToHistory = System.currentTimeMillis();
 				timeForLastFanControl = System.currentTimeMillis();
-				isIOIOConnected = true;
 				TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 				id = telephonyManager.getDeviceId();
 				updateSettings();
-				helper = new Helper(ioio_, KrypgrundsService.this, id, version,
-						serviceMode);
-				isInitialized = true;
+				helper = new Helper(ioio_, KrypgrundsService.this, id, version, serviceMode);
 				watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 				Helper.appendLog("*** IOIO connected OK. ***");
 				Helper.appendLog("Service mode is: " + serviceMode.toString());
+				isInitialized = true;
+				
 			}
 
 			@Override
 			public void loop() {
 				try {
-					if (System.currentTimeMillis()
-							- watchdog_TimeSinceLastOkData > TimeUnit.MINUTES
-								.toMillis(10)) {
+					//Keep this watchdog at top. Other dog will catch if no good data is returned.
+					mWatchdogTime = System.currentTimeMillis();
+
+					if (System.currentTimeMillis() - watchdog_TimeSinceLastOkData > TimeUnit.MINUTES.toMillis(60)) {
 						Helper.appendLog("Restarting ioio due to no good data for a long time.");
 						ioio_.hardReset();
 					}
@@ -134,18 +135,15 @@ public class KrypgrundsService extends IOIOService {
 
 						if (krypgrundSensor == HumidSensor.ChipCap2) {
 							KrypgrundStats oneKrypgrundMeasurement = (KrypgrundStats) oneMeasurement;
-							ChipCap2 inne = helper
-									.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
-							ChipCap2 ute = helper
-									.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+							ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+							ChipCap2 ute = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 							oneKrypgrundMeasurement.temperatureInne = inne.temperature;
 							oneKrypgrundMeasurement.moistureInne = inne.humidity;
 							oneKrypgrundMeasurement.temperatureUte = ute.temperature;
 							oneKrypgrundMeasurement.moistureUte = ute.humidity;
 							if (inne.okReading && ute.okReading) {
 								// Update the watchdog.
-								watchdog_TimeSinceLastOkData = System
-										.currentTimeMillis();
+								watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 							}
 
 							/*
@@ -153,11 +151,9 @@ public class KrypgrundsService extends IOIOService {
 							 * i gram/m3
 							 */
 
-							oneKrypgrundMeasurement.absolutFuktUte = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureUte) + 1))
+							oneKrypgrundMeasurement.absolutFuktUte = (float) (4.632248129 * (Math.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureUte) + 1))
 									* oneKrypgrundMeasurement.moistureUte;
-							oneKrypgrundMeasurement.absolutFuktInne = (float) (4.632248129 * (Math
-									.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureInne) + 1))
+							oneKrypgrundMeasurement.absolutFuktInne = (float) (4.632248129 * (Math.expm1(0.06321315927 * oneKrypgrundMeasurement.temperatureInne) + 1))
 									* oneKrypgrundMeasurement.moistureInne;
 							rawMeasurements.add(oneKrypgrundMeasurement);
 						}
@@ -169,9 +165,10 @@ public class KrypgrundsService extends IOIOService {
 						oneMeasurement = temp;
 						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
 						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
-						if (temp.windDirectionAvg != -1
-								&& temp.windSpeedAvg != -1) {
+						if (temp.windDirectionAvg != -1 && temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
+							// Update the watchdog.
+							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 						}
 
 					}
@@ -179,7 +176,7 @@ public class KrypgrundsService extends IOIOService {
 					oneMeasurement.temperature = helper.getTemp();
 
 					Thread.sleep(timeBetweenReading);
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					if (helper != null) {
@@ -210,20 +207,21 @@ public class KrypgrundsService extends IOIOService {
 	 * @param data
 	 */
 	public void ControlFan(KrypgrundStats data) {
-
-		if (System.currentTimeMillis() - timeForLastFanControl > TIME_BETWEEN_FAN_ON_OFF) {
-			timeForLastFanControl = System.currentTimeMillis();
-			// Dont start fans if inside temp is close to
-			// freezeingpoint.
-			if (data.temperatureInne < 0.5) {
-				helper.ControlFan(false);
-			} else {
-				// Start the fans!!
-
-				if (data.absolutFuktInne > data.absolutFuktUte + 15) {
-					helper.ControlFan(true);
-				} else {
+		if (data != null && helper != null) {
+			if (System.currentTimeMillis() - timeForLastFanControl > TIME_BETWEEN_FAN_ON_OFF) {
+				timeForLastFanControl = System.currentTimeMillis();
+				// Dont start fans if inside temp is close to
+				// freezeingpoint.
+				if (data.temperatureInne < 0.5) {
 					helper.ControlFan(false);
+				} else {
+					// Start the fans!!
+
+					if (data.absolutFuktInne > data.absolutFuktUte + 15) {
+						helper.ControlFan(true);
+					} else {
+						helper.ControlFan(false);
+					}
 				}
 			}
 		}
@@ -232,20 +230,21 @@ public class KrypgrundsService extends IOIOService {
 	private TimerTask mConnectTask = null;
 	private TimerTask mSendDataTask = null;
 	private TimerTask mAddToHistoryTask = null;
+	private TimerTask mPreventIOIOHWLockTask = null;
 	Timer addToHistoryTimer;
 	Timer ioioConnectorTimer;
 	Timer dataSenderTimer;
-
+	private Timer preventIOIOHWLockTimer;
+	
 	class SendDataTask extends TimerTask {
 		@Override
 		public void run() {
 			if (helper != null) {
+				debugText = "";
 				if (serviceMode == ServiceMode.Krypgrund) {
-					debugText = helper.SendDataToServer(krypgrundHistory,
-							ServiceMode.Krypgrund);
+					debugText = helper.SendDataToServer(krypgrundHistory, ServiceMode.Krypgrund);
 				} else if (serviceMode == ServiceMode.Survfind) {
-					debugText += helper.SendDataToServer(surfvindHistory,
-							ServiceMode.Survfind);
+					debugText += helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
 				}
 				timeForLastSendData = System.currentTimeMillis();
 			}
@@ -254,6 +253,20 @@ public class KrypgrundsService extends IOIOService {
 
 	}
 
+	class PreventIOIOHWLockTask extends TimerTask {
+		@Override
+		public void run() {
+			if (isIOIOConnected && helper != null && helper.ioio != null) {
+				try {
+					helper.ioio.hardReset();
+				} catch (ConnectionLostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 	class AddDataTask extends TimerTask {
 		@Override
 		public void run() {
@@ -263,21 +276,22 @@ public class KrypgrundsService extends IOIOService {
 
 			if (serviceMode == ServiceMode.Krypgrund) {
 				if (rawMeasurements != null && rawMeasurements.size() > 0) {
-					KrypgrundStats average = KrypgrundStats
-							.getAverage(rawMeasurements);
-					ControlFan(average);
-					average.fanOn = helper.IsFanOn();
-					krypgrundHistory.add(average);
+					KrypgrundStats average = KrypgrundStats.getAverage(rawMeasurements);
+					if (average != null) {
+						ControlFan(average);
+						if (helper != null) {
+							average.fanOn = helper.IsFanOn();
+						}
+						krypgrundHistory.add(average);
+					}
 					rawMeasurements.clear();
 				}
 				rawMeasurements = new ArrayList<KrypgrundStats>();
 			}
 
 			if (serviceMode == ServiceMode.Survfind) {
-				if (rawSurfvindsMeasurements != null
-						&& rawSurfvindsMeasurements.size() > 0) {
-					SurfvindStats average = SurfvindStats
-							.getAverage(rawSurfvindsMeasurements);
+				if (rawSurfvindsMeasurements != null && rawSurfvindsMeasurements.size() > 0) {
+					SurfvindStats average = SurfvindStats.getAverage(rawSurfvindsMeasurements);
 					surfvindHistory.add(average);
 					rawSurfvindsMeasurements.clear();
 				}
@@ -308,35 +322,37 @@ public class KrypgrundsService extends IOIOService {
 		};
 		Thread.setDefaultUncaughtExceptionHandler(s);
 
-		watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+		mWatchdogTime = watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 		if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected) {
+					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(10)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
-						// KrypgrundsService.this.restart();
+						KrypgrundsService.this.restart();
 					}
 				}
 			};
 			ioioConnectorTimer = new Timer("IOIOConnector");
-			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, 10000, 60000);
+			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.SECONDS.toMillis(15), TimeUnit.MINUTES.toMillis(10));
 		}
 
 		if (mSendDataTask == null) {
 			mSendDataTask = new SendDataTask();
 			dataSenderTimer = new Timer("DataSender");
-			dataSenderTimer.scheduleAtFixedRate(mSendDataTask,
-					timeBetweenSendingDataToServer,
-					timeBetweenSendingDataToServer);
+			dataSenderTimer.scheduleAtFixedRate(mSendDataTask, timeBetweenSendingDataToServer, timeBetweenSendingDataToServer);
 		}
 
 		if (mAddToHistoryTask == null) {
 			mAddToHistoryTask = new AddDataTask();
 			addToHistoryTimer = new Timer("AddToHistory");
-			addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask,
-					timeBetweenAddToHistory, timeBetweenAddToHistory);
+			addToHistoryTimer.scheduleAtFixedRate(mAddToHistoryTask, timeBetweenAddToHistory, timeBetweenAddToHistory);
+		}
+		if (mPreventIOIOHWLockTask != null) {
+			mPreventIOIOHWLockTask = new PreventIOIOHWLockTask();
+			preventIOIOHWLockTimer = new Timer("preventIOIOHWLockTimer");
+			preventIOIOHWLockTimer.scheduleAtFixedRate(mPreventIOIOHWLockTask, TimeUnit.DAYS.toMillis(1), TimeUnit.DAYS.toMillis(1));
 		}
 		return Service.START_STICKY;
 	}
@@ -353,22 +369,18 @@ public class KrypgrundsService extends IOIOService {
 	}
 
 	public void updateSettings() {
-		SharedPreferences prefs = getSharedPreferences("TNA_Sensor",
-				MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
 		int type = prefs.getInt(SetupActivity.SENSOR_TYPE_RADIO, SURFVIND);
 		if (type == SURFVIND)
 			serviceMode = ServiceMode.Survfind;
 		else if (type == KRYPGRUND)
 			serviceMode = ServiceMode.Krypgrund;
-		timeBetweenReading = prefs.getLong(SetupActivity.MEASUREMENT_DELAY_MS,
-				TimeUnit.SECONDS.toMillis(2));
+		timeBetweenReading = prefs.getLong(SetupActivity.MEASUREMENT_DELAY_MS, TimeUnit.SECONDS.toMillis(2));
 		if (timeBetweenReading == 0) {
 			timeBetweenReading = TimeUnit.SECONDS.toMillis(2);
 		}
 
-		timeBetweenSendingDataToServer = prefs.getLong(
-				SetupActivity.SEND_TO_SERVER_DELAY_MS,
-				TimeUnit.MINUTES.toMillis(5));
+		timeBetweenSendingDataToServer = prefs.getLong(SetupActivity.SEND_TO_SERVER_DELAY_MS, TimeUnit.MINUTES.toMillis(5));
 		if (timeBetweenSendingDataToServer == 0) {
 			timeBetweenSendingDataToServer = TimeUnit.MINUTES.toMillis(5);
 		}
@@ -377,8 +389,7 @@ public class KrypgrundsService extends IOIOService {
 
 		Helper.appendLog("Settings refreshed in Service:");
 		Helper.appendLog("ServiceMode =" + serviceMode.toString());
-		Helper.appendLog("TimeBetweenSendingDataToServer = "
-				+ timeBetweenSendingDataToServer);
+		Helper.appendLog("TimeBetweenSendingDataToServer = " + timeBetweenSendingDataToServer);
 		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
 		// helper.Destroy();
 		// helper
@@ -386,16 +397,14 @@ public class KrypgrundsService extends IOIOService {
 		if (dataSenderTimer != null) {
 			dataSenderTimer.cancel();
 			dataSenderTimer = new Timer("DataSenderTimer");
-			dataSenderTimer.scheduleAtFixedRate(new SendDataTask(),
-					timeBetweenSendingDataToServer,
-					timeBetweenSendingDataToServer);
+			dataSenderTimer.scheduleAtFixedRate(new SendDataTask(), timeBetweenSendingDataToServer, timeBetweenSendingDataToServer);
 		}
 		if (addToHistoryTimer != null) {
 			addToHistoryTimer.cancel();
 			addToHistoryTimer = new Timer("AddToHistoryTimer");
-			addToHistoryTimer.scheduleAtFixedRate(new AddDataTask(),
-					timeBetweenAddToHistory, timeBetweenAddToHistory);
+			addToHistoryTimer.scheduleAtFixedRate(new AddDataTask(), timeBetweenAddToHistory, timeBetweenAddToHistory);
 		}
+		
 	}
 
 	public void setForceFan(boolean on) {
@@ -418,6 +427,8 @@ public class KrypgrundsService extends IOIOService {
 				status.temperatureInne = oneReading.temperatureInne;
 				status.absolutFuktInne = oneReading.absolutFuktInne;
 				status.absolutFuktUte = oneReading.absolutFuktUte;
+				status.voltage = oneReading.batteryVoltage;
+
 			}
 			pos = rawSurfvindsMeasurements.size() - 1;
 			if (pos >= 0) {
@@ -425,19 +436,25 @@ public class KrypgrundsService extends IOIOService {
 				status.windDirection = (int) oneReading.windDirectionAvg;
 				status.windSpeed = oneReading.windSpeedAvg;
 				status.analogInput = oneReading.windDirectionAvg * 3.3f / 360f;
+				status.voltage = oneReading.batteryVoltage;
+
 			}
 		}
-		if (helper != null)
-			status.fanOn = helper.IsFanOn();
-		if (surfvindHistory != null)
-			status.historySize = surfvindHistory.size();
-		if (rawSurfvindsMeasurements != null)
-			status.readingSize = rawSurfvindsMeasurements.size();
-		if (krypgrundHistory != null)
-			status.historySize = krypgrundHistory.size();
-		if (rawMeasurements != null)
-			status.readingSize = rawMeasurements.size();
+		if (serviceMode == ServiceMode.Krypgrund) {
+			if (helper != null) {
+				status.fanOn = helper.IsFanOn();
+				if (krypgrundHistory != null)
+					status.historySize = krypgrundHistory.size();
+				if (rawMeasurements != null)
+					status.readingSize = rawMeasurements.size();
+			}
+		} else if (serviceMode == ServiceMode.Survfind) {
 
+			if (surfvindHistory != null)
+				status.historySize = surfvindHistory.size();
+			if (rawSurfvindsMeasurements != null)
+				status.readingSize = rawSurfvindsMeasurements.size();
+		}
 		status.statusMessage = debugText;
 		status.timeForLastSendData = timeForLastSendData;
 		status.timeBetweenSendingDataToServer = timeBetweenSendingDataToServer;
@@ -446,7 +463,7 @@ public class KrypgrundsService extends IOIOService {
 		status.timeBetweenReading = timeBetweenReading;
 		status.timeForLastFanControl = timeForLastFanControl;
 		status.deviceId = id;
-
+		
 		return status;
 	}
 }

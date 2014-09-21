@@ -13,10 +13,14 @@ import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -32,7 +36,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.tna.krypgrund.KrypgrundsService.ServiceMode;
+import android.app.Application;
+import android.content.Context;
+import android.os.Environment;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TimeUtils;
 
 public class Helper {
 	IOIO ioio = null;
@@ -78,34 +87,31 @@ public class Helper {
 	}
 
 	private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Continuos_Reading;
+	private static Context mCtx = null;
 
-	public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver,
-			ServiceMode mode) {
+	public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver, ServiceMode mode) {
 		ioio = _ioio;
 		krypService = kryp;
 		imei = id;
 		version = ver;
+		mCtx = kryp.getApplicationContext();
 		if (ioio != null) {
 			try {
 				// if (mode == ServiceMode.Survfind) {
 				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
-					mAnalogPulsecounter = ioio
-							.openAnalogInput(ANEMOMETER_SPEED);
+					mAnalogPulsecounter = ioio.openAnalogInput(ANEMOMETER_SPEED);
 				} else if (GET_SPEED_VERSION == FrequencyReading.Continuos_Reading) {
 					Spec spec = new Spec(ANEMOMETER_SPEED);
 					spec.mode = Mode.PULL_UP;
-					pulseCounter = ioio.openPulseInput(spec,
-							ClockRate.RATE_16MHz, PulseMode.FREQ, true);
+					pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_16MHz, PulseMode.FREQ, true);
 				} else if (GET_SPEED_VERSION == FrequencyReading.OpenClose_Reading) {
 					// Do nothing as open and close will be done at every
 					// call.
 				}
 				// } else if (mode == ServiceMode.Krypgrund) {
-				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz,
-						false);
-				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz,
-						false);
+				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
+				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
 				// }
 
 				// On board sensors. Are they used?
@@ -144,30 +150,36 @@ public class Helper {
 
 	public static void appendLog(String text) {
 		System.out.println(text);
+		// if (mCtx != null) {
 		try {
 			if (logFile == null) {
-				logFile = new File("sdcard/krypgrund_log.file");
+				// logFile = new File(mCtx.getFilesDir() +
+				// "/krypgrund_log.file");
+				// Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+				// +
+				logFile = new File("/sdcard/krypgrund_log.file");
 				if (!logFile.exists()) {
-					try {
-						logFile.createNewFile();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					logFile.createNewFile();
 				}
 			}
-
 			if (bufWriter == null) {
-				// BufferedWriter for performance, true to set append to file
+				// BufferedWriter for performance, true to set append to
+				// file
 				// flag
 				bufWriter = new BufferedWriter(new FileWriter(logFile, true));
 			}
+			long timestamp = System.currentTimeMillis();
+			CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", timestamp);
+			bufWriter.append(Long.toString(timestamp));
+			bufWriter.append(" - ");
+			bufWriter.append(cs.toString());
 
 			bufWriter.append(text);
 			bufWriter.newLine();
 			bufWriter.flush();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 
 			try {
 				if (bufWriter != null) {
@@ -175,12 +187,13 @@ public class Helper {
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				// e1.printStackTrace();
 			} finally {
 				bufWriter = null;
 				logFile = null;
 			}
 		}
+		// }
 	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
@@ -194,11 +207,9 @@ public class Helper {
 		try {
 			Thread.sleep(200);
 			if (type == SensorLocation.SensorInne) {
-				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1,
-						toReceive, 4);
+				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
 			} else if (type == SensorLocation.SensorUte) {
-				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1,
-						toReceive, 4);
+				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
 			}
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
@@ -211,8 +222,7 @@ public class Helper {
 		float humid = ((toReceive[0] & 0x3F) * 256 + (toReceive[1] & 0xFF));
 		humid /= Math.pow(2, 14);
 		humid *= 100;
-		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F)
-				/ 4;
+		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F) / 4;
 		temp /= Math.pow(2, 14);
 		temp *= 165;
 		temp -= 40;
@@ -332,8 +342,7 @@ public class Helper {
 						break;
 					}
 				} catch (Exception e) {
-					Log.e("Helper", "An IOIO command failed: Command = "
-							+ command);
+					Log.e("Helper", "An IOIO command failed: Command = " + command);
 					e.printStackTrace();
 
 				}
@@ -361,8 +370,7 @@ public class Helper {
 			anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 			Thread.sleep(200);
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: "
-					+ anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -371,8 +379,7 @@ public class Helper {
 			Log.e("Helper", "Now issuing a hard reset on IOIO");
 			ioio.hardReset();
 		} finally {
-			System.out
-					.println("======= GetWindDirection anemometer close.----");
+			System.out.println("======= GetWindDirection anemometer close.----");
 			anemometer.close();
 		}
 		return direction;
@@ -384,8 +391,7 @@ public class Helper {
 			// Thread.sleep(200);
 
 			float voltage = anemometer.getVoltage();
-			System.out.println("Volt: " + voltage + " Rate: "
-					+ anemometer.getSampleRate());
+			System.out.println("Volt: " + voltage + " Rate: " + anemometer.getSampleRate());
 			voltage *= 360 / 3.3f;
 			direction = voltage;
 		} catch (InterruptedException e) {
@@ -402,7 +408,7 @@ public class Helper {
 
 			voltage += voltage / 4400 * 24000;
 			System.out.println("VBatt: " + voltage);
-			voltage *= 100;
+			//voltage *= 100;
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -451,8 +457,7 @@ public class Helper {
 				}
 
 				HttpPost message = new HttpPost(postUrl);
-				message.addHeader("content-type",
-						"application/x-www-form-urlencoded");
+				message.addHeader("content-type", "application/x-www-form-urlencoded");
 
 				JSONArray dataArray = new JSONArray();
 
@@ -466,9 +471,10 @@ public class Helper {
 					}
 				}
 				data.put("measure", dataArray);
-				data.put("id", imei);
+				data.put("id", "\"" + imei + "\"");
 				data.put("version", version);
 				message.setEntity(new StringEntity(data.toString()));
+				System.out.print(data.toString());
 				HttpResponse response = client.execute(message);
 				if (response != null) {
 					StatusLine line = response.getStatusLine();
@@ -477,6 +483,7 @@ public class Helper {
 							// Delete the reading that are sent.
 							measurements.subList(0, nbrOfItemsToSend).clear();
 							sb.append(" Success");
+							sb.append(EntityUtils.toString(response.getEntity()));
 						} else {
 							SendSuccess = false;
 							sb.append("Fail: ");
@@ -562,8 +569,7 @@ public class Helper {
 		// WriteText("Volt:" + Float.toString(voltage));
 		// temperature =
 		// (float)(((float)((float)voltage/(float)supply)-(float)0.16)/(float)0.0062);
-		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375))
-				/ (float) 0.0225;
+		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375)) / (float) 0.0225;
 		// Temperature compensation for moisture
 		// int temperature = xxx;
 		// moisture =
@@ -586,8 +592,7 @@ public class Helper {
 			} else if (type == SensorLocation.SensorUte) {
 				capacitance = humidityOutside.read();
 			}
-			moisture = (capacitance - CalibrationDataHumidity)
-					/ CalibrationDataHumiditySensitivity + 55;
+			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -717,8 +722,7 @@ public class Helper {
 					status = false;
 				}
 			}
-			freq = NBR_READINGS_TO_ANALYZE - (endPulse - startPulse)
-					/ (float) (anemometer.getSampleRate() * nbrPulses);
+			freq = NBR_READINGS_TO_ANALYZE - (endPulse - startPulse) / (float) (anemometer.getSampleRate() * nbrPulses);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -741,8 +745,7 @@ public class Helper {
 
 		try {
 
-			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz,
-					PulseMode.FREQ, true);
+			pulseCounter = ioio.openPulseInput(spec, ClockRate.RATE_62KHz, PulseMode.FREQ, true);
 			Thread.sleep(500);
 			float duration = pulseCounter.waitPulseGetDuration();
 			freq = 1 / duration;
@@ -782,8 +785,7 @@ public class Helper {
 			public void run() {
 				try {
 					if (i2cInne != null) {
-						i2cInne.writeRead(adress / 2, false, toSend, 2,
-								receive, 0);
+						i2cInne.writeRead(adress / 2, false, toSend, 2, receive, 0);
 					} else {
 						Log.e("Helper", "I2C is null, no command sent!");
 					}

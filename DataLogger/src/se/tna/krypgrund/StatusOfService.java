@@ -22,6 +22,7 @@ public class StatusOfService {
 	public float analogInput = 0;
 	public int windDirection = 0;
 	public float windSpeed = 0;
+	public float voltage;
 	
 	public StatusOfService(){
 		timeOfCreation = System.currentTimeMillis();
