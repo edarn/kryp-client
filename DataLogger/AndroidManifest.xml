@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="13"
         android:targetSdkVersion="18" />
 
     <application

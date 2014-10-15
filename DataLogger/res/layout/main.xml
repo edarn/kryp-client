@@ -9,6 +9,51 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/speedLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="12 m/s"
+                    android:textSize="30dp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/arrow_background"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/compass_background" />
+
+                <ImageView
+                    android:id="@+id/arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/green_arrow" />
+            </FrameLayout>
+        </LinearLayout>
+
         <!-- ################ WEATHER STATION ###################### -->
 
         <LinearLayout
@@ -120,7 +165,8 @@
                 android:id="@+id/seekAnalogInput"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
-              <TextView
+
+            <TextView
                 android:id="@+id/textWindDirection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +179,6 @@
                 android:layout_height="wrap_content"
                 android:text="VindHastighet:"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-            
         </LinearLayout>
 
         <!-- ################ CRAWLSPACE STATION ###################### -->
@@ -155,8 +200,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="0" />
-
-                  </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/fanStatus"
@@ -171,7 +215,6 @@
             android:text="Luftfuktighet Inne"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-     
         <TextView
             android:id="@+id/textTempInne"
             android:layout_width="wrap_content"
@@ -179,7 +222,6 @@
             android:text="Temperatur Inne"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-      
         <TextView
             android:id="@+id/textFuktUte"
             android:layout_width="wrap_content"
@@ -187,7 +229,6 @@
             android:text="Luftfuktighet Ute"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-   
         <TextView
             android:id="@+id/textTempUte"
             android:layout_width="wrap_content"
@@ -195,7 +236,6 @@
             android:text="Temperatur Ute"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-      
         <TextView
             android:id="@+id/connectedText"
             android:layout_width="wrap_content"
@@ -223,8 +263,6 @@
             android:layout_height="wrap_content"
             android:text="Not Initialized"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
-       
 
         <LinearLayout
             android:layout_width="fill_parent"

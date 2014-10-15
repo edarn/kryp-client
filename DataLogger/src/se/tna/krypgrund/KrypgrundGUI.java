@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -53,6 +54,8 @@ public class KrypgrundGUI extends Activity {
 	private TextView textWindDirection;
 	private SeekBar windSeekBar;
 	private TextView textAnalogInput;
+	
+	private ImageView imv;
 
 	@Override
 	public void onPause() {
@@ -234,11 +237,71 @@ public class KrypgrundGUI extends Activity {
 				}
 			}
 		};
+		
 
 		timer.scheduleAtFixedRate(t, 0, 5000);
-
+		
+	    imv = (ImageView) findViewById(R.id.arrow);
+		/*
+		Timer te = new Timer();
+		TimerTask tu = new TimerTask() {
+			
+			@Override
+			public void run() {
+				
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						imv.setRotation(i);
+						i+=1;
+					}
+				});
+			}
+		};
+		
+		te.scheduleAtFixedRate(tu, 1,10);
+*/
+	    
+	/*    
+	    Gauge radial = GaugeBuilder.create()
+                .prefWidth(500)
+                .prefHeight(500)
+                .gaugeType(GaugeBuilder.GaugeType.RADIAL)
+                .frameDesign(Gauge.FrameDesign.STEEL)
+                .backgroundDesign(Gauge.BackgroundDesign.DARK_GRAY)
+                .lcdDesign(LcdDesign.STANDARD_GREEN)
+                .lcdDecimals(2)
+                .lcdValueFont(Gauge.LcdFont.LCD)
+                .pointerType(Gauge.PointerType.TYPE14)
+                .valueColor(ColorDef.RED)
+                .knobDesign(Gauge.KnobDesign.METAL)
+                .knobColor(Gauge.KnobColor.SILVER)
+                .sections(new Section[] {
+                    new Section(0, 37, Color.LIME),
+                    new Section(37, 60, Color.YELLOW),
+                    new Section(60, 75, Color.ORANGE})
+                .sectionsVisible(true)
+                .areas(new Section[] {new Section(75, 100, Color.RED)})
+                .areasVisible(true)
+                .markers(new Marker[] {
+                    new Marker(30, Color.MAGENTA),
+                    new Marker(75, Color.AQUAMARINE)})
+                .markersVisible(true)
+                .threshold(40)
+                .thresholdVisible(true)
+                .glowVisible(true)
+                .glowOn(true)
+                .trendVisible(true)
+                .trend(Gauge.Trend.UP)
+                .userLedVisible(true)
+                .bargraph(true)
+                .title("Temperature")
+                .unit("°C")
+                .build();
+	    */
 	}
-
+	int i = 0;
+	
 	@Override
 	protected void onStart() {
 
@@ -273,6 +336,8 @@ public class KrypgrundGUI extends Activity {
 					textWindDirection.setText("Vindriktning: " + status.windDirection);
 					textWindSpeed.setText("Vindhastighet: " + String.format("%.2f", status.windSpeed));
 					windSeekBar.setProgress(status.windDirection);
+					
+					imv.setRotation(status.windDirection);
 
 					textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
 					textTempInne.setText("Temp Inne: " + String.format("%.2f", status.temperatureInne));

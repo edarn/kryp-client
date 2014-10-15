@@ -157,7 +157,7 @@ public class Helper {
 				// "/krypgrund_log.file");
 				// Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 				// +
-				logFile = new File("/sdcard/krypgrund_log.file");
+				logFile = new File("/sdcard/krypgrund_log.txt");
 				if (!logFile.exists()) {
 					logFile.createNewFile();
 				}
@@ -408,7 +408,7 @@ public class Helper {
 
 			voltage += voltage / 4400 * 24000;
 			System.out.println("VBatt: " + voltage);
-			//voltage *= 100;
+			// voltage *= 100;
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();

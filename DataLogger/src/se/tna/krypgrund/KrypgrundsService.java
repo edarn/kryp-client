@@ -26,7 +26,7 @@ import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
-	private static final String version = "IOIO_R1A03";
+	private static final String version = "IOIO_R1A04";
 	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
 	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
 	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(5);
@@ -141,7 +141,7 @@ public class KrypgrundsService extends IOIOService {
 							oneKrypgrundMeasurement.moistureInne = inne.humidity;
 							oneKrypgrundMeasurement.temperatureUte = ute.temperature;
 							oneKrypgrundMeasurement.moistureUte = ute.humidity;
-							if (inne.okReading && ute.okReading) {
+							if (inne.okReading || ute.okReading) {
 								// Update the watchdog.
 								watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 							}
@@ -165,7 +165,7 @@ public class KrypgrundsService extends IOIOService {
 						oneMeasurement = temp;
 						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
 						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
-						if (temp.windDirectionAvg != -1 && temp.windSpeedAvg != -1) {
+						if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
@@ -231,9 +231,9 @@ public class KrypgrundsService extends IOIOService {
 	private TimerTask mSendDataTask = null;
 	private TimerTask mAddToHistoryTask = null;
 	private TimerTask mPreventIOIOHWLockTask = null;
-	Timer addToHistoryTimer;
-	Timer ioioConnectorTimer;
-	Timer dataSenderTimer;
+	private Timer addToHistoryTimer;
+	private Timer ioioConnectorTimer;
+	private Timer dataSenderTimer;
 	private Timer preventIOIOHWLockTimer;
 	
 	class SendDataTask extends TimerTask {
@@ -243,10 +243,12 @@ public class KrypgrundsService extends IOIOService {
 				debugText = "";
 				if (serviceMode == ServiceMode.Krypgrund) {
 					debugText = helper.SendDataToServer(krypgrundHistory, ServiceMode.Krypgrund);
+					timeForLastSendData = System.currentTimeMillis();
 				} else if (serviceMode == ServiceMode.Survfind) {
 					debugText += helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
+					timeForLastSendData = System.currentTimeMillis();
 				}
-				timeForLastSendData = System.currentTimeMillis();
+				
 			}
 
 		}
@@ -328,14 +330,14 @@ public class KrypgrundsService extends IOIOService {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(10)) {
+					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(60)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
 				}
 			};
 			ioioConnectorTimer = new Timer("IOIOConnector");
-			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.SECONDS.toMillis(15), TimeUnit.MINUTES.toMillis(10));
+			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(10));
 		}
 
 		if (mSendDataTask == null) {
@@ -354,6 +356,11 @@ public class KrypgrundsService extends IOIOService {
 			preventIOIOHWLockTimer = new Timer("preventIOIOHWLockTimer");
 			preventIOIOHWLockTimer.scheduleAtFixedRate(mPreventIOIOHWLockTask, TimeUnit.DAYS.toMillis(1), TimeUnit.DAYS.toMillis(1));
 		}
+		
+		Helper.appendLog("ServiceMode =" + serviceMode.toString());
+		Helper.appendLog("TimeBetweenSendingDataToServer = " + timeBetweenSendingDataToServer);
+		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
+		
 		return Service.START_STICKY;
 	}
 
@@ -391,9 +398,7 @@ public class KrypgrundsService extends IOIOService {
 		Helper.appendLog("ServiceMode =" + serviceMode.toString());
 		Helper.appendLog("TimeBetweenSendingDataToServer = " + timeBetweenSendingDataToServer);
 		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
-		// helper.Destroy();
-		// helper
-
+		
 		if (dataSenderTimer != null) {
 			dataSenderTimer.cancel();
 			dataSenderTimer = new Timer("DataSenderTimer");
