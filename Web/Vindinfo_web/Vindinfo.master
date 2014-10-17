@@ -1,0 +1,143 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Vindinfo.master.cs" Inherits="Vindinfo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://opengraphprotocol.org/schema/"
+>
+<head runat="server">
+    <title>Vindinfo, Weather Report</title>
+    
+    <meta name="description" content="Present wind speed and wind direction and history" />
+    <meta name="keywords" content="weather, weather info, wind speed, wind direction, air temperature, water temperature, weather histogram. Wind master" />
+
+    <meta property="og:site_name" content="vindinfo.se"/> 
+    <meta property="og:title" content="vindinfo"/>
+    <meta property="og:type" content="website"/> 
+    <meta property="og:image" content="http://www.vindinfo.se/design/Weather.gif"/> 
+    <meta property="og:url" content="http://www.vindinfo.se/"/> 
+    <meta property="og:name" content="vindinfo.se"/> 
+
+    <script type="text/javascript" src="js/dropdown.js"></script>
+    <script type="text/javascript" src="js/cool.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/dropdown.css" /> 
+    <style type="text/css">
+        .styleHeader
+        {
+            width: 100%;
+            height: 30px;
+            text-align: center;
+            background-repeat: repeat;
+        }
+        .styleIndex
+        {
+            width: 8.5%;
+            text-align: left;
+            vertical-align: top;
+            text-align: left;
+            font-family: tahoma, sans-serif;
+            color: #666666;
+            padding: 0em;
+            margin: 0em;
+            background:url(./design/frame_top.PNG) repeat-x;
+        }
+        .styleMain
+        {
+        	width: 80%;
+        	height: 300px;
+            text-align: left;
+            vertical-align: top;
+            font-family: tahoma, sans-serif;
+            color: #666666;
+            padding: 0em;
+            margin: 0em;
+            background:url(./design/frame_top.PNG) repeat-x;
+        }
+        .styleFooter 
+        {
+        	width: 100%;
+        	height: 100px;
+        	text-align: center;
+            font-family: tahoma, sans-serif;
+            color: #666666;
+            padding: 0em;
+            margin: 0em;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server" style="width: 100%; height: 100%;">
+    <div id="header" class="styleHeader" style="text-align: center;">
+        <asp:ContentPlaceHolder id="contentHead" runat="server">
+        <img src="./design/Weather.gif" alt="" width="50px" height="50px" style="position:absolute; left:70px;"/>
+        <!--<asp:DropDownList ID="locations" runat="server" Visible="false" ></asp:DropDownList> -->
+        <div class="menuwrapper" style="position: absolute; left: 10%; text-align: center; width: 30%;">
+            <!-- <a href="./Default.aspx" class="nodrop">Home</a> -->
+            <dl class="dropdown">
+                <dt id="locations-ddheader" onmouseover="ddMenu('locations',1)" onmouseout="ddMenu('locations',-1);">Weather</dt>
+                <dd id="locations-ddcontent" onmouseover="cancelHide('locations')" onmouseout="ddMenu('locations',-1)">
+                <ul id="ularens" runat="server">
+                   
+                </ul>
+                </dd>
+            </dl>
+            <dl class="dropdown">
+                <dt id="about-ddheader" onmouseover="ddMenu('about',1)" onmouseout="ddMenu('about',-1);">About</dt>
+                <dd id="about-ddcontent" onmouseover="cancelHide('about')" onmouseout="ddMenu('about',-1)">
+                <ul>
+                    <li><a href="./contacts.aspx?page=contacts" class='underline'>Contacts</a></li>
+                    <li><a href="./contacts.aspx?page=info" class='underline'>Info</a></li>
+                </ul>
+                </dd>
+            </dl>
+            <a href="./Download.aspx" class="nodrop">Download</a>
+        <div style="clear:both" />
+      <!-- <a href="./Default.aspx" class="nodrop" ><img border="0" src="./Images/vindinfo_title.png" alt="" style="position: absolute; left: 85%; top: -30px; width: 300px" onmouseover="this.src='./Images/vindinfo_title_mouseOver.png';" onmouseout="this.src='./Images/vindinfo_title.png';" /> </a> -->
+    </div>
+    </asp:ContentPlaceHolder>
+    </div>
+    <div style="width: 100%;">
+        <table width="100%">
+        <tr>
+            <td id="index" class="styleIndex"> </td>
+            <td id="main" class="styleMain">
+                <asp:ContentPlaceHolder id="contentMain" runat="server">
+                </asp:ContentPlaceHolder>
+            </td>
+            <td id="rightBanner">
+                <asp:ContentPlaceHolder id="contentBanner" runat="server">
+                    <%--<img src="design/banner.png" alt="Banner" />--%>
+                    <script type="text/javascript">
+                        google_ad_client = "pub-0138803691600797";
+                        /* Surfvind */
+                        google_ad_slot = "5711094823";
+                        google_ad_width = 160;
+                        google_ad_height = 600;    
+                    </script>
+                <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+                </script>
+                </asp:ContentPlaceHolder>
+            </td>
+        </tr>
+        </table>
+        </div>
+        <div id="footer" class="styleFooter">
+            <%--<img src="design/banner.png" alt="Banner" />--%>
+           <script type="text/javascript"><!--
+                google_ad_client = "pub-0138803691600797";
+                /* 728x90, skapad 2009-04-05 */
+                google_ad_slot = "0510411231";
+                google_ad_width = 728;
+                google_ad_height = 90;
+                //-->
+           </script>
+           <script type="text/javascript"
+                src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+           </script>
+           <br />
+           <span style="color:red">Contact:</span> thomas@tna.se 
+        </div>
+    </form>
+</body>
+</html>

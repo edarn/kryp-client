@@ -1,0 +1,451 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+using @DR = System.Drawing;
+using System.Drawing;
+using GoogleChartSharp;
+
+public class Helper
+{    
+	//public const int CNT_TIME_INTERVALS = 5;
+	// Graphix.FillPie - to draw sector
+	private Helper()
+	{
+    }
+
+    #region #Speed Image       
+    private static DR.Bitmap GetSpeedBitmap(int alpha, int minAlpha, int maxAlpha, HttpServerUtility server)
+    {        
+		//Speed meter		
+        DR.Bitmap speed = new DR.Bitmap(server.MapPath("~/Images/ws_speed.png"));
+		DR.Graphics speedGr = DR.Graphics.FromImage(speed);
+
+		//Speed arrow
+        DR.Bitmap arrow = new DR.Bitmap(server.MapPath("~/Images/ws_speed_arrow.png"));
+        DR.Graphics arrowGr = DR.Graphics.FromImage(arrow);
+
+		// center of arrow image
+		PointF rotationCenterArrow = new PointF((float)arrow.Width / 2 + 1, (float)arrow.Height - 21);
+		//arrowGr.DrawLine(new Pen(Color.Red), new Point(0, arrow.Height - 21), new Point(arrow.Width, arrow.Height - 21));
+		//arrowGr.DrawLine(new Pen(Color.Red), new Point(arrow.Width / 2 + 1, 0), new Point(arrow.Width / 2 + 1, arrow.Height));
+
+		//Green marker
+		DR.Bitmap greenMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_white.png"));
+		DR.Graphics greenMarkerGr = DR.Graphics.FromImage(arrow);
+
+		//Red marker
+		DR.Bitmap redMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_grey.png"));
+		DR.Graphics redMarkerGr = DR.Graphics.FromImage(arrow);
+
+		//Temporary bitmap
+        DR.Bitmap tempBmp = new DR.Bitmap(speed.Width, speed.Height);
+        DR.Graphics tempGr = DR.Graphics.FromImage(tempBmp);
+
+		// center of speed image
+		PointF rotationCenterSpeed = new PointF((float)speed.Width / 2 - 2 + 2, (float)speed.Height / 2 + 2  - 3);
+		//PointF rotationCenterSpeed = new PointF((float)speed.Width / 2, (float)speed.Height / 2);
+		//tempGr.DrawLine(new Pen(Color.Yellow), new Point(0, speed.Height / 2 + 2  - 3), new Point(speed.Width, speed.Height / 2 + 2  - 3));
+		//tempGr.DrawLine(new Pen(Color.Yellow), new Point(speed.Width / 2 - 2 + 2, 0), new Point(speed.Width / 2 - 2 + 2, speed.Height));
+
+
+		// draw light sector
+		Brush br = new SolidBrush(Color.FromArgb(30, 255, 200, 255));
+		int dw = 12;
+		tempGr.FillPie(br, new Rectangle(dw, dw, speed.Width - 2 - dw * 2, speed.Height - 2 - dw * 2), minAlpha - 90, maxAlpha - minAlpha);
+
+		//Draw green marker
+		DR.Drawing2D.Matrix X = new DR.Drawing2D.Matrix();		
+		X.RotateAt(minAlpha, rotationCenterSpeed);
+		tempGr.Transform = X;
+		tempGr.DrawImage(greenMarker,
+			new DR.PointF(rotationCenterSpeed.X - rotationCenterArrow.X, rotationCenterSpeed.Y - rotationCenterArrow.Y));
+			//new DR.PointF(speed.Width / 2 - arrow.Width / 2 + 2, speed.Height / 2 - arrow.Height + 20));
+
+		//Draw red marker
+		X.Reset();
+		X.RotateAt(maxAlpha, rotationCenterSpeed);
+		tempGr.Transform = X;		
+		tempGr.DrawImage(redMarker,
+			new DR.PointF(rotationCenterSpeed.X - rotationCenterArrow.X, rotationCenterSpeed.Y - rotationCenterArrow.Y));
+			//new DR.PointF(speed.Width / 2 - arrow.Width / 2 + 2, speed.Height / 2 - arrow.Height + 20));
+		
+		//Draw arrow
+		X.Reset();
+		X.RotateAt(alpha, rotationCenterSpeed);
+        tempGr.Transform = X;		
+		
+        tempGr.DrawImage(arrow, new DR.PointF(rotationCenterSpeed.X - rotationCenterArrow.X, rotationCenterSpeed.Y - rotationCenterArrow.Y));
+		X.Reset();
+
+        //speedGr.DrawImage(tempBmp, new DR.Point(0, 0));
+		tempBmp.MakeTransparent(tempBmp.GetPixel(0, 0));
+        return tempBmp;
+    }
+
+	private static int ConvertToAngle(float windSpeed)
+	{
+		// -104 .. 104 == 0..40
+		//return (int)(-112 + (220) * windSpeed / 40);
+		return (int)(-134 + (269) * windSpeed / 30);
+	}
+
+	public static DR.Bitmap GetWindSpeedPic(float windSpeed, float minSpeed, float maxSpeed, HttpServerUtility server)
+    {
+		return GetSpeedBitmap(ConvertToAngle(windSpeed), ConvertToAngle(minSpeed), ConvertToAngle(maxSpeed), server);
+    }
+    #endregion
+
+    #region #Compass Image
+	private static DR.Bitmap GetCompassBitmap(int avAngle, int minAngle, int maxAngle, HttpServerUtility server)
+    {
+		//Compass circle
+        DR.Bitmap compass = new DR.Bitmap(server.MapPath("~/Images/ws_compass.png"));
+        DR.Graphics compassGr = DR.Graphics.FromImage(compass);
+
+		//Compass arrow
+        DR.Bitmap arrow = new DR.Bitmap(server.MapPath("~/Images/ws_compass_arrow.png"));
+        DR.Graphics arrowGr = DR.Graphics.FromImage(arrow);
+
+		//Green marker
+		DR.Bitmap greenMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_white.png"));
+		DR.Graphics greenMarkerGr = DR.Graphics.FromImage(arrow);
+
+		//Red marker
+		DR.Bitmap redMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_grey.png"));
+		DR.Graphics redMarkerGr = DR.Graphics.FromImage(arrow);
+
+		//Temporary bitmap
+        DR.Bitmap tempBmp = new DR.Bitmap(compass.Width, compass.Height);
+        DR.Graphics tempGr = DR.Graphics.FromImage(tempBmp);
+
+		// draw light sector
+		Brush br = new SolidBrush(Color.FromArgb(30, 255, 200, 255));
+		int dw = 12;
+		tempGr.FillPie(br, new Rectangle(dw, dw, compass.Width - 2 - dw * 2, compass.Height - 2 - dw * 2), minAngle - 90 + 3, maxAngle - minAngle);
+
+		//Draw green marker
+		DR.Drawing2D.Matrix X = new DR.Drawing2D.Matrix();
+		X.RotateAt(minAngle, new DR.PointF(compass.Width / 2, compass.Height / 2));
+		tempGr.Transform = X;
+		tempGr.DrawImage(greenMarker, new DR.PointF(compass.Width / 2 - arrow.Width / 2, compass.Height / 2 - arrow.Height / 2));
+
+		//Draw red marker
+		X.Reset();
+		X.RotateAt(maxAngle, new DR.PointF(compass.Width / 2, compass.Height / 2));
+		tempGr.Transform = X;
+		tempGr.DrawImage(redMarker, new DR.PointF(compass.Width / 2 - arrow.Width / 2, compass.Height / 2 - arrow.Height / 2));
+
+		//Draw compass arrow
+		X.Reset();
+		X.RotateAt(avAngle, new DR.PointF(compass.Width / 2, compass.Height / 2));
+        tempGr.Transform = X;
+		tempGr.DrawImage(arrow, new DR.PointF(compass.Width / 2 - arrow.Width / 2, compass.Height / 2 - arrow.Height / 2));
+		X.Reset();
+
+        //compassGr.DrawImage(tempBmp, new DR.Point(0, 0));
+		tempBmp.MakeTransparent(tempBmp.GetPixel(0, 0));
+		return tempBmp;
+    }
+
+    public static DR.Bitmap GetCompassPic(int avDir, int minDir, int maxDir, HttpServerUtility server)
+    {
+		return GetCompassBitmap((int)(avDir / 4.17), (int)(minDir / 4.17), (int)(maxDir / 4.17), server);
+    }
+    #endregion
+
+    #region #Google Charts         
+
+	#region OLDES METHODS		
+
+	/*
+	//imgChart.ImageUrl = @"http://chart.apis.google.com/chart?chs=250x100&amp;chd=t:60,40&amp;cht=p3&amp;chl=Hello|World";
+	//imgChart.ImageUrl = @"http://chart.apis.google.com/chart?cht=lc&chs=400x400&chd=t:100,60,120,80&chds=0,100&chco=224499&chxt=x,y&chxl=0:|Sep-10|Oct-20|Nov-30|Dec-40|1:||0|10|20|30|40|50|60|70|80|90|100&chm=B,76A4FB,0,0,0";
+    public static string GetChartURL(float[] dataArr)
+    {
+        // Instantiate the chart object
+        LineChart lineChart = new LineChart(250, 150);
+        // Values to be charted        
+
+        // Set chart title using default color and font
+        lineChart.SetTitle("Step Size Test");
+
+        // This is a x and y axis chart. Create two new axis objects
+        lineChart.AddAxis(new ChartAxis(ChartAxisType.Left));
+        lineChart.AddAxis(new ChartAxis(ChartAxisType.Bottom));
+
+        // Load the chart with the dataset (line int array)
+        lineChart.SetData(dataArr);
+
+        // Add a grid to the chart (dotted grid lines)
+        lineChart.SetGrid(20, 50);
+
+        // retuns the FQDN of the chart
+        return lineChart.GetUrl();
+    }
+	*/
+	/*
+    /// <summary>
+    /// array of 8 values of wind directions in percentages counts
+    /// </summary>
+    public static string GetDirectionURL(int[] dataArr, Size imgSize)
+    {       
+        float[] cnts = new float[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        foreach (int val in dataArr)
+        {
+            if (val > 187.5 * 0 && val <= 187.5 * 1)
+                cnts[0] = cnts[0] + 1;
+            if (val > 187.5 * 1 && val <= 187.5 * 2)
+                cnts[1] = cnts[1] + 1;
+            if (val > 187.5 * 2 && val <= 187.5 * 3)
+                cnts[2] = cnts[2] + 1;
+            if (val > 187.5 * 3 && val <= 187.5 * 4)
+                cnts[3] = cnts[3] + 1;
+            if (val > 187.5 * 4 && val <= 187.5 * 5)
+                cnts[4] = cnts[4] + 1;
+            if (val > 187.5 * 5 && val <= 187.5 * 6)
+                cnts[5] = cnts[5] + 1;
+            if (val > 187.5 * 6 && val <= 187.5 * 7)
+                cnts[6] = cnts[6] + 1;
+            if (val > 187.5 * 7 && val <= 1500)//187.5 * 8)
+                cnts[7] = cnts[7] + 1;
+        }
+        for (int i = 0; i < cnts.Length; i++)
+        {
+            if (dataArr.Length != 0)
+                cnts[i] = cnts[i] * 100 / dataArr.Length;
+            else
+                cnts[i] = 0;
+        }
+
+        LineChart chart = new LineChart(imgSize.Width, imgSize.Height);
+        chart.SetTitle("");
+        chart.SetData(cnts);     
+        //chart.SetGrid((float)14.28, (float)20);     
+
+
+        ChartAxis axisY = new ChartAxis(ChartAxisType.Left);        
+        axisY.AddLabel(new ChartAxisLabel("0", (float)(0 * 10)));
+        axisY.AddLabel(new ChartAxisLabel("20", (float)(2 * 10)));
+        axisY.AddLabel(new ChartAxisLabel("40", (float)(4 * 10)));
+        axisY.AddLabel(new ChartAxisLabel("60", (float)(6 * 10)));
+        axisY.AddLabel(new ChartAxisLabel("80", (float)(8 * 10)));
+        axisY.AddLabel(new ChartAxisLabel("100", (float)(10 * 10)));         
+        chart.AddAxis(axisY);
+
+        ChartAxis axisX = new ChartAxis(ChartAxisType.Bottom);        
+        axisX.AddLabel(new ChartAxisLabel("N", (float)(0 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("NE", (float)(1 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("E", (float)(2 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("SE", (float)(3 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("S", (float)(4 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("SW", (float)(5 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("W", (float)(6 * 14.28)));
+        axisX.AddLabel(new ChartAxisLabel("NW", (float)(100)));//(7 * 14.28)));        
+        chart.AddAxis(axisX);          
+        chart.SetDatasetColors(new string[] { "224499" });
+        chart.AddFillArea(new FillArea("76A4FB", 0));
+
+        return chart.GetUrl();
+    }
+	*/
+	#endregion
+
+	public static string GetSpeedURL(float[] dataArr, string[] labels, Size imgSize)
+	{
+		LineChart chart = new LineChart(imgSize.Width, imgSize.Height);
+		chart.SetTitle("");
+				
+		float maxVal = dataArr[0];		
+		for (int i = 0; i < dataArr.Length; i++)
+		{
+			// 2.5 to correct values, therefore was grid spep equal 2.5
+			//dataArr[i] = (float)(dataArr[i] * 2.5);
+			
+			if (dataArr[i] > maxVal)
+				maxVal = dataArr[i];
+		}		
+			
+		
+		ChartAxis axisY = new ChartAxis(ChartAxisType.Left);
+		float coeff = maxVal / 5;
+		
+		if (maxVal >= 0.0 && maxVal < 1)
+		{
+			axisY.SetRange(0, 1);
+			coeff = (float)1 / (float)5;
+		}
+		else
+		{
+			axisY.SetRange(0, (int)maxVal);
+		}
+
+		for (int i = 0; i < dataArr.Length; i++)
+		{
+			// 2.5 to correct values, therefore was grid spep equal 2.5
+			//dataArr[i] = (float)(dataArr[i] * 2.5);
+			dataArr[i] = dataArr[i] * 5;
+		}
+		chart.SetData(dataArr);		
+
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)0 * coeff), (float)(0 * coeff)));
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)1 * coeff), (float)(1 * coeff)));
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)2 * coeff), (float)(2 * coeff)));
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)3 * coeff), (float)(3 * coeff)));
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)4 * coeff), (float)(4 * coeff)));
+		axisY.AddLabel(new ChartAxisLabel(string.Format("{0:F2}", (float)5 * coeff), (float)(5 * coeff)));
+		/*
+		axisY.AddLabel(new ChartAxisLabel("0", (float)(0 * 2.5)));
+		axisY.AddLabel(new ChartAxisLabel("10", (float)(10 * 2.5)));
+		axisY.AddLabel(new ChartAxisLabel("20", (float)(20 * 2.5)));
+		axisY.AddLabel(new ChartAxisLabel("30", (float)(30 * 2.5)));
+		axisY.AddLabel(new ChartAxisLabel("40", (float)(40 * 2.5)));
+		*/
+		chart.AddAxis(axisY);
+
+		ChartAxis axisX = new ChartAxis(ChartAxisType.Bottom);
+		axisX.FontSize = 8;
+		ChartAxis axisX2 = new ChartAxis(ChartAxisType.Bottom);
+		axisX2.FontSize = 8;
+
+		#region # oldest version display labels in intervals
+		/*
+		axisX.AddLabel(new ChartAxisLabel(labels[0].Substring(0, labels[0].IndexOf("*")), (float)3));
+		axisX.AddLabel(new ChartAxisLabel(labels[1].Substring(0, labels[1].IndexOf("*")), (float)20));
+		axisX.AddLabel(new ChartAxisLabel(labels[2].Substring(0, labels[2].IndexOf("*")), (float)40));
+		axisX.AddLabel(new ChartAxisLabel(labels[3].Substring(0, labels[3].IndexOf("*")), (float)60));
+		axisX.AddLabel(new ChartAxisLabel(labels[4].Substring(0, labels[4].IndexOf("*")), (float)80));
+		axisX.AddLabel(new ChartAxisLabel(labels[5].Substring(0, labels[5].IndexOf("*")), (float)100));
+
+		axisX2.AddLabel(new ChartAxisLabel(labels[0].Substring(labels[0].IndexOf("*") + 1), (float)3));
+		axisX2.AddLabel(new ChartAxisLabel(labels[1].Substring(labels[1].IndexOf("*") + 1), (float)20));
+		axisX2.AddLabel(new ChartAxisLabel(labels[2].Substring(labels[2].IndexOf("*") + 1), (float)40));
+		axisX2.AddLabel(new ChartAxisLabel(labels[3].Substring(labels[3].IndexOf("*") + 1), (float)60));
+		axisX2.AddLabel(new ChartAxisLabel(labels[4].Substring(labels[4].IndexOf("*") + 1), (float)80));
+		axisX2.AddLabel(new ChartAxisLabel(labels[5].Substring(labels[5].IndexOf("*") + 1), (float)100));
+		*/
+		#endregion
+		#region # nevest version display labels in intervals
+		axisX.AddLabel(new ChartAxisLabel(labels[0].Substring(0, labels[0].IndexOf("*")), (float)3));
+		axisX2.AddLabel(new ChartAxisLabel(labels[0].Substring(labels[0].IndexOf("*") + 1), (float)3));
+		int sizeInterval = 100 / (labels.Length - 1);
+		int cntSteps = 100 / sizeInterval;
+		if ((float)100 / (float)sizeInterval > (float)cntSteps)
+			cntSteps++;
+		for (int i = 1; i < cntSteps; i++)
+		{
+			axisX.AddLabel(new ChartAxisLabel(labels[i].Substring(0, labels[i].IndexOf("*")), (float)i * sizeInterval));
+			axisX2.AddLabel(new ChartAxisLabel(labels[i].Substring(labels[i].IndexOf("*") + 1), (float)i * sizeInterval));
+		}
+		#endregion
+
+		//axisX.AddLabel(new ChartAxisLabel("", (float)0));
+		//axisX.AddLabel(new ChartAxisLabel("For selected period", (float)50));
+		chart.AddAxis(axisX);
+		chart.AddAxis(axisX2);
+
+		chart.SetDatasetColors(new string[] { "224499" });
+		chart.AddFillArea(new FillArea("76A4FB", 0));
+		return chart.GetUrl();
+	}
+
+	public static string GetDirectionURL(float[] dataArr, string []labels, Size imgSize)
+	{
+		LineChart chart = new LineChart(imgSize.Width, imgSize.Height);
+		chart.SetTitle("");
+		float[] arr = new float[dataArr.Length];
+		for (int i = 0; i < dataArr.Length; i++)
+			arr[i] = GetDirectionValue(dataArr[i]);
+		chart.SetData(arr);
+
+		ChartAxis axisY = new ChartAxis(ChartAxisType.Left, new string[] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" });
+		chart.AddAxis(axisY);
+		
+
+		ChartAxis axisX = new ChartAxis(ChartAxisType.Bottom);		
+		axisX.FontSize = 8;
+		ChartAxis axisX2 = new ChartAxis(ChartAxisType.Bottom);
+		axisX2.FontSize = 8;
+
+		#region # oldest version display labels in intervals
+		/*
+		axisX.AddLabel(new ChartAxisLabel(labels[0].Substring(0, labels[0].IndexOf("*")), (float)3));
+		axisX.AddLabel(new ChartAxisLabel(labels[1].Substring(0, labels[1].IndexOf("*")), (float)20));
+		axisX.AddLabel(new ChartAxisLabel(labels[2].Substring(0, labels[2].IndexOf("*")), (float)40));
+		axisX.AddLabel(new ChartAxisLabel(labels[3].Substring(0, labels[3].IndexOf("*")), (float)60));
+		axisX.AddLabel(new ChartAxisLabel(labels[4].Substring(0, labels[4].IndexOf("*")), (float)80));
+		axisX.AddLabel(new ChartAxisLabel(labels[5].Substring(0, labels[5].IndexOf("*")), (float)100));
+
+		axisX2.AddLabel(new ChartAxisLabel(labels[0].Substring(labels[0].IndexOf("*") + 1), (float)3));
+		axisX2.AddLabel(new ChartAxisLabel(labels[1].Substring(labels[1].IndexOf("*") + 1), (float)20));
+		axisX2.AddLabel(new ChartAxisLabel(labels[2].Substring(labels[2].IndexOf("*") + 1), (float)40));
+		axisX2.AddLabel(new ChartAxisLabel(labels[3].Substring(labels[3].IndexOf("*") + 1), (float)60));
+		axisX2.AddLabel(new ChartAxisLabel(labels[4].Substring(labels[4].IndexOf("*") + 1), (float)80));
+		axisX2.AddLabel(new ChartAxisLabel(labels[5].Substring(labels[5].IndexOf("*") + 1), (float)100));
+		*/
+		#endregion
+		#region # nevest version display labels in intervals
+		axisX.AddLabel(new ChartAxisLabel(labels[0].Substring(0, labels[0].IndexOf("*")), (float)3));
+		axisX2.AddLabel(new ChartAxisLabel(labels[0].Substring(labels[0].IndexOf("*") + 1), (float)3));
+		int sizeInterval = 100 / (labels.Length - 1);
+		int cntSteps = 100 / sizeInterval;
+		if ((float)100 / (float)sizeInterval > (float)cntSteps)
+			cntSteps++;
+		for (int i = 1; i < cntSteps; i++)
+		{
+			axisX.AddLabel(new ChartAxisLabel(labels[i].Substring(0, labels[i].IndexOf("*")), (float)i * sizeInterval));
+			axisX2.AddLabel(new ChartAxisLabel(labels[i].Substring(labels[i].IndexOf("*") + 1), (float)i * sizeInterval));
+		}
+		#endregion
+
+		chart.AddAxis(axisX);
+		chart.AddAxis(axisX2);		
+
+		chart.SetDatasetColors(new string[] { "224499" });
+		chart.AddFillArea(new FillArea("76A4FB", 0));
+
+		return chart.GetUrl();
+	}
+
+	/// <summary>
+	/// Return value in Graphix Y-value to current (val) value of average direction
+	/// </summary>
+	/// <param name="val">average direction</param>
+	/// <returns>point Y-coordinate on graphix</returns>
+	public static float GetDirectionValue(float val)
+	{		
+		//"N"
+		if (val > 187.5 * 0 && val <= 187.5 * 1)
+			return (float)(0 * 14.28);
+		//"NE"
+		if (val > 187.5 * 1 && val <= 187.5 * 2)
+			return (float)(1 * 14.28);
+		//"E"
+		if (val > 187.5 * 2 && val <= 187.5 * 3)
+			return (float)(2 * 14.28);
+		//"SE"
+		if (val > 187.5 * 3 && val <= 187.5 * 4)
+			return (float)(3 * 14.28);
+		//"S"
+		if (val > 187.5 * 4 && val <= 187.5 * 5)
+			return (float)(4 * 14.28);
+		//"SW"
+		if (val > 187.5 * 5 && val <= 187.5 * 6)
+			return (float)(5 * 14.28);
+		// "W"
+		if (val > 187.5 * 6 && val <= 187.5 * 7)
+			return (float)(6 * 14.28);
+		//"NW"
+		if (val > 187.5 * 7 && val <= 1500)//187.5 * 8)
+			return (float)(100);//(float)(7 * 14.28);
+		return 0;
+	}
+
+    #endregion
+}

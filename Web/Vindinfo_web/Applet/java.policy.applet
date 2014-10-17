@@ -1,0 +1,4 @@
+grant codeBase "http://www.surfvind.se/Applet.aspx" {
+  permission java.security.AllPermission;
+};
+

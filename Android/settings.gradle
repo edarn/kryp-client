@@ -1,0 +1,5 @@
+include ':ioio:IOIOLibBT'
+include ':ioio:IOIOLibAccessory'
+include ':ioio:IOIOLibAndroidDevice'
+include ':ioio:IOIOLib:target:android'
+include ':DataLogger'

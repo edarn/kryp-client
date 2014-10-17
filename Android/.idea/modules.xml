@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android.iml" filepath="$PROJECT_DIR$/Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataLogger/DataLogger.iml" filepath="$PROJECT_DIR$/DataLogger/DataLogger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ioio/IOIOLibAccessory/IOIOLibAccessory.iml" filepath="$PROJECT_DIR$/ioio/IOIOLibAccessory/IOIOLibAccessory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ioio/IOIOLibAndroidDevice/IOIOLibAndroidDevice.iml" filepath="$PROJECT_DIR$/ioio/IOIOLibAndroidDevice/IOIOLibAndroidDevice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ioio/IOIOLibBT/IOIOLibBT.iml" filepath="$PROJECT_DIR$/ioio/IOIOLibBT/IOIOLibBT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ioio/IOIOLib/target/android/android.iml" filepath="$PROJECT_DIR$/ioio/IOIOLib/target/android/android.iml" />
+    </modules>
+  </component>
+</project>
+

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="unspecified" >
+        <source path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\build\intermediates\exploded-aar\Android.ioio.IOIOLib.target\android\unspecified\res" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\build\intermediates\bundles\debug\res" >
+            <file
+                name="device_filter"
+                path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\build\intermediates\bundles\debug\res\xml\device_filter.xml"
+                qualifiers=""
+                type="xml" />
+        </source>
+    </dataSet>
+    <dataSet config="main" >
+        <source path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\src\androidTest\res" />
+        <source path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\build\generated\res\rs\test\debug" />
+        <source path="C:\Users\thomas\Krypgrund_Git\kryp-client\Android\ioio\IOIOLibAndroidDevice\build\generated\res\generated\test\debug" />
+    </dataSet>
+
+</merger>

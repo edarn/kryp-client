@@ -10,6 +10,9 @@
 
 # generated files
 bin/
+obj/
+!Web/Vindinfo_web/Bin/
+!Web/Surfvind_web/Surfvind/bin/
 gen/
 
 # Local configuration file (sdk path, etc)

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/mainContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/speedLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="12 m/s"
+                    android:textSize="30dp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/arrow_background"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/compass_background" />
+
+                <ImageView
+                    android:id="@+id/arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/green_arrow" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- ################ WEATHER STATION ###################### -->
+
+        <LinearLayout
+            android:id="@+id/weatherStationContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weather Station:"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <FrameLayout
+                    android:layout_width="150dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="20dp" >
+
+                    <WebView
+                        android:id="@+id/webViewCompassBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <WebView
+                        android:id="@+id/webViewCompass"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="200dp"
+                    android:layout_height="200dp" >
+
+                    <WebView
+                        android:id="@+id/webViewSpeedBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <WebView
+                        android:id="@+id/webViewSpeed"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Temp " />
+
+                <TextView
+                    android:id="@+id/temperatureText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=" grader" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:text="@string/analog_label" />
+
+                <TextView
+                    android:id="@+id/TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textAnalogInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Analog Input:"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <SeekBar
+                android:id="@+id/seekAnalogInput"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textWindDirection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VindRiktning:"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/textWindSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VindHastighet:"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+
+        <!-- ################ CRAWLSPACE STATION ###################### -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Voltage: " />
+
+            <TextView
+                android:id="@+id/voltageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="0" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fanStatus"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Fan is Off" />
+
+        <TextView
+            android:id="@+id/textFuktInne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Luftfuktighet Inne"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textTempInne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperatur Inne"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textFuktUte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Luftfuktighet Ute"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textTempUte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperatur Ute"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/connectedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not Initialized"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textFanOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not Initialized"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/phoneId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not Initialized"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/debugText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not Initialized"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ToggleButton
+                android:id="@+id/DebugButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="Debug Off"
+                android:textOn="Debug On" />
+
+            <ToggleButton
+                android:id="@+id/toggleFanButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FanOff"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
