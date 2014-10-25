@@ -41,8 +41,8 @@ public class KrypgrundsService extends IOIOService {
 
 	private final IBinder mBinder = new MyBinder();
 
-	ArrayList<KrypgrundStats> rawMeasurements = new ArrayList<KrypgrundStats>();
-	ArrayList<SurfvindStats> rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
+	ConcurrentMaxSizeArray<KrypgrundStats> rawMeasurements = new ConcurrentMaxSizeArray<KrypgrundStats>();
+    ConcurrentMaxSizeArray<SurfvindStats> rawSurfvindsMeasurements = new ConcurrentMaxSizeArray<SurfvindStats>();
 
 	public String debugText = "";
 	public String statusText = "";
@@ -77,7 +77,7 @@ public class KrypgrundsService extends IOIOService {
 
 	private HumidSensor krypgrundSensor = HumidSensor.ChipCap2;
 	@SuppressLint("UseSparseArrays")
-	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>();
+	ArrayList<KrypgrundStats> krypgrundHistory = new ArrayList<KrypgrundStats>(500);
 	ArrayList<SurfvindStats> surfvindHistory = new ArrayList<SurfvindStats>();
 	protected static boolean isIOIOConnected = false;
 	static {
@@ -288,7 +288,7 @@ public class KrypgrundsService extends IOIOService {
 					}
 					rawMeasurements.clear();
 				}
-				rawMeasurements = new ArrayList<KrypgrundStats>();
+				rawMeasurements = new ConcurrentMaxSizeArray<KrypgrundStats>();
 			}
 
 			if (serviceMode == ServiceMode.Survfind) {
@@ -297,7 +297,7 @@ public class KrypgrundsService extends IOIOService {
 					surfvindHistory.add(average);
 					rawSurfvindsMeasurements.clear();
 				}
-				rawSurfvindsMeasurements = new ArrayList<SurfvindStats>();
+				rawSurfvindsMeasurements = new ConcurrentMaxSizeArray<SurfvindStats>();
 			}
 
 		}
@@ -330,7 +330,7 @@ public class KrypgrundsService extends IOIOService {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected || System.currentTimeMillis() - mWatchdogTime < TimeUnit.MINUTES.toMillis(60)) {
+					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.MINUTES.toMillis(60)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
@@ -425,7 +425,7 @@ public class KrypgrundsService extends IOIOService {
 		synchronized (KrypgrundsService.this) {
 			int pos = rawMeasurements.size() - 1;
 			if (pos >= 0) {
-				KrypgrundStats oneReading = rawMeasurements.get(pos);
+				KrypgrundStats oneReading = rawMeasurements.getMostRecentlyAddedObject();
 				status.moistureInne = oneReading.moistureInne;
 				status.moistureUte = oneReading.moistureUte;
 				status.temperatureUte = oneReading.temperatureUte;
@@ -437,7 +437,7 @@ public class KrypgrundsService extends IOIOService {
 			}
 			pos = rawSurfvindsMeasurements.size() - 1;
 			if (pos >= 0) {
-				SurfvindStats oneReading = rawSurfvindsMeasurements.get(pos);
+				SurfvindStats oneReading = rawSurfvindsMeasurements.getMostRecentlyAddedObject();
 				status.windDirection = (int) oneReading.windDirectionAvg;
 				status.windSpeed = oneReading.windSpeedAvg;
 				status.analogInput = oneReading.windDirectionAvg * 3.3f / 360f;

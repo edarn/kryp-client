@@ -49,7 +49,7 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 		return 0;
 	}
 
-	public static SurfvindStats getAverage(List<SurfvindStats> rawMeasurements) {
+	public static SurfvindStats getAverage(ConcurrentMaxSizeArray<SurfvindStats> rawMeasurements) {
 		// Always create a new object, as it is added to the
 		// history list.
 		SurfvindStats total = new SurfvindStats();
@@ -57,11 +57,9 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 			total.windDirectionMin = 999999;
 			total.windSpeedMin = 999999;
 
-			Collections.sort(rawMeasurements);
-
-			// Calculate an averagevalue of all the readings.
-			for (SurfvindStats stat : rawMeasurements) {
-
+           	// Calculate an averagevalue of all the readings.
+			for (Object s : rawMeasurements.getArray()) {
+                SurfvindStats stat = (SurfvindStats) s;
 				total.windDirectionAvg += stat.windDirectionAvg;
 				if (stat.windDirectionAvg < total.windDirectionMin) {
 					total.windDirectionMin = stat.windDirectionAvg;

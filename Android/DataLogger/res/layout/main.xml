@@ -1,58 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/mainContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1" >
-
-                <TextView
-                    android:id="@+id/speedLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="12 m/s"
-                    android:textSize="30dp" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1" >
-
-                <ImageView
-                    android:id="@+id/arrow_background"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/compass_background" />
-
-                <ImageView
-                    android:id="@+id/arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/green_arrow" />
-            </FrameLayout>
-        </LinearLayout>
 
         <!-- ################ WEATHER STATION ###################### -->
 
@@ -60,26 +16,152 @@
             android:id="@+id/weatherStationContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:background="@drawable/bakgrund_weather"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="#b0000000"
                 android:text="Weather Station:"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textColor="#ffffff"
+                android:textSize="25dp" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textWindSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="#b0000000"
+                        android:text="12 m/s"
+                        android:textColor="#ffffff"
+                        android:textSize="40dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="left"
+                            android:layout_marginLeft="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/temperature" />
+
+                        <TextView
+                            android:id="@+id/humidText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="7"
+                            android:background="#b0000000"
+                            android:textColor="#ffffff"
+                            android:textSize="40dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text=" \u2103"
+                            android:background="#b0000000"
+                            android:textColor="#ffffff"
+                            android:textSize="40dp"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="left"
+                            android:layout_marginLeft="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/blue_water" />
+
+                        <TextView
+                            android:id="@+id/temperatureText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="68"
+                            android:background="#b0000000"
+                            android:textColor="#ffffff"
+                            android:textSize="40dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text=" %"
+
+                            android:background="#b0000000"
+                            android:textColor="#ffffff"
+                            android:textSize="40dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/arrow_background"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/compass_background" />
+
+                    <ImageView
+                        android:id="@+id/arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="110dp"
+                        android:layout_gravity="center"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/green_arrow" />
+                </FrameLayout>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <FrameLayout
                     android:layout_width="150dp"
                     android:layout_height="200dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp" >
+                    android:layout_marginTop="20dp">
 
                     <WebView
                         android:id="@+id/webViewCompassBackground"
@@ -95,7 +177,7 @@
 
                 <FrameLayout
                     android:layout_width="200dp"
-                    android:layout_height="200dp" >
+                    android:layout_height="200dp">
 
                     <WebView
                         android:id="@+id/webViewSpeedBackground"
@@ -113,176 +195,192 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Temp " />
+                    android:layout_marginLeft="80dp"
+                    android:text="Direction: " />
 
                 <TextView
-                    android:id="@+id/temperatureText"
+                    android:id="@+id/textWindDirection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="7" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text=" grader" />
+                    android:layout_gravity="center_horizontal"
+                    android:text="246" />
             </LinearLayout>
+            <!--
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="20dp" >
 
-            <LinearLayout
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="5dp"
+                                android:text="@string/analog_label" />
+
+                            <TextView
+                                android:id="@+id/TextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/textAnalogInput"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Analog Input:"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                        <SeekBar
+                            android:id="@+id/seekAnalogInput"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/textWindDirection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="VindRiktning:"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            -->
+        </LinearLayout>
+
+        <!-- ################ CRAWLSPACE STATION ###################### -->
+        <LinearLayout
+            android:id="@+id/crawlspaceContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="20dp" >
+                android:layout_gravity="center_horizontal"
+                android:text="Crawl Space "
+                android:textSize="25dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="@string/analog_label" />
+                    android:layout_gravity="center_vertical"
+                    android:text="Voltage: " />
 
                 <TextView
-                    android:id="@+id/TextView"
+                    android:id="@+id/voltageText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="0" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textAnalogInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Analog Input:"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <SeekBar
-                android:id="@+id/seekAnalogInput"
+                android:id="@+id/fanStatus"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Fan is Off" />
 
             <TextView
-                android:id="@+id/textWindDirection"
+                android:id="@+id/textFuktInne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VindRiktning:"
+                android:text="Luftfuktighet Inne"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
-                android:id="@+id/textWindSpeed"
+                android:id="@+id/textTempInne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VindHastighet:"
+                android:text="Temperatur Inne"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/textFuktUte"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Luftfuktighet Ute"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/textTempUte"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperatur Ute"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
-
-        <!-- ################ CRAWLSPACE STATION ###################### -->
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Voltage: " />
+                android:layout_gravity="center_horizontal"
+                android:text="Debug data"
+                android:textSize="25dp" />
 
             <TextView
-                android:id="@+id/voltageText"
+                android:id="@+id/connectedText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="0" />
-        </LinearLayout>
+                android:text="Not Initialized"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <TextView
-            android:id="@+id/fanStatus"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Fan is Off" />
-
-        <TextView
-            android:id="@+id/textFuktInne"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Luftfuktighet Inne"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/textTempInne"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temperatur Inne"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/textFuktUte"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Luftfuktighet Ute"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/textTempUte"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temperatur Ute"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/connectedText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not Initialized"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/textFanOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not Initialized"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/phoneId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not Initialized"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/debugText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not Initialized"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <ToggleButton
-                android:id="@+id/DebugButton1"
+            <TextView
+                android:id="@+id/textFanOn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="Debug Off"
-                android:textOn="Debug On" />
+                android:text="Not Initialized"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <ToggleButton
-                android:id="@+id/toggleFanButton"
+            <TextView
+                android:id="@+id/phoneId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="FanOff"
-                android:visibility="gone" />
+                android:text="Not Initialized"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/debugText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not Initialized"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ToggleButton
+                    android:id="@+id/DebugButton1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="Debug Off"
+                    android:textOn="Debug On" />
+
+                <ToggleButton
+                    android:id="@+id/toggleFanButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FanOff"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
 </ScrollView>

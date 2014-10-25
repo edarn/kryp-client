@@ -202,7 +202,6 @@ public class SetupActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		System.out.println("Jodå");
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria c = new Criteria();
 		c.setAccuracy(Criteria.ACCURACY_MEDIUM);

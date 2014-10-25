@@ -1,13 +1,5 @@
 package se.tna.krypgrund;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewDataInterface;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,7 +10,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,102 +23,109 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewDataInterface;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class KrypgrundGUI extends Activity {
-	private TextView textFuktInne;
-	private TextView textFuktUte;
-	private TextView textTempInne;
-	private TextView textTempUte;
-	private TextView debugText;
-	private TextView initializedText;
-	private TextView fanStatus;
-	private TextView phoneId;
-	private TextView textVoltage;;
-	
+    private TextView textFuktInne;
+    private TextView textFuktUte;
+    private TextView textTempInne;
+    private TextView textTempUte;
+    private TextView debugText;
+    private TextView initializedText;
+    private TextView fanStatus;
+    private TextView phoneId;
+    private TextView textVoltage;
+    ;
 
-	private ToggleButton debugButton;
-	private ToggleButton toggleFanButton;
 
-	private KrypgrundsService kryp = null;
-	private ServiceConnection mConnection = null;
-	private TextView textFanOn;
-	private TextView textWindSpeed;
-	private TextView textWindDirection;
-	private SeekBar windSeekBar;
-	private TextView textAnalogInput;
-	
-	private ImageView imv;
+    private ToggleButton debugButton;
+    private ToggleButton toggleFanButton;
 
-	@Override
-	public void onPause() {
+    private KrypgrundsService kryp = null;
+    private ServiceConnection mConnection = null;
+    private TextView textFanOn;
+    private TextView textWindSpeed;
+    private TextView textWindDirection;
 
-		super.onPause();
-	}
+    private ImageView compassImageView;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.settings, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+    @Override
+    public void onPause() {
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		startActivity(new Intent(this, SetupActivity.class));
-		return true;
-	}
+        super.onPause();
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (kryp != null) {
-			kryp.updateSettings();
-		}
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (serviceBound && mConnection != null) {
-			unbindService(mConnection);
-			serviceBound = false;
-			mConnection = null;
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        startActivity(new Intent(this, SetupActivity.class));
+        return true;
+    }
 
-	boolean serviceBound = false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (kryp != null) {
+            kryp.updateSettings();
+        }
+    }
 
-	// SharedPreferences preferences;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (serviceBound && mConnection != null) {
+            unbindService(mConnection);
+            serviceBound = false;
+            mConnection = null;
+        }
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Helper.appendLog("App started");
-		mConnection = new ServiceConnection() {
+    boolean serviceBound = false;
 
-			@Override
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				kryp = ((KrypgrundsService.MyBinder) service).getService();
-				Toast.makeText(KrypgrundGUI.this, "Connected", Toast.LENGTH_SHORT).show();
-				serviceBound = true;
-				kryp.updateSettings();
-			}
+    // SharedPreferences preferences;
 
-			@Override
-			public void onServiceDisconnected(ComponentName name) {
-				kryp = null;
-				serviceBound = false;
-				Toast.makeText(KrypgrundGUI.this, "DisConnected", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Helper.appendLog("App started");
+        mConnection = new ServiceConnection() {
 
-			}
-		};
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                kryp = ((KrypgrundsService.MyBinder) service).getService();
+                Toast.makeText(KrypgrundGUI.this, "Connected", Toast.LENGTH_SHORT).show();
+                serviceBound = true;
+                kryp.updateSettings();
+            }
 
-		setContentView(R.layout.main);
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                kryp = null;
+                serviceBound = false;
+                Toast.makeText(KrypgrundGUI.this, "DisConnected", Toast.LENGTH_SHORT).show();
 
-		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		String id = telephonyManager.getDeviceId();
+            }
+        };
+
+        setContentView(R.layout.main);
+
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String id = telephonyManager.getDeviceId();
 
 		/*
-		 * // debug id = "358848043355882";
+         * // debug id = "358848043355882";
 		 * 
 		 * // WebView myWebView = (WebView) findViewById(R.id.webView); //
 		 * myWebView.loadUrl("http://www.surfvind.se/Applet/" + id + //
@@ -151,97 +149,94 @@ public class KrypgrundGUI extends Activity {
 		 * speedViewBackground.setBackgroundColor(0x00000000);
 		 */
 
-		class GraphViewData implements GraphViewDataInterface {
-			private double x;
-			private double y;
+        class GraphViewData implements GraphViewDataInterface {
+            private double x;
+            private double y;
 
-			GraphViewData(double a, double b) {
-				x = a;
-				y = b;
-			}
+            GraphViewData(double a, double b) {
+                x = a;
+                y = b;
+            }
 
-			@Override
-			public double getX() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
+            @Override
+            public double getX() {
+                // TODO Auto-generated method stub
+                return 0;
+            }
 
-			@Override
-			public double getY() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
+            @Override
+            public double getY() {
+                // TODO Auto-generated method stub
+                return 0;
+            }
 
-		}
-		// init example series data
-		GraphViewSeries exampleSeries = new GraphViewSeries(
-				new GraphViewData[] { new GraphViewData(1, 2.0d),
-						new GraphViewData(2, 1.5d), new GraphViewData(3, 2.5d),
-						new GraphViewData(4, 1.0d) });
+        }
+        // init example series data
+        GraphViewSeries exampleSeries = new GraphViewSeries(
+                new GraphViewData[]{new GraphViewData(1, 2.0d),
+                        new GraphViewData(2, 1.5d), new GraphViewData(3, 2.5d),
+                        new GraphViewData(4, 1.0d)});
 
-		GraphView graphView = new LineGraphView(this // context
-				, "GraphViewDemo" // heading
-		);
-		graphView.addSeries(exampleSeries); // data
+        GraphView graphView = new LineGraphView(this // context
+                , "GraphViewDemo" // heading
+        );
+        graphView.addSeries(exampleSeries); // data
 
-		LinearLayout layout = (LinearLayout) findViewById(R.id.mainContainer);
-		layout.addView(graphView);
-		
-		textVoltage = (TextView) findViewById(R.id.voltageText);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.mainContainer);
+        layout.addView(graphView);
 
-		textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
-		textWindDirection = (TextView) findViewById(R.id.textWindDirection);
-		textAnalogInput = (TextView) findViewById(R.id.textAnalogInput);
-		windSeekBar = (SeekBar) findViewById(R.id.seekAnalogInput);
-		windSeekBar.setMax(330);
+        textVoltage = (TextView) findViewById(R.id.voltageText);
 
-		fanStatus = (TextView) findViewById(R.id.fanStatus);
-		debugText = (TextView) findViewById(R.id.debugText);
+        textWindSpeed = (TextView) findViewById(R.id.textWindSpeed);
+        textWindDirection = (TextView) findViewById(R.id.textWindDirection);
 
-		textFuktInne = (TextView) findViewById(R.id.textFuktInne);
-		textFuktUte = (TextView) findViewById(R.id.textFuktUte);
-		textTempInne = (TextView) findViewById(R.id.textTempInne);
-		textTempUte = (TextView) findViewById(R.id.textTempUte);
-		textFanOn = (TextView) findViewById(R.id.textFanOn);
-		initializedText = (TextView) findViewById(R.id.connectedText);
-		phoneId = (TextView) findViewById(R.id.phoneId);
-		toggleFanButton = (ToggleButton) findViewById(R.id.toggleFanButton);
-		debugButton = (ToggleButton) findViewById(R.id.DebugButton1);
+        fanStatus = (TextView) findViewById(R.id.fanStatus);
+        debugText = (TextView) findViewById(R.id.debugText);
 
-		debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        textFuktInne = (TextView) findViewById(R.id.textFuktInne);
+        textFuktUte = (TextView) findViewById(R.id.textFuktUte);
+        textTempInne = (TextView) findViewById(R.id.textTempInne);
+        textTempUte = (TextView) findViewById(R.id.textTempUte);
+        textFanOn = (TextView) findViewById(R.id.textFanOn);
+        initializedText = (TextView) findViewById(R.id.connectedText);
+        phoneId = (TextView) findViewById(R.id.phoneId);
+        toggleFanButton = (ToggleButton) findViewById(R.id.toggleFanButton);
+        debugButton = (ToggleButton) findViewById(R.id.DebugButton1);
 
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					toggleFanButton.setVisibility(View.VISIBLE);
-				} else {
-					toggleFanButton.setVisibility(View.GONE);
-				}
-			}
-		});
+        debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-		Intent service = new Intent(this, KrypgrundsService.class);
-		this.startService(service);
-		bindService(new Intent(this, KrypgrundsService.class), mConnection, Context.BIND_AUTO_CREATE);
-		Timer timer = new Timer();
-		TimerTask t = new TimerTask() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    toggleFanButton.setVisibility(View.VISIBLE);
+                } else {
+                    toggleFanButton.setVisibility(View.GONE);
+                }
+            }
+        });
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				if (null != kryp) {
-					updateUI();
-					if (debugButton.isChecked()) {
-						kryp.setForceFan(toggleFanButton.isChecked());
-					}
-				}
-			}
-		};
-		
+        Intent service = new Intent(this, KrypgrundsService.class);
+        this.startService(service);
+        bindService(new Intent(this, KrypgrundsService.class), mConnection, Context.BIND_AUTO_CREATE);
+        Timer timer = new Timer();
+        TimerTask t = new TimerTask() {
 
-		timer.scheduleAtFixedRate(t, 0, 5000);
-		
-	    imv = (ImageView) findViewById(R.id.arrow);
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                if (null != kryp) {
+                    updateUI();
+                    if (debugButton.isChecked()) {
+                        kryp.setForceFan(toggleFanButton.isChecked());
+                    }
+                }
+            }
+        };
+
+
+        timer.scheduleAtFixedRate(t, 0, 5000);
+
+        compassImageView = (ImageView) findViewById(R.id.arrow);
 		/*
 		Timer te = new Timer();
 		TimerTask tu = new TimerTask() {
@@ -252,7 +247,7 @@ public class KrypgrundGUI extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						imv.setRotation(i);
+						compassImageView.setRotation(i);
 						i+=1;
 					}
 				});
@@ -296,81 +291,82 @@ public class KrypgrundGUI extends Activity {
                 .userLedVisible(true)
                 .bargraph(true)
                 .title("Temperature")
-                .unit("°C")
+                .unit("ï¿½C")
                 .build();
 	    */
-	}
-	int i = 0;
-	
-	@Override
-	protected void onStart() {
+    }
 
-		super.onStart();
+    int i = 0;
 
-		LinearLayout l = (LinearLayout) findViewById(R.id.weatherStationContainer);
-		SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
-		int type = preferences.getInt(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
-		if (l != null) {
-			if (type == KrypgrundsService.KRYPGRUND) {
-				l.setVisibility(View.GONE);
-			} else {
-				l.setVisibility(View.VISIBLE);
-			}
-		}
-	}
+    @Override
+    protected void onStart() {
 
-	private void updateUI() {
-		if (null != kryp) {
-			final StatusOfService status = kryp.getStatus();
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (status.fanOn) {
-						fanStatus.setText("Fan is RUNNING");
-					} else {
-						fanStatus.setText("Fan is OFF");
+        super.onStart();
 
-					}
+        LinearLayout l = (LinearLayout) findViewById(R.id.weatherStationContainer);
+        LinearLayout ll = (LinearLayout) findViewById(R.id.crawlspaceContainer);
+        SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
+        int type = preferences.getInt(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
+        if (type == KrypgrundsService.KRYPGRUND) {
+            l.setVisibility(View.GONE);
+            ll.setVisibility(View.VISIBLE);
+        } else {
+            l.setVisibility(View.VISIBLE);
+            ll.setVisibility(View.GONE);
+        }
+    }
 
-					textAnalogInput.setText("Analog Input: " + String.format("%.2f", status.analogInput));
-					textWindDirection.setText("Vindriktning: " + status.windDirection);
-					textWindSpeed.setText("Vindhastighet: " + String.format("%.2f", status.windSpeed));
-					windSeekBar.setProgress(status.windDirection);
-					
-					imv.setRotation(status.windDirection);
+    private void updateUI() {
+        if (null != kryp) {
+            final StatusOfService status = kryp.getStatus();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (status.fanOn) {
+                        fanStatus.setText("Fan is RUNNING");
+                    } else {
+                        fanStatus.setText("Fan is OFF");
 
-					textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
-					textTempInne.setText("Temp Inne: " + String.format("%.2f", status.temperatureInne));
-					textFuktUte.setText("Fukt Ute: " + String.format("%.2f", status.moistureUte));
-					textFuktInne.setText("Fukt Inne: " + String.format("%.2f", status.moistureInne));
-					textFanOn.setText("Fan On =" + status.fanOn);
-					textVoltage.setText(String.format("%.2f",status.voltage));
+                    }
 
-					// Is ioio chip initialized etc
-					initializedText.setText(status.statusMessage);
-					phoneId.setText("IMEI:" + status.deviceId);
-					StringBuilder sb = new StringBuilder();
-					sb.append("HistorySize: ");
-					sb.append(status.historySize);
-					sb.append("\n");
-					sb.append("ReadingSize: ");
-					sb.append(status.readingSize);
-					sb.append("\n");
+                 //   textWindDirection.setText(status.windDirection);
+                    textWindSpeed.setText(String.format("%.2f", status.windSpeed));
 
-					sb.append("TimeOfCreation: ");
+                    compassImageView.setRotation(status.windDirection);
 
-					CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeOfCreation);
-					sb.append(cs.toString());
-					
-					sb.append("\nTimeSinceLastSend: ");
-					cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeForLastSendData);
-					sb.append(cs.toString());
-					
-					debugText.setText(sb.toString());
-					// debugText.setText(status.)
-				}
-			});
-		}
-	}
+
+                    textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
+                    textTempInne.setText("Temp Inne: " + String.format("%.2f", status.temperatureInne));
+                    textFuktUte.setText("Fukt Ute: " + String.format("%.2f", status.moistureUte));
+                    textFuktInne.setText("Fukt Inne: " + String.format("%.2f", status.moistureInne));
+                    textFanOn.setText("Fan On =" + status.fanOn);
+                    textVoltage.setText(String.format("%.2f", status.voltage));
+
+                    // Is ioio chip initialized etc
+                    initializedText.setText(status.statusMessage);
+                    phoneId.setText("IMEI:" + status.deviceId);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("HistorySize: ");
+                    sb.append(status.historySize);
+                    sb.append("\n");
+                    sb.append("ReadingSize: ");
+                    sb.append(status.readingSize);
+                    sb.append("\n");
+
+                    sb.append("TimeOfCreation: ");
+
+                    CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeOfCreation);
+                    sb.append(cs.toString());
+
+                    sb.append("\nTimeSinceLastSend: ");
+                    cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeForLastSendData);
+                    sb.append(cs.toString());
+
+                    debugText.setText(sb.toString());
+                    // debugText.setText(status.)
+                }
+            });
+        }
+    }
 
 }

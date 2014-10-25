@@ -1,6 +1,7 @@
 package se.tna.krypgrund;
 
 import java.util.List;
+import java.util.Queue;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,15 +36,16 @@ public class KrypgrundStats extends Stats {
 		return ret;
 	}
 
-	public static KrypgrundStats getAverage(List<KrypgrundStats> rawMeasurements) {
+	public static KrypgrundStats getAverage(ConcurrentMaxSizeArray<KrypgrundStats> rawMeasurements) {
 		// Always create a new object, as it is added to the
 		// history list.
 		KrypgrundStats total = new KrypgrundStats();
 
 		if (rawMeasurements != null && rawMeasurements.size() > 0) {
 			// Calculate an averagevalue of all the readings.
-			for (KrypgrundStats stat : rawMeasurements) {
-				total.moistureInne += stat.moistureInne;
+			for (Object s : rawMeasurements.getArray()) {
+                KrypgrundStats stat = (KrypgrundStats) s;
+                total.moistureInne += stat.moistureInne;
 				total.moistureUte += stat.moistureUte;
 				total.temperatureInne += stat.temperatureInne;
 				total.temperatureUte += stat.temperatureUte;
