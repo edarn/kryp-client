@@ -1,3 +1,7 @@
+Android/.gradle/**
+Android/build/
+Android/**/build/
+
 # built application files
 *.apk
 *.ap_
@@ -23,3 +27,8 @@ local.properties
 .project
 .metadata/
 .metadata/*
+
+#Android Studio project files
+
+.idea
+
