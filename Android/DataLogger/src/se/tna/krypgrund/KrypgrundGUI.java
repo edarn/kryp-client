@@ -291,7 +291,7 @@ public class KrypgrundGUI extends Activity {
                 .userLedVisible(true)
                 .bargraph(true)
                 .title("Temperature")
-                .unit("�C")
+                .unit("C")
                 .build();
 	    */
     }

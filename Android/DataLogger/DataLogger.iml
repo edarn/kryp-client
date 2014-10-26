@@ -76,10 +76,10 @@
     <orderEntry type="jdk" jdkName="Android API 14 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="GraphView-3.1.2" level="project" />
-    <orderEntry type="module" module-name="IOIOLibAndroidDevice" exported="" />
-    <orderEntry type="module" module-name="IOIOLibAccessory" exported="" />
     <orderEntry type="module" module-name="IOIOLibBT" exported="" />
+    <orderEntry type="module" module-name="IOIOLibAndroidDevice" exported="" />
     <orderEntry type="module" module-name="android" exported="" />
+    <orderEntry type="module" module-name="IOIOLibAccessory" exported="" />
   </component>
 </module>
 
