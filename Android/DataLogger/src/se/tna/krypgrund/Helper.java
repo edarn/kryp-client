@@ -160,6 +160,7 @@ public class Helper {
 				logFile = new File("/sdcard/krypgrund_log.txt");
 				if (!logFile.exists()) {
 					logFile.createNewFile();
+
 				}
 			}
 			if (bufWriter == null) {
@@ -169,7 +170,7 @@ public class Helper {
 				bufWriter = new BufferedWriter(new FileWriter(logFile, true));
 			}
 			long timestamp = System.currentTimeMillis();
-			CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", timestamp);
+			CharSequence cs = DateFormat.format("yyyy-MM-dd - kk:mm:ss", timestamp);
 			bufWriter.append(Long.toString(timestamp));
 			bufWriter.append(" - ");
 			bufWriter.append(cs.toString());
@@ -193,7 +194,6 @@ public class Helper {
 				logFile = null;
 			}
 		}
-		// }
 	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
