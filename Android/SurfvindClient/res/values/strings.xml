@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SurfvindClient!</string>
+    <string name="app_name">surfvindClient</string>
+<color name="WHITE">#FFFFFFFF</color>
+<color name="BLACK">#FF000000</color>
+<color name="RED">#FFFF0000</color>
+
+
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:id="@+id/ScrollView01" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@color/WHITE" android:scrollbars="horizontal|vertical" android:scrollbarAlwaysDrawHorizontalTrack="true" android:layout_height="wrap_content" android:layout_width="wrap_content"><RelativeLayout android:id="@+id/RelativeLayout01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:scrollbars="horizontal" android:scrollbarAlwaysDrawHorizontalTrack="true"><ImageView
+	android:id="@+id/header" android:background="@drawable/vsbg"
+	android:layout_height="fill_parent" android:layout_alignParentRight="false"
+	android:layout_centerHorizontal="true" android:layout_width="fill_parent"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="false" android:layout_alignParentLeft="true" android:id="@+id/IntervalTitle" android:text="Interval:" android:textColor="@color/BLACK" android:textStyle="bold"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:text="Location:" android:textColor="@color/BLACK" android:textStyle="bold" android:id="@+id/LocationTitle" android:layout_alignParentRight="true" android:layout_centerInParent="false"></TextView><Spinner android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/IntervalTitle" android:id="@+id/IntervalSpinner"></Spinner><Spinner android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/LocationTitle" android:id="@+id/LocationSpinner" android:layout_alignParentRight="true" android:layout_centerInParent="false"></Spinner><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/WindDirMeter" android:layout_alignParentLeft="true" android:layout_below="@+id/IntervalSpinner" android:background="@drawable/ws_compass"></ImageView><ImageView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/CompassNeedle" android:layout_below="@+id/IntervalSpinner" android:layout_alignParentLeft="true"></ImageView>
+
+
+
+
+
+<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/WindSpeedMeter" android:layout_below="@+id/LocationSpinner" android:background="@drawable/ws_speed" android:layout_alignParentRight="true" android:layout_centerInParent="false"></ImageView><ImageView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/WindSpeedNeedle" android:layout_below="@+id/LocationSpinner" android:layout_alignParentRight="true" android:layout_centerInParent="false"></ImageView><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/WindSpeedTitle" android:background="@drawable/wind_speed" android:layout_centerHorizontal="true" android:layout_below="@+id/WindSpeedMeter"></ImageView><WebView android:layout_height="wrap_content" android:id="@+id/WindSpeeedGraph" android:layout_below="@+id/WindSpeedTitle" android:layout_width="wrap_content"></WebView>
+
+<TextView android:layout_height="wrap_content" android:id="@+id/Link" android:text="www.surfvind.se" android:textColor="@color/BLACK" android:textColorHighlight="@color/RED" android:autoLink="web" android:layout_width="fill_parent" android:layout_below="@+id/WindDirGraph" android:gravity="center_horizontal"></TextView>
+
+
+
+
+</RelativeLayout>
+
+
+</ScrollView>
