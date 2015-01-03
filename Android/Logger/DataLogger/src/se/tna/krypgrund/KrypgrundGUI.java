@@ -355,11 +355,11 @@ public class KrypgrundGUI extends Activity {
 
                     sb.append("TimeOfCreation: ");
 
-                    CharSequence cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeOfCreation);
+                    CharSequence cs = DateFormat.format("yyyy-MM-dd - kk:mm:ss", status.timeOfCreation);
                     sb.append(cs.toString());
 
                     sb.append("\nTimeSinceLastSend: ");
-                    cs = DateFormat.format("yyyy-MM-dd - hh:mm:ss", status.timeForLastSendData);
+                    cs = DateFormat.format("yyyy-MM-dd - kk:mm:ss", status.timeForLastSendData);
                     sb.append(cs.toString());
 
                     debugText.setText(sb.toString());
