@@ -30,7 +30,7 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 			ret.put("Battery", (int) batteryVoltage);
 			ret.put("Temperature", (int) temperature);
 
-			ret.put("TimeStamp", time.format2445());
+			ret.put("TimeStamp", time);
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

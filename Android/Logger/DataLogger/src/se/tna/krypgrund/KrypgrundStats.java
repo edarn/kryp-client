@@ -26,7 +26,7 @@ public class KrypgrundStats extends Stats {
 			ret.put("AbsolutFuktInne", absolutFuktInne);
 			ret.put("AbsolutFuktUte", absolutFuktUte);
 			ret.put("FanOn", fanOn);
-			ret.put("TimeStamp", time.format2445());
+			ret.put("TimeStamp", time);
 			ret.put("BatteryVoltage", batteryVoltage);
 
 		} catch (JSONException e) {
