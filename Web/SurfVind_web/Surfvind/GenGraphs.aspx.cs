@@ -52,7 +52,6 @@ namespace Surfvind_2011
               location = "354745031074596";  
               duration = "1"; 
             }
-
             update(location, duration);
             
         }
@@ -74,12 +73,14 @@ namespace Surfvind_2011
             {  /* Update everything */
                 foreach (Location l in loc)
                 {
+                 //   Response.Write(l.imei.ToString());
                     this.location = l.imei.ToString();
                     wd.SetImei(this.location);
                     for (int i = 0; i < 5; i++)
                     {
                         this.interval = i;
-                        generateGraph(this.interval, this.location, wd);
+                        fetchData(interval, wd);
+               //         Response.Write("Create Graph");
                         createGraph();
                     }
                 }
@@ -90,28 +91,16 @@ namespace Surfvind_2011
                 /* Safe, we know this value can be parsed, we've tried it before */
                 this.interval = int.Parse(duration);
                 wd.SetImei(this.location);
-                generateGraph(this.interval, this.location, wd);
+             //   Response.Write("Generate Graph");
+
+                fetchData(interval, wd);
+                //    Response.Write("Create Graph");
+                        
                 createGraph();
             }
         }
 
-        public void update2(String location)
-        {
-            String dbToUse = "";
-            dbToUse = "Surfvind_data";
-            WindData wd = new WindData(true, dbToUse);
-            wd.SetImei(location);
-            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-
-            List<Location> loc = wd.GetLocations();
-            loc.Sort();
-
-                    for (int i = 0; i < 3/*5*/; i++)
-                    {
-                        this.interval = i;
-                        generateGraph(this.interval, location, wd);
-                    }
-        }
+       
 
         /* Check the arguments if we want to generate only one image for any given location and duration */
         private bool checkArguments(String location, String duration, List<Location> locations)
@@ -145,35 +134,19 @@ namespace Surfvind_2011
             }
             return false;
         }
-
-        public void generateGraph(int interval, String imei, WindData wd)
+        public void fetchData(int interval, WindData wd)
         {
-            Start = DateTime.Now;
             try
             {
                 DateTime endInterval = DateTime.Now;
                 DateTime beginInterval = GetStartInterval(interval, endInterval);
-                LogTime();
-
-                WindRecord currentWind = wd.GetCurrentWind();
-                if (currentWind.Time < DateTime.Now.AddHours(-1))
-                {
-                    currentWind.AverageSpeed = 0;
-                    currentWind.MinSpeed = 0;
-                    currentWind.MaxSpeed = 0;
-                    currentWind.AverageDirection = 0;
-                    currentWind.MinDirection = 0;
-                    currentWind.MaxDirection = 0;
-                }
                 List<float> dirValues = new List<float>();
                 List<string> timeLabels = new List<string>();
                 List<float> speedValues = new List<float>();
                 List<float> minValues = new List<float>();
                 List<float> maxValues = new List<float>();
-                LogTime();
                 List<WindRecord> windData = wd.GetListBetweenDate2(beginInterval, endInterval);
-                LogTime();
-
+   
                 foreach (WindRecord w in windData)
                 {
                     minValues.Add(w.MinSpeed);
@@ -182,26 +155,42 @@ namespace Surfvind_2011
                     timeLabels.Add(w.Time.ToShortDateString() + "*" + w.Time.ToShortTimeString());
                     dirValues.Add(w.AverageDirection);
                 }
-                LogTime();
-
+   
                 this.dirValues = dirValues.ToArray();
                 this.speedValues = speedValues.ToArray();
                 this.timeLabels = timeLabels.ToArray();
                 this.minSpeedValues = minValues.ToArray();
                 this.maxSpeedValues = maxValues.ToArray();
-                LogTime();
+            }catch
+            {
 
+            }
+        }
+
+        public void generateSensorImages(String imei, WindData wd)
+        {
+            Start = DateTime.Now;
+            try
+            {
+                WindRecord currentWind = wd.GetCurrentWind();
+                if (currentWind.Time < DateTime.Now.AddHours(-2))
+                {
+                    currentWind.AverageSpeed = 0;
+                    currentWind.MinSpeed = 0;
+                    currentWind.MaxSpeed = 0;
+                    currentWind.AverageDirection = 0;
+                    currentWind.MinDirection = 0;
+                    currentWind.MaxDirection = 0;
+                }
+                
                 /* TODO, move this functionality to an own method since we only need to do this once
                  * For no, lets settle with a check if this is the first time for any given location
                  */
-                if (interval == 0)
-                {
                     String path = HttpContext.Current.Server.MapPath("~/") + "Images/" + imei;
                     if (!System.IO.Directory.Exists(path))
                     {
                         System.IO.Directory.CreateDirectory(path);
                     }
-
                     Helper.GetWindSpeedPic(currentWind.AverageSpeed, currentWind.MinSpeed, currentWind.MaxSpeed, Server).Save(Server.MapPath("~/Images/" + imei + "_img_speed.png"));
                     LogTime();
                     Helper.GetCompassPic(currentWind.AverageDirection, currentWind.MinDirection, currentWind.MaxDirection, Server).Save(Server.MapPath("~/Images/" + imei + "_img_compass.png"));
@@ -216,12 +205,7 @@ namespace Surfvind_2011
                     String test = Server.MapPath("~/Images/" + imei + "_img_water_temp.png");
                     Helper.getTempImage(water_temp).Save(Server.MapPath("~/Images/" + imei + "_img_water_temp.png"));
                     Helper.getTempImage(air_temp).Save(Server.MapPath("~/Images/" + imei + "_img_air_temp.png"));
-                }
-            }
-            catch
-            {
-                int a = 0;
-                a++;
+            } catch {
                 Debug.WriteLine("Problem1");
             }
         }

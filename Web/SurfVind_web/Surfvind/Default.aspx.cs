@@ -19,7 +19,6 @@ namespace Surfvind_2011
         #region declarations
         const int CountIntervals = 100;
         DateTime Start;
-        private List<Location> locations;
         #endregion
 
         protected void LogTime()
@@ -28,7 +27,6 @@ namespace Surfvind_2011
             Start = DateTime.Now;
         }
        public String imei = "";
-       private int OldSelectedIndex = -1;
         protected void Page_Load(object sender, EventArgs e)
         {
             String location = Request.QueryString["location"];
@@ -37,52 +35,42 @@ namespace Surfvind_2011
             Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
             try
             {
-               
-                
-                LogTime();
-                String dbToUse = "";
-                dbToUse = "Surfvind_data";
-
-                LogTime();
-
-                WindData wd = new WindData(true, dbToUse);
+                String dbToUse = "Surfvind_data";
                 bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-
-                List<Location> loc = wd.GetLocations();
-                loc.Sort();
-
-                locations = loc;
-                /* Populate location scrollbar */
-                populateLocationScrollbar(loc);
-                if (loc.Count > 0)
-                {
-                    imei = loc.ToArray()[ddlWhere.SelectedIndex].imei.ToString();
-                    wd.SetImei(imei);
-                    /* Set google map location */
-                    addGMap(loc[ddlWhere.SelectedIndex]);
-
-                }
-
-                GenGraphs t = new GenGraphs();
-                t.update2(imei);
+                WindData windData = new WindData(isMySQL, dbToUse);
                 
+                List<Location> allWeatherStations = windData.GetLocations();
+                allWeatherStations.Sort();
 
+                /* Populate location scrollbar */
+                populateLocationScrollbar(allWeatherStations);
+                if (allWeatherStations.Count > 0)
+                {
+                    imei = allWeatherStations.ToArray()[ddlWhere.SelectedIndex].imei.ToString();
+                }
                 if (location != null)
                 {
-                    OldSelectedIndex = ddlWhere.SelectedIndex;
-                    int index = getIndexForLocation(loc, location);
+                    int index = getIndexForLocation(allWeatherStations, location);
                     if (index >= 0)
                     {
                         ddlWhere.SelectedIndex = index;
                         imei = location;
-                        wd.SetImei(imei);
                     }
                 }
+                windData.SetImei(imei);
+                /* Set google map location */
+                addGMap(allWeatherStations[ddlWhere.SelectedIndex]);
+       
+                GenGraphs graphGenerator = new GenGraphs();
+                graphGenerator.generateSensorImages(imei, windData);
+               
 
                 /* Get pre-stored direction and speed arrows */
                 imgSpeed.ImageUrl = "~/Images/" + imei + "_img_speed.png";
                 imgCompass.ImageUrl = "~/Images/" + imei + "_img_compass.png";
 
+                
+                
                 if (imei == "12345") //Set this to the IMEI nbr that you use for developement of water air and humidity temp
                 {
                     // Set temp images
@@ -92,7 +80,7 @@ namespace Surfvind_2011
                     int w_temp;
                     int a_temp;
 
-                    WindRecord wr = wd.GetCurrentWind();
+                    WindRecord wr = windData.GetCurrentWind();
                     w_temp = wr.AverageWaterTemp;
                     a_temp = wr.AverageAirTemp;
 
@@ -108,9 +96,8 @@ namespace Surfvind_2011
                 }
 
                 /* Set the applet location */
-                setAppletLocation();
+                setAppletLocation(windData);
 
-              
                 twentyFourHGraph.ImageUrl = "~/Applet/" + imei + "/graph_2.png";
                 fiveHGraph.ImageUrl = "~/Applet/" + imei + "/graph_1.png";
             }
@@ -120,7 +107,6 @@ namespace Surfvind_2011
                 debug.Height = 200;
                 debug.Text = eee.Message +"\n";
                 debug.Text += eee.StackTrace;
-                //Response.Redirect("~/ErrorPage.aspx");
             }
         }
 
@@ -172,22 +158,13 @@ namespace Surfvind_2011
         }
 
         /* Set the correct arguments to the applet */
-        private void setAppletLocation()
+        private void setAppletLocation(WindData wd)
         {
-            String dbToUse = "";
-            dbToUse = "Surfvind_data";
-            WindData wd = new WindData(true, dbToUse);
-            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-
             List<Location> loc = wd.GetLocations();
             loc.Sort();
-
-            String html;
             if (loc.Count > 0)
             {
-                html = "http://www.surfvind.se/Applet.aspx?location=" + loc.ToArray()[ddlWhere.SelectedIndex].imei.ToString();
-
-                applet.Attributes["src"] = html;
+                applet.Attributes["src"] = "http://www.surfvind.se/Applet.aspx?location=" + loc.ToArray()[ddlWhere.SelectedIndex].imei.ToString(); ;
             }
         }
         /*
