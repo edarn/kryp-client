@@ -36,7 +36,6 @@ if (!empty($string)){
 		if (!empty($imei) && !empty($measureArray))
 		{		
 			foreach ($measureArray as $key => $value) {
-			    echo "===========================<br>";
 			    echo "Timestamp: " . $value['TimeStamp'] ."<br>";
 			    $timestamp = $value['TimeStamp'];
 
@@ -57,9 +56,11 @@ if (!empty($string)){
 
           echo "WindSpeedMin: " . $value['WindSpeedMin']."<br>";
 			    $minSpeed =  $value['WindSpeedMin'];
-
+				
+				$vBatt = 0;//$value['Battery'];
+				$temperature = 0;// $value['Temperature'];
           
-          echo TNA_QuerySQL("INSERT INTO `Surfvind_data` SET imei=$imei, time='$timestamp',averageDir=$averageDir,maxDir=$maxDir,minDir=$minDir,averageSpeed=$averageSpeed,maxSpeed=$maxSpeed,minSpeed=$minSpeed,version='$version'");
+          echo TNA_QuerySQL("INSERT INTO `Surfvind_data` SET imei=$imei, time='$timestamp',averageDir=$averageDir,maxDir=$maxDir,minDir=$minDir,averageSpeed=$averageSpeed,maxSpeed=$maxSpeed,minSpeed=$minSpeed,airTemp=$temperature,waterTemp=$vBatt,version='$version'");
 			    echo "<br>";
 			}
 		}
