@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Users\a500298\Desktop\Surfvind Publish</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="AddDataAndIMEI.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="AddDebug.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="AddSurfvindDataIOIOv1.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="AddWindData2.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Android/GetSensors.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Applet.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Applet/test.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/AjaxControlToolkit.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/Application_Log.txt">
+      <publishTime>01/10/2015 21:02:17</publishTime>
+    </File>
+    <File Include="bin/Artem.GoogleMap.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/GMaps.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/GoogleChartSharp.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/MySql.Data.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/MySql.Data.Entity.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/MySql.Web.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/Surfvind 2011.dll">
+      <publishTime>01/11/2015 22:08:45</publishTime>
+    </File>
+    <File Include="bin/System.Web.Extensions.Design.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/System.Web.Extensions.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/ZedGraph.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="bin/ZedGraph.Web.dll">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="css/StyleSheet1.css">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Default.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/0.gif">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/arrow_green.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/arrow_red.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/banner.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/chart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/my_arrow_red.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/speed_direction.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/wind_arrow.PNG">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/wind_direction.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/wind_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_background.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_background_sea.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_banner.jpg">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_compass_arrow.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_compass_arrow_003.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_compass_arrow_2.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_graph.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_head.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="design/ws_speed_arrow.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Documents/Embed components from surfvind_se.pdf">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Documents/WindMaster - Installationsanvisning v2.pdf">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Documents/Windmaster - Produktblad_v3.pdf">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Download.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="DownloadAs.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="ErrorPage.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="GenGraphs.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="HTMLPage1.htm">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="ImageHandler.ashx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="ImagePage.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_img_air_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_img_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_img_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_img_water_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_WindDirectionChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/12345_WindSpeedChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_img_air_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_img_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_img_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_img_water_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_WindDirectionChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745030513008_WindSpeedChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745031035159_img_air_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745031035159_img_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745031035159_img_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/354745031035159_img_water_temp.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/img_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/img_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/temp_air_new.PNG">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/WindSpeedChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_arrow_grey.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_arrow_white.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_compass.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_compass_arrow.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_speed.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/ws_speed_arrow.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/_WindDirectionChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Images/_WindSpeedChart.png">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="SmallEmbededDisplay.ashx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="smslista.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Testing.html">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="WapPage.php">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>01/10/2015 22:04:33</publishTime>
+    </File>
+    <File Include="WebForm1.aspx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+    <File Include="WebImage.ashx">
+      <publishTime>10/25/2014 15:38:13</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

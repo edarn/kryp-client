@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CAB644D0-67F2-4026-935C-1F8E2003E40E}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Surfvind_2011</RootNamespace>
+    <AssemblyName>Surfvind 2011</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Artem.GoogleMap">
+      <HintPath>..\..\..\..\..\Desktop\SurfvindMerge\Bin\Artem.GoogleMap.dll</HintPath>
+    </Reference>
+    <Reference Include="GMaps">
+      <HintPath>..\..\..\..\..\Desktop\SurfvindMerge\Bin\GMaps.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleChartSharp">
+      <HintPath>..\..\..\..\..\Desktop\SurfvindMerge\Bin\GoogleChartSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MySql.Data.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Web, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MySql.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="ZedGraph">
+      <HintPath>..\..\..\..\..\Desktop\SurfvindMerge\Bin\ZedGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="ZedGraph.Web">
+      <HintPath>..\..\..\..\..\Desktop\SurfvindMerge\Bin\ZedGraph.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AddDataAndIMEI.php">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="AddDebug.php">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="AddWindData2.php">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Applet.aspx" />
+    <Content Include="Applet\test.png" />
+    <Content Include="bin\AjaxControlToolkit.dll" />
+    <Content Include="bin\Application_Log.txt" />
+    <Content Include="bin\Artem.GoogleMap.dll" />
+    <Content Include="bin\GMaps.dll" />
+    <Content Include="bin\GoogleChartSharp.dll" />
+    <Content Include="bin\MySql.Data.dll" />
+    <Content Include="bin\MySql.Data.Entity.dll" />
+    <Content Include="bin\MySql.Web.dll" />
+    <Content Include="bin\Surfvind 2011.dll" />
+    <Content Include="bin\Surfvind 2011.pdb" />
+    <Content Include="bin\System.Web.Extensions.Design.dll" />
+    <Content Include="bin\System.Web.Extensions.dll" />
+    <Content Include="bin\ZedGraph.dll" />
+    <Content Include="bin\ZedGraph.Web.dll" />
+    <Content Include="css\StyleSheet1.css" />
+    <Content Include="Default.aspx" />
+    <Content Include="design\0.gif" />
+    <Content Include="design\arrow_green.png" />
+    <Content Include="design\arrow_red.png" />
+    <Content Include="design\banner.png" />
+    <Content Include="design\chart.png" />
+    <Content Include="design\my_arrow_red.png" />
+    <Content Include="design\speed_direction.png" />
+    <Content Include="design\wind_arrow.PNG" />
+    <Content Include="design\wind_direction.png" />
+    <Content Include="design\wind_speed.png" />
+    <Content Include="design\ws_background.png" />
+    <Content Include="design\ws_background_sea.png" />
+    <Content Include="design\ws_banner.jpg" />
+    <Content Include="design\ws_compass.png" />
+    <Content Include="design\ws_compass_arrow.png" />
+    <Content Include="design\ws_compass_arrow_003.png" />
+    <Content Include="design\ws_compass_arrow_2.png" />
+    <Content Include="design\ws_graph.png" />
+    <Content Include="design\ws_head.png" />
+    <Content Include="design\ws_speed.png" />
+    <Content Include="design\ws_speed_arrow.png" />
+    <Content Include="Download.aspx" />
+    <Content Include="DownloadAs.aspx" />
+    <Content Include="ErrorPage.aspx" />
+    <Content Include="GenGraphs.aspx" />
+    <Content Include="Android\GetSensors.aspx" />
+    <Content Include="HTMLPage1.htm" />
+    <Content Include="ImagePage.aspx" />
+    <Content Include="Images\12345_img_air_temp.png" />
+    <Content Include="Images\12345_img_compass.png" />
+    <Content Include="Images\12345_img_speed.png" />
+    <Content Include="Images\12345_img_water_temp.png" />
+    <Content Include="Images\12345_WindDirectionChart.png" />
+    <Content Include="Images\12345_WindSpeedChart.png" />
+    <Content Include="Images\354745030513008_img_air_temp.png" />
+    <Content Include="Images\354745030513008_img_compass.png" />
+    <Content Include="Images\354745030513008_img_speed.png" />
+    <Content Include="Images\354745030513008_img_water_temp.png" />
+    <Content Include="Images\354745030513008_WindDirectionChart.png" />
+    <Content Include="Images\354745030513008_WindSpeedChart.png" />
+    <Content Include="Images\354745031035159_img_air_temp.png" />
+    <Content Include="Images\354745031035159_img_compass.png" />
+    <Content Include="Images\354745031035159_img_speed.png" />
+    <Content Include="Images\354745031035159_img_water_temp.png" />
+    <Content Include="Images\img_compass.png" />
+    <Content Include="Images\img_speed.png" />
+    <Content Include="Images\temp_air_new.PNG" />
+    <Content Include="Images\WindSpeedChart.png" />
+    <Content Include="Images\ws_arrow_grey.png" />
+    <Content Include="Images\ws_arrow_white.png" />
+    <Content Include="Images\ws_compass.png" />
+    <Content Include="Images\ws_compass_arrow.png" />
+    <Content Include="Images\ws_speed.png" />
+    <Content Include="Images\ws_speed_arrow.png" />
+    <Content Include="Images\_WindDirectionChart.png" />
+    <Content Include="Images\_WindSpeedChart.png" />
+    <Content Include="Testing.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="WebForm1.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Download.aspx.cs">
+      <DependentUpon>Download.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Download.aspx.designer.cs">
+      <DependentUpon>Download.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadAs.aspx.cs">
+      <DependentUpon>DownloadAs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ErrorPage.aspx.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ErrorPage.aspx.designer.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GenGraphs.aspx.cs">
+      <DependentUpon>GenGraphs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GenGraphs.aspx.designer.cs">
+      <DependentUpon>GenGraphs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Android\GetSensors.aspx.cs">
+      <DependentUpon>GetSensors.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Android\GetSensors.aspx.designer.cs">
+      <DependentUpon>GetSensors.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Helper.cs" />
+    <Compile Include="ImagePage.aspx.cs">
+      <DependentUpon>ImagePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ImagePage.aspx.designer.cs">
+      <DependentUpon>ImagePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SmallEmbededDisplay.ashx.cs">
+      <DependentUpon>SmallEmbededDisplay.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WindData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ImageHandler.ashx" />
+    <Content Include="WebImage.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AddDataHargshamn.php">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="bin\AddDataAndIMEI.php" />
+    <None Include="bin\AddDebug.php" />
+    <None Include="bin\AddWindData2.php" />
+    <Content Include="AddSurfvindDataIOIOv1.php">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="design\Thumbs.db" />
+    <Content Include="Documents\Embed components from surfvind_se.pdf" />
+    <Content Include="Documents\WindMaster - Installationsanvisning v2.pdf" />
+    <Content Include="Documents\Windmaster - Produktblad_v3.pdf" />
+    <None Include="Images\Thumbs.db" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="smslista.php" />
+    <Content Include="WapPage.php" />
+    <Content Include="SmallEmbededDisplay.ashx" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>64095</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
