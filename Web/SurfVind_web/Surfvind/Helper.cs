@@ -83,8 +83,8 @@ namespace Surfvind_2011
 
 		private static int ConvertToAngle(float windSpeed)
 		{
-			// -134 .. 134 == 0..40
-			return (int)(-134 + (269) * windSpeed / 30);
+			// -134 .. 134 == 0..30
+			return (int)(-134 + (269) * windSpeed / 30f);
 		}
 
 		public static DR.Bitmap GetWindSpeedPic(float windSpeed, float minSpeed, float maxSpeed, HttpServerUtility server)

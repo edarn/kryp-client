@@ -32,8 +32,7 @@ namespace Surfvind_2011
         private float[] minSpeedValues;
 
         private String location;
-        private int interval;
-
+      
         DateTime Start;
 
         protected void LogTime()
@@ -53,8 +52,9 @@ namespace Surfvind_2011
               duration = "1"; 
             }
             update(location, duration);
-            
         }
+
+     
 
         /* There are two ways of using this site. Either no parameters, then all graphs for all locations will 
          * be generated, or with arguments (e.g. location=12345&duration=0) and only one graph will be generated
@@ -69,6 +69,8 @@ namespace Surfvind_2011
             List<Location> loc = wd.GetLocations();
             loc.Sort();
 
+            placeholder.InnerHtml += "Thomas "+ loc.Count;
+          
             if (!checkArguments(location, duration, loc))
             {  /* Update everything */
                 foreach (Location l in loc)
@@ -78,25 +80,34 @@ namespace Surfvind_2011
                     wd.SetImei(this.location);
                     for (int i = 0; i < 5; i++)
                     {
-                        this.interval = i;
-                        fetchData(interval, wd);
-               //         Response.Write("Create Graph");
-                        createGraph();
+                        int interval = i;
+                        fetchData(i, wd);
+
+                        System.Web.UI.WebControls.Image a = new System.Web.UI.WebControls.Image();
+                        a.Width =800;
+                        a.Height = 200;
+                        a.ImageUrl = generateGraphOnServer(interval,800,200);
+                        placeholder.Controls.Add(a);
                     }
                 }
             }
+                
             else
             {
                 this.location = location;
-                /* Safe, we know this value can be parsed, we've tried it before */
-                this.interval = int.Parse(duration);
+                // Safe, we know this value can be parsed, we've tried it before 
+                int interval = int.Parse(duration);
                 wd.SetImei(this.location);
              //   Response.Write("Generate Graph");
 
                 fetchData(interval, wd);
                 //    Response.Write("Create Graph");
-                        
-                createGraph();
+
+                System.Web.UI.WebControls.Image a = new System.Web.UI.WebControls.Image();
+                a.Width = 800;
+                a.Height = 200;
+                a.ImageUrl = generateGraphOnServer(interval,800,200);
+                placeholder.Controls.Add(a);
             }
         }
 
@@ -155,7 +166,6 @@ namespace Surfvind_2011
                     timeLabels.Add(w.Time.ToShortDateString() + "*" + w.Time.ToShortTimeString());
                     dirValues.Add(w.AverageDirection);
                 }
-   
                 this.dirValues = dirValues.ToArray();
                 this.speedValues = speedValues.ToArray();
                 this.timeLabels = timeLabels.ToArray();
@@ -258,14 +268,6 @@ namespace Surfvind_2011
 			return beginInterval;
 		}
 
-        public void createGraph()
-        {
-            zgwCtl.Draw(false);
-        }
-        
-
-
-
         private double[] TranslateSpeedValues(float[] values)
         {
             List<double> arr = new List<double>();
@@ -314,23 +316,13 @@ namespace Surfvind_2011
             return rez;
         }
 
-        protected void zgwCtl_OnRenderGraph(ZedGraphWeb zgw, Graphics g, MasterPane masterPane)
+   
+        public String generateGraphOnServer(int interval,int width, int height)
         {
-            if (g != null)
-            {
-                g.Clear(Color.White);
-            }
+            GraphPane graphPane = new GraphPane();
             double[] valuesY = TranslateSpeedValues(this.speedValues);
             XDate[] valuesX = TranslateTimeValues(this.timeLabels);
-            GraphPane graphPane = null;
-            if (masterPane != null)
-            {
-                graphPane = masterPane[0];
-            }
-            else
-            {
-                graphPane = new GraphPane();
-            }
+       
             PointPairList listMean = new PointPairList();
             PointPairList listMax = new PointPairList();
             PointPairList listMin = new PointPairList();
@@ -445,10 +437,10 @@ namespace Surfvind_2011
             //graphPane.IsPenWidthScaled = false;
             //graphPane.IsFontsScaled = false;			
 
-            masterPane.AxisChange(g);
+        //    graphPane.AxisChange(g);
 
             // Draw wind direction arrows
-            
+
             ImageObj[] dirImages = new ImageObj[dirValues.Length];
             int nbrOfPlots = Math.Min(20, dirImages.Length);
 
@@ -482,10 +474,11 @@ namespace Surfvind_2011
             {
                 if (dirImages.Length < nbrOfPlots)
                 {
-                    for(int i = 0; i < nbrOfPlots - dirImages.Length; i++) {
+                    for (int i = 0; i < nbrOfPlots - dirImages.Length; i++)
+                    {
                         next += step;
                     }
-                    
+
                 }
                 for (int i = 0; i < dirImages.Length && i < rot.Length && i < nbrOfPlots; i++)
                 {
@@ -499,15 +492,19 @@ namespace Surfvind_2011
             if (valuesX.Length > 0)
             {
                 DateTime date = valuesX[0];
-                graphPane.Title.Text = getInfoText(date);
+                graphPane.Title.Text = getInfoText(date, interval);
             }
             graphPane.Title.FontSpec.Size = 24;
             graphPane.Title.FontSpec.Fill.Color = Color.Black;
 
             // Get interval so we can name the picture
-            String name = "graph_" + this.interval + ".png";
-            
-            
+            String name = "graph_" + interval + ".png";
+
+            Bitmap bm = new Bitmap(width, height);
+            Graphics ge = Graphics.FromImage(bm);
+            graphPane.AxisChange(ge);
+
+
             try
             {
                 String path = HttpContext.Current.Server.MapPath("/") + "Applet/" + location;
@@ -516,16 +513,17 @@ namespace Surfvind_2011
                     System.IO.Directory.CreateDirectory(path);
                 }
 
-                masterPane.GetImage().Save(Server.MapPath("~/Applet/" + location + "/" + name), System.Drawing.Imaging.ImageFormat.Png);
+                graphPane.GetImage(width,height,200).Save(Server.MapPath("~/Applet/" + location + "/" + name), System.Drawing.Imaging.ImageFormat.Png);
             }
             catch (Exception)
             {
                 Debug.WriteLine("Problem3");
                 Debug.WriteLine("Exception raised. Location: " + location);
             }
+            return "~/Applet/" + location + "/" + name;
         }
 
-        private String getInfoText(DateTime date)
+        private String getInfoText(DateTime date, int interval)
         {
             String infoText;
 

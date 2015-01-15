@@ -95,11 +95,15 @@ namespace Surfvind_2011
                     water.Visible = false;
                 }
 
+                
+                // Graphs are now generated on demand. 
+                graphGenerator.fetchData(2, windData);
+                twentyFourHGraph.ImageUrl = graphGenerator.generateGraphOnServer(2,1000,250);
+                graphGenerator.fetchData(1, windData);
+                fiveHGraph.ImageUrl = graphGenerator.generateGraphOnServer(1,1000,250);
                 /* Set the applet location */
                 setAppletLocation(windData);
 
-                twentyFourHGraph.ImageUrl = "~/Applet/" + imei + "/graph_2.png";
-                fiveHGraph.ImageUrl = "~/Applet/" + imei + "/graph_1.png";
             }
             catch (Exception eee)
             {

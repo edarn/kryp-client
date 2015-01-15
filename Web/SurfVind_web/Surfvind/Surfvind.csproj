@@ -270,6 +270,7 @@
     <Content Include="Documents\WindMaster - Installationsanvisning v2.pdf" />
     <Content Include="Documents\Windmaster - Produktblad_v3.pdf" />
     <None Include="Images\Thumbs.db" />
+    <None Include="Properties\PublishProfiles\ftp.pubxml" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="Properties\PublishProfiles\Profile2.pubxml" />
     <None Include="Properties\Settings.settings">
