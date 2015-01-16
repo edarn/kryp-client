@@ -42,22 +42,26 @@ namespace WindInfo
 
 		public string GetDBConnString()
 		{
-			return isMySqlDB ? GetMySqlConnStr() : GetSQLConnStr();
+			//return isMySqlDB ? GetMySqlConnStr() : GetSQLConnStr();
+            return GetMySqlConnStr();
 		}
 
 		DbCommand GetDBCommand(string cmd, DbConnection conn)
 		{
-			return isMySqlDB ? (DbCommand)new MySqlCommand(cmd, (MySqlConnection)conn) : (DbCommand)new SqlCommand(cmd, (SqlConnection)conn);
+            return (DbCommand)new MySqlCommand(cmd, (MySqlConnection)conn);
+			//return isMySqlDB ? (DbCommand)new MySqlCommand(cmd, (MySqlConnection)conn) : (DbCommand)new SqlCommand(cmd, (SqlConnection)conn);
 		}
 
 		DbConnection GetDbConnection(string connStr)
 		{
-			return isMySqlDB ? (DbConnection)new MySqlConnection(connStr) : (DbConnection)new SqlConnection(connStr);
+            return (DbConnection)new MySqlConnection(connStr);
+			//return isMySqlDB ? (DbConnection)new MySqlConnection(connStr) : (DbConnection)new SqlConnection(connStr);
 		}
 
 		DbParameter GetDBParam(string paramName, object paramValue)
 		{
-			return isMySqlDB ? (DbParameter)new MySqlParameter("?" + paramName, paramValue) : (DbParameter)new SqlParameter("@" + paramName, paramValue);
+            return (DbParameter)new MySqlParameter("?" + paramName, paramValue);
+            //return isMySqlDB ? (DbParameter)new MySqlParameter("?" + paramName, paramValue) : (DbParameter)new SqlParameter("@" + paramName, paramValue);
         }
         #endregion
 
@@ -180,27 +184,51 @@ namespace WindInfo
             return list;
         }
 
-        public List<Location> GetLocations()
+        public List<Location> GetLocations(HttpResponse resp)
         {
             //string cmdText = string.Format("select distinct imei from Surfvind_data WHERE 1");
             DateTime start = DateTime.Now;
             start = start.AddDays(-7);
             string t = start.ToString();
+            if (resp != null)
+            {
+                resp.Write("Thomas: " + t);
+            }
+            
 
-            //string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM `Surfvind_location`,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time > \"" + t + "\"");
-            string cmdText = string.Format("SELECT Location,imei, Latitiud, Longitud FROM `Surfvind_location` WHERE 1");
+            string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM `Surfvind_location`,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time > \"2015-01-01\"");
+            //string cmdText = string.Format("SELECT Location,imei, Latitiud, Longitud FROM `Surfvind_location` WHERE 1");
+
+            if (resp != null)
+            {
+                resp.Write("conn string: " + cmdText + "  ");
+            }
+            
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
+                if (resp != null)
+                {
+                    resp.Write("Conn works");
+                }
                 List<Location> list = new List<Location>();
                 conn.Open();
                 using (DbCommand cmd = GetDBCommand(cmdText, conn))
                 {
+                    if (resp != null)
+                    {
+                        resp.Write("Get DB Command Works");
+                    }
                     DbDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
+                        if (resp != null)
+                        {
+                            resp.Write("reader REad");
+                        }
                         Location wr = new Location(reader["Location"].ToString(), reader["imei"].ToString(), reader["Longitud"].ToString(), reader["Latitiud"].ToString());
                         list.Add(wr);
                     }
+                    reader.Close();
                 }
                 return list;
             }

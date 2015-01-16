@@ -35,15 +35,14 @@ public partial class Default : System.Web.UI.Page
             LocationPage.Visible = false;
             return;
         }
-        
+
         String dbToUse = "";
         dbToUse = "Surfvind_data";
 
         WindData wd = new WindData(true, dbToUse);
         bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
 
-        List<Location> loc = wd.GetLocations();
-        loc.Sort();
+        List<Location> loc = Helper.getLocations();
 
         String imei = location; // getLocation(location, loc).imei.ToString();
         if (imei == null)
@@ -59,8 +58,8 @@ public partial class Default : System.Web.UI.Page
         imgCompass.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_compass.png";
 
         // Set temp images
-      //  water_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_water_temp.png";
-      //  air_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_air_temp.png";
+        //  water_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_water_temp.png";
+        //  air_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_air_temp.png";
 
         int w_temp;
         int a_temp;
@@ -69,12 +68,12 @@ public partial class Default : System.Web.UI.Page
         w_temp = wr.AverageWaterTemp;
         a_temp = wr.AverageAirTemp;
 
-     //   water_temp.ToolTip = "Water temperature: " + w_temp + " °C";
-     //   air_temp.ToolTip = "Air temperature: " + a_temp + " °C";
+        //   water_temp.ToolTip = "Water temperature: " + w_temp + " °C";
+        //   air_temp.ToolTip = "Air temperature: " + a_temp + " °C";
 
         /* Set google map location */
         Location loca = getLocation(location, loc);
-        
+
         setAppletLocation(imei);
 
         Title_loc.Text = loca.Name;
@@ -85,7 +84,6 @@ public partial class Default : System.Web.UI.Page
             addGMap(loca);
             Title += loca;
         }
-        
 
         WelcomePage.Visible = false;
         LocationPage.Visible = true;
@@ -109,7 +107,7 @@ public partial class Default : System.Web.UI.Page
     {
         foreach (Location l in loc)
         {
-            if(l.imei.Equals(location)) 
+            if (l.imei.Equals(location))
             {
                 return l;
             }
@@ -121,14 +119,6 @@ public partial class Default : System.Web.UI.Page
 
     private void setAppletLocation(String imei)
     {
-        String dbToUse = "";
-        dbToUse = "Surfvind_data";
-        WindData wd = new WindData(true, dbToUse);
-        bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-
-        List<Location> loc = wd.GetLocations();
-        loc.Sort();
-
         String html;
         //html = "http://www.surfvind.se/Applet.aspx?location=" + imei;
         html = "http://www.vindinfo.se/slideshow.aspx?Location=" + imei;
