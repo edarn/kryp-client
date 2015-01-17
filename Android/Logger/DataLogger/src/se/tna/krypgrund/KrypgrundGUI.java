@@ -332,7 +332,7 @@ public class KrypgrundGUI extends Activity {
                  //   textWindDirection.setText(status.windDirection);
                     textWindSpeed.setText(String.format("%.2f", status.windSpeed));
 
-                    compassImageView.setRotation(status.windDirection);
+                  //  compassImageView.setRotation(status.windDirection);
 
 
                     textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));

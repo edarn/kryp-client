@@ -38,3 +38,4 @@ Web/SurfVind_web/Surfvind/bin/Application_Log.txt
 Android/Logger/gradle/.gradle/
 Android/Logger/.gradle/
 *.iml
+Android/Logger/gradle/gradle/

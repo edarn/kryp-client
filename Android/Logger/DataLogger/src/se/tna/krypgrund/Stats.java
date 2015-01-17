@@ -14,7 +14,7 @@ public abstract class Stats{
 	public float batteryVoltage = 0;
 	public int temperature = 0;
 	public Stats(){
-	    DateFormat dateFormatLocal = new SimpleDateFormat("yyyyMMddTkkmmss");
+	    DateFormat dateFormatLocal = new SimpleDateFormat("yyyyMMdd'T'kkmmss");
         TimeZone t = TimeZone.getDefault();
         dateFormatLocal.setTimeZone(t);
         time = dateFormatLocal.format(new Date(System.currentTimeMillis()));
