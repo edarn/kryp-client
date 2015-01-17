@@ -39,3 +39,4 @@ Android/Logger/gradle/.gradle/
 Android/Logger/.gradle/
 *.iml
 Android/Logger/gradle/gradle/
+*.log
