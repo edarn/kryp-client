@@ -222,7 +222,7 @@ public class Helper {
 		float humid = ((toReceive[0] & 0x3F) * 256 + (toReceive[1] & 0xFF));
 		humid /= Math.pow(2, 14);
 		humid *= 100;
-		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F) / 4;
+		float temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] >> 2) & 0x3F);// / 4;
 		temp /= Math.pow(2, 14);
 		temp *= 165;
 		temp -= 40;
