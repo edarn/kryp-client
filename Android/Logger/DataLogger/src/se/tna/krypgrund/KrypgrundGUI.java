@@ -41,7 +41,7 @@ public class KrypgrundGUI extends Activity {
     private TextView fanStatus;
     private TextView phoneId;
     private TextView textVoltage;
-    ;
+
 
 
     private ToggleButton debugButton;
@@ -54,6 +54,11 @@ public class KrypgrundGUI extends Activity {
     private TextView textWindDirection;
 
     private ImageView compassImageView;
+
+    private ImageView temperatureImageView;
+    private ImageView moistureImageView;
+
+    private int angle = 0;
 
     @Override
     public void onPause() {
@@ -237,8 +242,13 @@ public class KrypgrundGUI extends Activity {
         timer.scheduleAtFixedRate(t, 0, 5000);
 
         compassImageView = (ImageView) findViewById(R.id.arrow);
-		/*
+        temperatureImageView = (ImageView) findViewById(R.id.temp_arrow);
+        moistureImageView = (ImageView) findViewById(R.id.moist_arrow);
+
+
+
 		Timer te = new Timer();
+
 		TimerTask tu = new TimerTask() {
 			
 			@Override
@@ -247,15 +257,16 @@ public class KrypgrundGUI extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						compassImageView.setRotation(i);
-						i+=1;
+                        temperatureImageView.setRotation(angle);
+                        moistureImageView.setRotation(angle);
+                        i+=1;
 					}
 				});
 			}
 		};
 		
-		te.scheduleAtFixedRate(tu, 1,10);
-*/
+		te.scheduleAtFixedRate(tu, 1,50);
+
 	    
 	/*    
 	    Gauge radial = GaugeBuilder.create()
