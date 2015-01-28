@@ -165,7 +165,12 @@ public class KrypgrundsService extends IOIOService {
 						oneMeasurement = temp;
 						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
 						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
-						if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1) {
+
+                        ChipCap2 tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+                        temp.moisture = tempAndHumidity.humidity;
+                        temp.temperature = tempAndHumidity.temperature;
+
+                        if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1) {
 							rawSurfvindsMeasurements.add(temp);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
@@ -173,8 +178,6 @@ public class KrypgrundsService extends IOIOService {
 
 					}
 					oneMeasurement.batteryVoltage = helper.getBatteryVoltage();
-					oneMeasurement.temperature = helper.getTemp();
-
 					Thread.sleep(timeBetweenReading);
 					
 				} catch (Exception e) {
@@ -442,7 +445,8 @@ public class KrypgrundsService extends IOIOService {
 				status.windSpeed = oneReading.windSpeedAvg;
 				status.analogInput = oneReading.windDirectionAvg * 3.3f / 360f;
 				status.voltage = oneReading.batteryVoltage;
-
+                status.moistureInne = oneReading.moisture;
+                status.temperatureInne = oneReading.temperature;
 			}
 		}
 		if (serviceMode == ServiceMode.Krypgrund) {

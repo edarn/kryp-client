@@ -341,7 +341,7 @@ public class KrypgrundGUI extends Activity {
                     }
 
                  //   textWindDirection.setText(status.windDirection);
-                    textWindSpeed.setText(String.format("%.2f", status.windSpeed));
+                    textWindSpeed.setText(String.format("%.2f", status.windSpeed) +" "+ String.format("%.2f", status.moistureInne) + " " + String.format("%.2f", status.temperatureInne)  );
 
                   //  compassImageView.setRotation(status.windDirection);
 

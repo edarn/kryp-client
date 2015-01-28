@@ -12,7 +12,6 @@ import java.util.TimeZone;
 public abstract class Stats{
 	public String time;
 	public float batteryVoltage = 0;
-	public int temperature = 0;
 	public Stats(){
 	    DateFormat dateFormatLocal = new SimpleDateFormat("yyyyMMdd'T'kkmmss");
         TimeZone t = TimeZone.getDefault();

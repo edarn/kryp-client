@@ -62,7 +62,6 @@ public class Helper {
 	PulseInput pulseCounter = null;
 	AnalogInput anemometer = null;
 	private AnalogInput power;
-	private AnalogInput temp;
 	private AnalogInput mAnalogPulsecounter;
 
 	private static final int ANEMOMETER_WIND_VANE = 45;
@@ -116,7 +115,6 @@ public class Helper {
 
 				// On board sensors. Are they used?
 				power = ioio.openAnalogInput(42);
-				temp = ioio.openAnalogInput(43);
 
 				B2 = ioio.openDigitalOutput(20);
 				B1 = ioio.openDigitalOutput(19);
@@ -142,7 +140,6 @@ public class Helper {
 		B1.close();
 		B2.close();
 		power.close();
-		temp.close();
 	}
 
 	static File logFile = null;
@@ -157,7 +154,7 @@ public class Helper {
 				// "/krypgrund_log.file");
 				// Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 				// +
-				logFile = new File("/sdcard/krypgrund_log.txt");
+				logFile = new File(Environment.getExternalStorageDirectory().getPath() +"/krypgrund_log.txt");
 				if (!logFile.exists()) {
 					logFile.createNewFile();
 
@@ -202,7 +199,6 @@ public class Helper {
 		byte toSend[] = new byte[1];
 		byte toReceive[] = new byte[4];
 		toSend[0] = (byte) 0;
-		System.out.println("Humid: ++");
 
 		try {
 			Thread.sleep(200);
@@ -229,7 +225,9 @@ public class Helper {
 
 		result.humidity = humid;
 		result.temperature = temp;
-		return result;
+        System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature);
+
+        return result;
 	}
 
 	public ChipCap2 GetChipCap2TempAndHumidity(final SensorLocation type) {
@@ -664,21 +662,6 @@ public class Helper {
 		for (char b : text.toCharArray()) {
 			SendI2CCommand(0xC6, 0, b);
 		}
-	}
-
-	public int getTemp() throws ConnectionLostException {
-		float voltage = 0;
-		try {
-			voltage = temp.getVoltage();
-			System.out.println("Tempraw: " + voltage);
-
-			voltage = 100 * voltage - 50;
-			System.out.println("Tempcalc: " + voltage);
-			voltage *= 10;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return (int) voltage;
 	}
 
 	public float getWindSpeed3() throws ConnectionLostException {

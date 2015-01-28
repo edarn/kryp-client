@@ -14,7 +14,11 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 	public float windDirectionAvg = 0;
 	public float windDirectionMax = 0;
 
-	@Override
+    public float moisture = 0;
+    public float temperature = 0;
+
+
+    @Override
 	public JSONObject getJSON() {
 
 		JSONObject ret = new JSONObject();
@@ -28,9 +32,10 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 			ret.put("WindSpeedMax", windSpeedMax);
 
 			ret.put("Battery", (int) batteryVoltage);
-			ret.put("Temperature", (int) temperature);
+            ret.put("Temperature", (int) temperature);
+            ret.put("Moisture", (int) moisture);
 
-			ret.put("TimeStamp", time);
+            ret.put("TimeStamp", time);
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

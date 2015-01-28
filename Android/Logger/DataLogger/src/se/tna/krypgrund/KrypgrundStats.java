@@ -51,7 +51,6 @@ public class KrypgrundStats extends Stats {
 				total.temperatureUte += stat.temperatureUte;
 				total.absolutFuktInne += stat.absolutFuktInne;
 				total.absolutFuktUte += stat.absolutFuktUte;
-				total.temperature += stat.temperature;
 				total.batteryVoltage += stat.batteryVoltage;
 			}
 
@@ -62,7 +61,6 @@ public class KrypgrundStats extends Stats {
 			total.temperatureUte /= size;
 			total.absolutFuktInne /= size;
 			total.absolutFuktUte /= size;
-			total.temperature /= size;
 			total.batteryVoltage /= size;
 		}
 		return total;
