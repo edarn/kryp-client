@@ -2,10 +2,10 @@ apply plugin: 'android'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-   // compile project(':ioio:IOIOLibAccessory')
+     compile project(':ioio:IOIOLibAccessory')
     compile project(':ioio:IOIOLib:target:android')
-  //  compile project(':ioio:IOIOLibAndroidDevice')
-   // compile project(':ioio:IOIOLibBT')
+    compile project(':ioio:IOIOLibAndroidDevice')
+    compile project(':ioio:IOIOLibBT')
 }
 
 android {
