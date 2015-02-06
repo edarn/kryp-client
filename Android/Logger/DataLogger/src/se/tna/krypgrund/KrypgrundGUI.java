@@ -336,6 +336,20 @@ public class KrypgrundGUI extends Activity {
         }
     }
 
+    private int getMoistureAngle(float moisture) {
+        int angle = 0;
+        angle = (int) ((moisture / 100f) * 135 * 2);
+        angle -= 135;
+        return angle;
+    }
+
+    private int getTempAngle(float temperature) {
+        int angle = 0;
+        angle = (int) ((temperature / 100f) * 120 * 2);
+        angle -= 120;
+        return angle;
+    }
+
     private void updateUI() {
         if (null != kryp) {
             final StatusOfService status = kryp.getStatus();
