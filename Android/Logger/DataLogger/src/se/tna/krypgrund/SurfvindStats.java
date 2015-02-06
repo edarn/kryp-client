@@ -31,9 +31,9 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 			ret.put("WindSpeedAvg", windSpeedAvg);
 			ret.put("WindSpeedMax", windSpeedMax);
 
-			ret.put("Battery", (int) batteryVoltage);
-            ret.put("Temperature", (int) temperature);
-            ret.put("Moisture", (int) moisture);
+			ret.put("Battery", String.format("%.1f", batteryVoltage));
+            ret.put("Temperature", String.format("%.1f", temperature));
+            ret.put("Moisture", String.format("%.1f", moisture));
 
             ret.put("TimeStamp", time);
 
@@ -81,12 +81,14 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 				}
 				total.temperature += stat.temperature;
 				total.batteryVoltage += stat.batteryVoltage;
+                total.moisture += stat.moisture;
 			}
 			int size = rawMeasurements.size();
 			total.windDirectionAvg /= size;
 			total.windSpeedAvg /= size;
 			total.temperature /= size;
 			total.batteryVoltage /= size;
+            total.moisture /= size;
 		}
 		return total;
 	}

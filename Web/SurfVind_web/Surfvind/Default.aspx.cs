@@ -69,24 +69,20 @@ namespace Surfvind_2011
                 imgSpeed.ImageUrl = "~/Images/" + imei + "_img_speed.png";
                 imgCompass.ImageUrl = "~/Images/" + imei + "_img_compass.png";
 
+                WindRecord wr = windData.GetCurrentWind();
                 
-                
-                if (imei == "12345") //Set this to the IMEI nbr that you use for developement of water air and humidity temp
+                if (wr.Moisture != 0)
                 {
                     // Set temp images
                     water_temp.ImageUrl = "~/Images/" + imei + "_img_water_temp.png";
                     air_temp.ImageUrl = "~/Images/" + imei + "_img_air_temp.png";
 
-                    int w_temp;
-                    int a_temp;
-
-                    WindRecord wr = windData.GetCurrentWind();
-                    w_temp = wr.AverageWaterTemp;
-                    a_temp = wr.AverageAirTemp;
-
-                    water_temp.ToolTip = "Water temperature: " + w_temp + " °C";
-                    air_temp.ToolTip = "Air temperature: " + a_temp + " °C";
+                    water_temp.ToolTip = "Water temperature: " + wr.AverageWaterTemp + " °C";
+                    air_temp.ToolTip = "Air temperature: " + wr.AverageAirTemp + " °C";
                     Label1.Text = "Moisture: " + wr.Moisture + "%";
+                    air.Visible = true;
+                    moisture.Visible = true;
+                    water.Visible = true;
                 }
                 else
                 {

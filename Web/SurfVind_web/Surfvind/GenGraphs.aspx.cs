@@ -207,8 +207,8 @@ namespace Surfvind_2011
                     LogTime();
 
                     /* Create temperature images */
-                    int water_temp;
-                    int air_temp;
+                    float water_temp;
+                    float air_temp;
 
                     water_temp = currentWind.AverageWaterTemp;
                     air_temp = currentWind.AverageAirTemp;

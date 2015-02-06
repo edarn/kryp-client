@@ -164,7 +164,7 @@ namespace Surfvind_2011
 
         #region #Temperature Image
         /* Generate temperature image */
-        public static Image getTempImage(int temp)
+        public static Image getTempImage(float temp)
         {
             Image image;
             int width, height, rect_width, rect_height, rect_x, rect_y;
@@ -178,7 +178,7 @@ namespace Surfvind_2011
             height = 180;
 
             rect_width = 9;
-            rect_height = (temp + 30) * 2;
+            rect_height = (int)((temp + 30) * 2);
             rect_x = 13;
             rect_y = 146 - rect_height;
             image = new Bitmap(width, height);

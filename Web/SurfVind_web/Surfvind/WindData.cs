@@ -297,9 +297,9 @@ namespace Surfvind_2011
                     currWind.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
                     currWind.MinSpeed = float.Parse(reader["minSpeed"].ToString());
                     // TODO, uncomment next two lines when the database has posts for temperature
-                    currWind.AverageAirTemp = int.Parse(reader["airTemp"].ToString());
-                    currWind.AverageWaterTemp = int.Parse(reader["waterTemp"].ToString());
-                    currWind.Moisture = int.Parse(reader["moisture"].ToString());
+                    currWind.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
+                    currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
+                    currWind.Moisture = float.Parse(reader["moisture"].ToString());
                 }
             }
 
@@ -336,9 +336,9 @@ namespace Surfvind_2011
         float _averageSpeed;
         float _maxSpeed;
         float _minSpeed;
-        int _averageWaterTemp;
-        int _averageAirTemp;
-        int _moisture;
+        float _averageWaterTemp;
+        float _averageAirTemp;
+        float _moisture;
 
 
         public DateTime Time
@@ -384,20 +384,20 @@ namespace Surfvind_2011
         }
 
         // TODO
-        public int AverageWaterTemp
+        public float AverageWaterTemp
         {
             get { return _averageWaterTemp; }
             set { _averageWaterTemp = value; }
         }
 
         // TODO
-        public int AverageAirTemp
+        public float AverageAirTemp
         {
             get { return _averageAirTemp; }
             set { _averageAirTemp = value; }
         }
 
-        public int Moisture
+        public float Moisture
         {
             get { return _moisture; }
             set { _moisture = value; }

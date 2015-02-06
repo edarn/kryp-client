@@ -57,10 +57,14 @@ if (!empty($string)){
           echo "WindSpeedMin: " . $value['WindSpeedMin']."<br>";
 			    $minSpeed =  $value['WindSpeedMin'];
 				
-				$vBatt = 0;//$value['Battery'];
-				$temperature = 0;// $value['Temperature'];
-          
-          echo TNA_QuerySQL("INSERT INTO `Surfvind_data` SET imei=$imei, time='$timestamp',averageDir=$averageDir,maxDir=$maxDir,minDir=$minDir,averageSpeed=$averageSpeed,maxSpeed=$maxSpeed,minSpeed=$minSpeed,airTemp=$temperature,waterTemp=$vBatt,version='$version'");
+				  $vBatt = $value['Battery'];
+          echo "vBatt: " . $value['Battery']."<br>";
+			    
+				  $airTemp = $value['Temperature'];
+          $moisture = $value['Moisture'];
+          echo "Moisture: " . $value['Moisture']."<br>";
+			    
+          echo TNA_QuerySQL("INSERT INTO `Surfvind_data` SET imei=$imei, time='$timestamp',averageDir=$averageDir,maxDir=$maxDir,minDir=$minDir,averageSpeed=$averageSpeed,maxSpeed=$maxSpeed,minSpeed=$minSpeed,airTemp=$airTemp,waterTemp=$vBatt,moisture=$moisture,version='$version'");
 			    echo "<br>";
 			}
 		}
