@@ -40,3 +40,4 @@ Android/Logger/.gradle/
 *.iml
 Android/Logger/gradle/gradle/
 *.log
+*.orig
