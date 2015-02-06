@@ -170,7 +170,7 @@ public class KrypgrundsService extends IOIOService {
                         temp.moisture = tempAndHumidity.humidity;
                         temp.temperature = tempAndHumidity.temperature;
 
-                        if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1) {
+                        if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1 || temp.moisture != 0 || temp.temperature != -40) {
 							rawSurfvindsMeasurements.add(temp);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
