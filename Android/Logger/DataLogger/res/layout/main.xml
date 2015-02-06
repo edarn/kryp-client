@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/mainContainer"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            android:id="@+id/mainContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
         <!-- ################ WEATHER STATION ###################### -->
 
         <LinearLayout
-            android:id="@+id/weatherStationContainer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bakgrund_weather"
-            android:orientation="vertical">
+                android:id="@+id/weatherStationContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bakgrund_weather"
+                android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="#b0000000"
-                android:text="Weather Station:"
-                android:textColor="#ffffff"
-                android:textSize="25dp" />
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="#b0000000"
+                    android:text="Weather Station:"
+                    android:textColor="#ffffff"
+                    android:textSize="25dp"/>
 
             <LinearLayout
                     android:layout_width="fill_parent"
@@ -39,7 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:orientation="vertical">
 
                     <TextView
@@ -50,7 +50,7 @@
                             android:background="#b0000000"
                             android:text="12 m/s"
                             android:textColor="#ffffff"
-                            android:textSize="35dp" />
+                            android:textSize="35dp"/>
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -63,17 +63,17 @@
                                 android:layout_height="60dp"
                                 android:layout_gravity="left"
                                 android:scaleType="centerInside"
-                                android:src="@drawable/temperature" />
+                                android:src="@drawable/temperature"/>
 
                         <TextView
-                                android:id="@+id/humidText"
+                                android:id="@+id/temperatureText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:background="#b0000000"
                                 android:text="7"
                                 android:textColor="#ffffff"
-                                android:textSize="35dp" />
+                                android:textSize="35dp"/>
 
                         <TextView
                                 android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                                 android:background="#b0000000"
                                 android:text=" \u2103"
                                 android:textColor="#ffffff"
-                                android:textSize="35dp" />
+                                android:textSize="35dp"/>
 
                     </LinearLayout>
 
@@ -91,22 +91,22 @@
                             android:layout_height="match_parent"
                             android:layout_marginTop="10dp"
                             android:orientation="horizontal">
-<!--
-                        <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="60dp"
-                                android:layout_gravity="left"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/blue_water" /> -->
+                        <!--
+                                                <ImageView
+                                                        android:layout_width="40dp"
+                                                        android:layout_height="60dp"
+                                                        android:layout_gravity="left"
+                                                        android:scaleType="centerInside"
+                                                        android:src="@drawable/blue_water" /> -->
                         <TextView
-                                android:id="@+id/temperatureText"
+                                android:id="@+id/humidText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:background="#b0000000"
                                 android:text="68"
                                 android:textColor="#ffffff"
-                                android:textSize="35sp" />
+                                android:textSize="35sp"/>
 
                         <TextView
                                 android:layout_width="wrap_content"
@@ -115,10 +115,55 @@
                                 android:background="#b0000000"
                                 android:text=" %"
                                 android:textColor="#ffffff"
-                                android:textSize="35sp" />
+                                android:textSize="35sp"/>
 
                     </LinearLayout>
 
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+                        <FrameLayout android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content">
+                        <ImageView
+                                android:layout_width="55dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_vertical"
+                                android:scaleType="centerInside"
+                                android:src="#00FF00"/>
+                        <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center_vertical"
+
+                                android:scaleType="centerInside"
+
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+
+                                android:src="@drawable/battery_icon"/>
+                        </FrameLayout>
+                        <TextView
+                                android:id="@+id/batteryText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="#b0000000"
+                                android:text="11.2"
+                                android:textColor="#ffffff"
+                                android:textSize="35sp"/>
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="#b0000000"
+                                android:text=" V"
+                                android:textColor="#ffffff"
+                                android:textSize="35sp"/>
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <FrameLayout
@@ -133,7 +178,7 @@
                             android:layout_height="150dp"
                             android:layout_gravity="center_horizontal"
                             android:scaleType="fitXY"
-                            android:src="@drawable/compass_background" />
+                            android:src="@drawable/compass_background"/>
 
                     <ImageView
                             android:id="@+id/arrow"
@@ -142,71 +187,71 @@
                             android:layout_gravity="center"
                             android:padding="10dp"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/green_arrow" />
+                            android:src="@drawable/visare_riktning"/>
                 </FrameLayout>
             </LinearLayout>
 
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                 <FrameLayout
-                    android:layout_width="150dp"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp">
+                        android:layout_width="150dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="20dp">
 
                     <WebView
-                        android:id="@+id/webViewCompassBackground"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                            android:id="@+id/webViewCompassBackground"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
 
                     <WebView
-                        android:id="@+id/webViewCompass"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000" />
+                            android:id="@+id/webViewCompass"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"/>
                 </FrameLayout>
 
                 <FrameLayout
-                    android:layout_width="200dp"
-                    android:layout_height="200dp">
+                        android:layout_width="200dp"
+                        android:layout_height="200dp">
 
                     <WebView
-                        android:id="@+id/webViewSpeedBackground"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                            android:id="@+id/webViewSpeedBackground"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
 
                     <WebView
-                        android:id="@+id/webViewSpeed"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000" />
+                            android:id="@+id/webViewSpeed"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"/>
                 </FrameLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="80dp"
-                    android:text="Direction: " />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="80dp"
+                        android:text="Direction: "/>
 
                 <TextView
-                    android:id="@+id/textWindDirection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="246" />
+                        android:id="@+id/textWindDirection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="246"/>
             </LinearLayout>
             <!--
                         <LinearLayout
@@ -252,71 +297,71 @@
 
         <!-- ################ CRAWLSPACE STATION ###################### -->
         <LinearLayout
-            android:id="@+id/crawlspaceContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+                android:id="@+id/crawlspaceContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Crawl Space "
-                android:textSize="25dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Crawl Space "
+                    android:textSize="25dp"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Voltage: " />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Voltage: "/>
 
                 <TextView
-                    android:id="@+id/voltageText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="0" />
+                        android:id="@+id/voltageText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="0"/>
             </LinearLayout>
 
             <TextView
-                android:id="@+id/fanStatus"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Fan is Off" />
+                    android:id="@+id/fanStatus"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fan is Off"/>
 
             <TextView
-                android:id="@+id/textFuktInne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Luftfuktighet Inne"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:id="@+id/textFuktInne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Luftfuktighet Inne"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
-                android:id="@+id/textTempInne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Temperatur Inne"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:id="@+id/textTempInne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperatur Inne"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
-                android:id="@+id/textFuktUte"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Luftfuktighet Ute"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:id="@+id/textFuktUte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Luftfuktighet Ute"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
-                android:id="@+id/textTempUte"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Temperatur Ute"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:id="@+id/textTempUte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperatur Ute"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 
             <FrameLayout
@@ -330,7 +375,7 @@
                         android:layout_height="250dp"
                         android:layout_gravity="center_horizontal"
                         android:scaleType="fitXY"
-                        android:src="@drawable/moisture_and_temp" />
+                        android:src="@drawable/moisture_and_temp"/>
 
                 <ImageView
                         android:id="@+id/temp_arrow"
@@ -339,7 +384,7 @@
                         android:layout_gravity="center"
                         android:layout_marginBottom="45dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/stora_visaren" />
+                        android:src="@drawable/stora_visaren"/>
                 <ImageView
                         android:id="@+id/moist_arrow"
                         android:layout_width="40dp"
@@ -349,70 +394,70 @@
                         android:layout_marginLeft="2dp"
 
                         android:scaleType="fitCenter"
-                        android:src="@drawable/lilla_visaren" />
+                        android:src="@drawable/lilla_visaren"/>
             </FrameLayout>
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Debug data"
-                android:textSize="25dp" />
-
-            <TextView
-                android:id="@+id/connectedText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Initialized"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/textFanOn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Initialized"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/phoneId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Initialized"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/debugText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Initialized"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <ToggleButton
-                    android:id="@+id/DebugButton1"
+            <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textOff="Debug Off"
-                    android:textOn="Debug On" />
+                    android:layout_gravity="center_horizontal"
+                    android:text="Debug data"
+                    android:textSize="25dp"/>
+
+            <TextView
+                    android:id="@+id/connectedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Initialized"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <TextView
+                    android:id="@+id/textFanOn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Initialized"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <TextView
+                    android:id="@+id/phoneId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Initialized"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <TextView
+                    android:id="@+id/debugText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Initialized"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                 <ToggleButton
-                    android:id="@+id/toggleFanButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FanOff"
-                    android:visibility="gone" />
+                        android:id="@+id/DebugButton1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOff="Debug Off"
+                        android:textOn="Debug On"/>
+
+                <ToggleButton
+                        android:id="@+id/toggleFanButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FanOff"
+                        android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

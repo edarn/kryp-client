@@ -56,6 +56,7 @@ public class KrypgrundGUI extends Activity {
     private TextView textFanOn;
     private TextView textWindSpeed;
     private TextView textWindDirection;
+    private TextView batteryText;
 
     private ImageView compassImageView;
 
@@ -214,7 +215,7 @@ public class KrypgrundGUI extends Activity {
 
         temperatureText = (TextView) findViewById(R.id.temperatureText);
         humidText = (TextView) findViewById(R.id.humidText);
-
+        batteryText = (TextView) findViewById(R.id.batteryText);
 
         debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -350,10 +351,10 @@ public class KrypgrundGUI extends Activity {
 
                  //   textWindDirection.setText(status.windDirection);
                     textWindSpeed.setText(String.format("%.2f", status.windSpeed));
-                    temperatureText.setText(String.format("%.2f", status.temperatureInne));
-                    humidText.setText(String.format("%.2f", status.moistureInne));
-                  //  compassImageView.setRotation(status.windDirection);
-
+                    temperatureText.setText(String.format("%.0f", status.temperatureInne));
+                    humidText.setText(String.format("%.1f", status.moistureInne));
+                    compassImageView.setRotation(status.windDirection);
+                    batteryText.setText(String.format("%.1f", status.voltage));
 
                     textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
                     textTempInne.setText("Temp Inne: " + String.format("%.2f", status.temperatureInne));

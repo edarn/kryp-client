@@ -148,6 +148,7 @@ public class Helper {
 	public static void appendLog(String text) {
 		System.out.println(text);
 		// if (mCtx != null) {
+        /*
 		try {
 			if (logFile == null) {
 				// logFile = new File(mCtx.getFilesDir() +
@@ -190,7 +191,7 @@ public class Helper {
 				bufWriter = null;
 				logFile = null;
 			}
-		}
+		} */
 	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
@@ -211,8 +212,8 @@ public class Helper {
 			e.printStackTrace();
 			return null;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return null;
+            System.out.println("GetChipCap2 interrupted. Comm error.");
+            return null;
 		}
 
 		float humid = ((toReceive[0] & 0x3F) * 256 + (toReceive[1] & 0xFF));
@@ -294,8 +295,8 @@ public class Helper {
 			freq = pulseCounter.getFrequency();
 			// pulseCounter.w
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            System.out.println("No wind detected!");
+        }
 
 		System.out.println("WindSpeed: " + String.format("%.2f", freq) + " Hz");
 		if (freq < 0.5) {
@@ -398,7 +399,7 @@ public class Helper {
 		return direction;
 	}
 
-	public int getBatteryVoltage() throws ConnectionLostException {
+	public float getBatteryVoltage() throws ConnectionLostException {
 		float voltage = 0;
 		try {
 
@@ -411,7 +412,7 @@ public class Helper {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return (int) voltage;
+		return voltage;
 	}
 
 	public boolean IsFanOn() {
