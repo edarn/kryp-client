@@ -85,6 +85,15 @@ namespace Surfvind_2011 {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl air;
         
         /// <summary>
+        /// temperature_container control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable temperature_container;
+        
+        /// <summary>
         /// air_temp control.
         /// </summary>
         /// <remarks>
@@ -103,6 +112,42 @@ namespace Surfvind_2011 {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl water;
         
         /// <summary>
+        /// moisture_container control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow moisture_container;
+        
+        /// <summary>
+        /// moisture_image control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image moisture_image;
+        
+        /// <summary>
+        /// moisture control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label moisture;
+        
+        /// <summary>
+        /// battery_container control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow battery_container;
+        
+        /// <summary>
         /// water_temp control.
         /// </summary>
         /// <remarks>
@@ -112,22 +157,13 @@ namespace Surfvind_2011 {
         protected global::System.Web.UI.WebControls.Image water_temp;
         
         /// <summary>
-        /// moisture control.
+        /// power control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl moisture;
-        
-        /// <summary>
-        /// Label1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Label power;
         
         /// <summary>
         /// GMap1 control.

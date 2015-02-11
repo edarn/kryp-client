@@ -123,6 +123,7 @@
     <Content Include="design\chart.png" />
     <Content Include="design\my_arrow_red.png" />
     <Content Include="design\speed_direction.png" />
+    <Content Include="design\water_drop.png" />
     <Content Include="design\wind_arrow.PNG" />
     <Content Include="design\wind_direction.png" />
     <Content Include="design\wind_speed.png" />
@@ -160,6 +161,7 @@
     <Content Include="Images\354745031035159_img_compass.png" />
     <Content Include="Images\354745031035159_img_speed.png" />
     <Content Include="Images\354745031035159_img_water_temp.png" />
+    <Content Include="Images\battery_icon.png" />
     <Content Include="Images\img_compass.png" />
     <Content Include="Images\img_speed.png" />
     <Content Include="Images\temp_air_new.PNG" />

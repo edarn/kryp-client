@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
-  <publishProfile publishUrl="ftp://ftp.surfvind.se" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="129649_surfvind" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASwRZQFTGo0SWs6Iufbg5fwAAAAACAAAAAAAQZgAAAAEAACAAAAAsJlDdFrgP4Le/uZZOtlT6qTthqQT8BVKXrWJTCGyTzQAAAAAOgAAAAAIAACAAAAD+UWwl0JJEvqg+yyJuEJsobpjwXGAYBfIsx0FUil1spyAAAABtsjJtNFkXD99heUdFkdfahok1S+nXyyUD0BJrx0fEB0AAAAASPzI5dmFTisr6LH8sgZVOpne5jaWfN2KHh1IqHFIpbD+Rz4D/Di1/JIrl9LLegs91iZSyAcP3KCBsCbzStO3q" SelectedForPublish="True">
+  <publishProfile publishUrl="ftp://ftp.surfvind.se" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="129649_surfvind" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA2w2tq7WyK027WdybA33rKQAAAAACAAAAAAAQZgAAAAEAACAAAACx4O9iiWRvWGE/i7Jy0X38LEJb3SfOkUlWf5/8cTWHMwAAAAAOgAAAAAIAACAAAAD6QP2waQoLGRZId5OqKGeD8PrFoavyJFVT71bDMiaq3iAAAAAgO1bjctuSWmNjbGOAFPoE6TRmovnzwPjK3Y9H6vSOeEAAAACqn22WtIMaWU/k1xQyHgs5/1Ufl4nSZZ/FdVxZgcU8k92kEAYSGboc/0juzKyeQfFYhUCWnJqKFbMb63qchCVN" SelectedForPublish="True">
     <file relUrl="ErrorPage.aspx" publishTime="11/01/2012 17:07:42" />
-    <file relUrl="Default.aspx" publishTime="11/21/2012 13:34:09" />
+    <file relUrl="Default.aspx" publishTime="02/11/2015 17:02:09" />
     <file relUrl="Images/temp_air_new.PNG" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Applet.aspx" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/MySql.Web.dll" publishTime="01/02/2011 11:55:42" />
@@ -17,7 +17,7 @@
     <file relUrl="Images/12345_img_water_temp.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/my_arrow_red.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="HTMLPage1.htm" publishTime="11/01/2012 18:30:54" />
-    <file relUrl="Web.config" publishTime="02/06/2015 22:03:16" />
+    <file relUrl="Web.config" publishTime="02/11/2015 16:58:19" />
     <file relUrl="design/ws_graph.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/Application_Log.txt" publishTime="11/21/2012 12:56:08" />
     <file relUrl="Images/ws_speed.png" publishTime="11/01/2012 17:07:42" />
@@ -32,7 +32,6 @@
     <file relUrl="design/arrow_red.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/AjaxControlToolkit.dll" publishTime="03/17/2011 13:30:02" />
     <file relUrl="bin/ZedGraph.Web.dll" publishTime="03/17/2011 13:30:08" />
-    <file relUrl="design/ws_speed.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/GMaps.dll" publishTime="03/17/2011 13:30:06" />
     <file relUrl="design/ws_head.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Images/_WindDirectionChart.png" publishTime="11/01/2012 17:07:42" />
@@ -42,15 +41,15 @@
     <file relUrl="Documents/WindMaster - Installationsanvisning v2.pdf" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/ws_compass_arrow.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Images/12345_WindSpeedChart.png" publishTime="11/01/2012 17:07:42" />
-    <file relUrl="design/chart.png" publishTime="11/01/2012 17:07:42" />
-    <file relUrl="Images/354745030513008_WindDirectionChart.png" publishTime="11/01/2012 17:07:42" />
+    <file relUrl="Images/battery_icon.png" publishTime="02/06/2015 21:25:00" />
     <file relUrl="Images/354745030513008_img_water_temp.png" publishTime="11/21/2012 12:55:57" />
-    <file relUrl="design/ws_speed_arrow.png" publishTime="11/01/2012 17:07:42" />
+    <file relUrl="design/chart.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/ws_background_sea.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Applet/test.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/GoogleChartSharp.dll" publishTime="03/17/2011 13:30:06" />
     <file relUrl="Android/GetSensors.aspx" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Images/354745030513008_img_speed.png" publishTime="11/21/2012 12:55:57" />
+    <file relUrl="design/ws_speed_arrow.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="ImageHandler.ashx" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Testing.html" publishTime="11/01/2012 17:07:42" />
     <file relUrl="AddWindData2.php" publishTime="11/01/2012 17:07:42" />
@@ -72,18 +71,21 @@
     <file relUrl="design/ws_compass_arrow_003.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Images/354745030513008_WindSpeedChart.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="bin/MySql.Data.dll" publishTime="01/02/2011 11:55:40" />
-    <file relUrl="bin/Surfvind 2011.dll" publishTime="02/06/2015 22:10:01" />
+    <file relUrl="bin/Surfvind 2011.dll" publishTime="02/11/2015 16:59:48" />
     <file relUrl="design/0.gif" publishTime="11/01/2012 17:07:42" />
-    <file relUrl="bin/Surfvind 2011.pdb" publishTime="02/06/2015 22:10:01" />
+    <file relUrl="design/water_drop.png" publishTime="02/06/2015 20:44:51" />
+    <file relUrl="bin/Surfvind 2011.pdb" publishTime="02/11/2015 16:59:48" />
     <file relUrl="Images/354745030513008_img_air_temp.png" publishTime="11/21/2012 12:55:57" />
     <file relUrl="WebImage.ashx" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/ws_compass.png" publishTime="11/01/2012 17:07:42" />
-    <file relUrl="Images/ws_arrow_grey.png" publishTime="11/01/2012 17:07:42" />
+    <file relUrl="Images/354745030513008_WindDirectionChart.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Images/WindSpeedChart.png" publishTime="11/01/2012 17:07:42" />
+    <file relUrl="design/ws_speed.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="ImagePage.aspx" publishTime="03/18/2011 19:46:42" />
     <file relUrl="bin/System.Web.Extensions.dll" publishTime="03/17/2011 13:30:08" />
     <file relUrl="Images/354745031035159_img_water_temp.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="Documents/Windmaster - Produktblad_v3.pdf" publishTime="11/01/2012 17:07:42" />
+    <file relUrl="Images/ws_arrow_grey.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/arrow_green.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="design/banner.png" publishTime="11/01/2012 17:07:42" />
     <file relUrl="WebForm1.aspx" publishTime="11/01/2012 17:07:42" />
@@ -92,7 +94,7 @@
     <file relUrl="Images/ws_arrow_white.png" publishTime="11/01/2012 17:07:42" />
   </publishProfile>
   <publishProfile publishUrl="C:\Users\thomas\Desktop\Surfvind20111007" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile2" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="False">
-    <file relUrl="ErrorPage.aspx" publishTime="03/18/2011 19:46:30" />
+    <file relUrl="design/ws_compass_arrow_003.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Default.aspx" publishTime="10/07/2011 19:28:07" />
     <file relUrl="Images/temp_air_new.PNG" publishTime="03/18/2011 19:06:48" />
     <file relUrl="Applet.aspx" publishTime="03/18/2011 19:05:38" />
@@ -105,57 +107,56 @@
     <file relUrl="Images/12345_WindDirectionChart.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="Images/_WindSpeedChart.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="css/StyleSheet1.css" publishTime="03/18/2011 19:21:24" />
-    <file relUrl="smslista.php" publishTime="03/18/2011 19:05:38" />
+    <file relUrl="Images/12345_img_water_temp.png" publishTime="09/17/2011 21:55:21" />
     <file relUrl="design/my_arrow_red.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="HTMLPage1.htm" publishTime="09/07/2011 01:20:12" />
     <file relUrl="Web.config" publishTime="10/07/2011 20:42:29" />
     <file relUrl="design/ws_graph.png" publishTime="03/18/2011 19:06:34" />
+    <file relUrl="bin/GMaps.dll" publishTime="03/17/2011 13:30:06" />
     <file relUrl="bin/Application_Log.txt" publishTime="09/17/2011 23:10:15" />
-    <file relUrl="design/wind_speed.png" publishTime="03/18/2011 19:06:34" />
+    <file relUrl="Images/ws_speed.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="design/speed_direction.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="design/ws_compass_arrow_2.png" publishTime="03/18/2011 19:06:34" />
-    <file relUrl="design/ws_compass_arrow_003.png" publishTime="03/18/2011 19:06:34" />
+    <file relUrl="Images/ws_compass_arrow.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="Images/ws_speed_arrow.png" publishTime="03/18/2011 19:06:48" />
-    <file relUrl="Images/ws_speed.png" publishTime="03/18/2011 19:06:48" />
+    <file relUrl="smslista.php" publishTime="03/18/2011 19:05:38" />
     <file relUrl="Images/img_speed.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="bin/Artem.GoogleMap.dll" publishTime="03/17/2011 13:30:04" />
     <file relUrl="Images/354745031035159_img_compass.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="design/arrow_red.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="bin/AjaxControlToolkit.dll" publishTime="03/17/2011 13:30:02" />
     <file relUrl="bin/ZedGraph.Web.dll" publishTime="03/17/2011 13:30:08" />
-    <file relUrl="design/ws_speed.png" publishTime="03/18/2011 19:06:34" />
-    <file relUrl="bin/GMaps.dll" publishTime="03/17/2011 13:30:06" />
+    <file relUrl="AddDataAndIMEI.php" publishTime="10/07/2011 20:45:30" />
+    <file relUrl="ErrorPage.aspx" publishTime="03/18/2011 19:46:30" />
     <file relUrl="design/ws_head.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Images/_WindDirectionChart.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="Images/12345_img_compass.png" publishTime="09/17/2011 21:55:21" />
     <file relUrl="Images/img_compass.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="design/ws_banner.jpg" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Documents/WindMaster - Installationsanvisning v2.pdf" publishTime="08/15/2011 15:13:49" />
-    <file relUrl="Images/12345_img_water_temp.png" publishTime="09/17/2011 21:55:21" />
     <file relUrl="design/ws_compass_arrow.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Images/12345_WindSpeedChart.png" publishTime="03/18/2011 19:06:48" />
-    <file relUrl="design/chart.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Images/354745030513008_img_water_temp.png" publishTime="03/26/2011 17:34:33" />
-    <file relUrl="design/ws_speed_arrow.png" publishTime="03/18/2011 19:06:34" />
+    <file relUrl="design/chart.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="design/ws_background_sea.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Applet/test.png" publishTime="08/31/2011 23:54:46" />
     <file relUrl="bin/GoogleChartSharp.dll" publishTime="03/17/2011 13:30:06" />
     <file relUrl="Android/GetSensors.aspx" publishTime="03/18/2011 19:46:36" />
     <file relUrl="Images/354745030513008_img_speed.png" publishTime="03/26/2011 17:34:33" />
+    <file relUrl="design/ws_speed_arrow.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="ImageHandler.ashx" publishTime="03/18/2011 19:04:56" />
     <file relUrl="Testing.html" publishTime="03/18/2011 19:05:38" />
     <file relUrl="AddWindData2.php" publishTime="09/17/2011 22:56:22" />
     <file relUrl="Images/ws_compass.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="GenGraphs.aspx" publishTime="08/31/2011 23:44:17" />
+    <file relUrl="design/wind_speed.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="design/wind_arrow.PNG" publishTime="09/17/2011 23:39:23" />
-    <file relUrl="AddDataAndIMEI.php" publishTime="10/07/2011 20:45:30" />
     <file relUrl="bin/System.Web.Extensions.Design.dll" publishTime="03/17/2011 13:30:08" />
     <file relUrl="Documents/Embed components from surfvind_se.pdf" publishTime="08/15/2011 15:13:40" />
     <file relUrl="Images/354745031035159_img_speed.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="design/ws_background.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Images/354745031035159_img_air_temp.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="AddDebug.php" publishTime="10/07/2011 19:51:50" />
-    <file relUrl="Images/ws_compass_arrow.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="bin/ZedGraph.dll" publishTime="03/17/2011 13:30:10" />
     <file relUrl="Images/12345_img_speed.png" publishTime="09/17/2011 21:55:21" />
     <file relUrl="DownloadAs.aspx" publishTime="03/18/2011 19:05:38" />
@@ -169,6 +170,7 @@
     <file relUrl="design/ws_compass.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="Images/354745030513008_WindDirectionChart.png" publishTime="03/18/2011 19:06:48" />
     <file relUrl="Images/WindSpeedChart.png" publishTime="03/18/2011 19:06:48" />
+    <file relUrl="design/ws_speed.png" publishTime="03/18/2011 19:06:34" />
     <file relUrl="ImagePage.aspx" publishTime="03/18/2011 19:46:44" />
     <file relUrl="bin/System.Web.Extensions.dll" publishTime="03/17/2011 13:30:08" />
     <file relUrl="Images/354745031035159_img_water_temp.png" publishTime="03/18/2011 19:06:48" />

@@ -74,29 +74,28 @@ namespace Surfvind_2011
                 if (wr.Moisture != 0)
                 {
                     // Set temp images
-                    water_temp.ImageUrl = "~/Images/" + imei + "_img_water_temp.png";
                     air_temp.ImageUrl = "~/Images/" + imei + "_img_air_temp.png";
+                    power.Text = wr.AverageWaterTemp + " V";
+                    moisture.Text = wr.Moisture + " %";
 
-                    water_temp.ToolTip = "Water temperature: " + wr.AverageWaterTemp + " °C";
                     air_temp.ToolTip = "Air temperature: " + wr.AverageAirTemp + " °C";
-                    Label1.Text = "Moisture: " + wr.Moisture + "%";
-                    air.Visible = true;
-                    moisture.Visible = true;
-                    water.Visible = true;
+                    
+                    moisture_container.Visible = true;
+                    battery_container.Visible = true;
+                    temperature_container.Visible = true;
                 }
                 else
                 {
-                    air.Visible = false;
-                    moisture.Visible = false;
-                    water.Visible = false;
+                    moisture_container.Visible = false;
+                    battery_container.Visible = false;
+                    temperature_container.Visible = false;
                 }
 
-                
                 // Graphs are now generated on demand. 
                 graphGenerator.fetchData(2, windData);
-                twentyFourHGraph.ImageUrl = graphGenerator.generateGraphOnServer(2,1000,250);
+                twentyFourHGraph.ImageUrl = graphGenerator.generateGraphOnServer(2,1050,250);
                 graphGenerator.fetchData(1, windData);
-                fiveHGraph.ImageUrl = graphGenerator.generateGraphOnServer(1,1000,250);
+                fiveHGraph.ImageUrl = graphGenerator.generateGraphOnServer(1,1050,250);
                 /* Set the applet location */
                 setAppletLocation(windData);
 
