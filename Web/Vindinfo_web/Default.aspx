@@ -13,47 +13,7 @@
         <asp:Panel ID="WelcomePage" runat="server">
             <img id="flower" src="./Images/welcome_pic.jpg" alt="" style="position: absolute;
                 left: 150px; border-style: none; top: 100px; height: 570px;" onload="setOpacity('flower', 0.2);" />
-            <a href="./Default.aspx">
-                <img id="Locations" src="./Images/weather_btn.png" alt="" style="position: absolute;
-                    left: 760px; width: 100px; border-style: none" onmouseover="zoomIn('Locations'); show('qm_weather_info', 1000, true)"
-                    onmouseout="zoomOut('Locations'); hide('qm_weather_info');" onmousemove="setPosition('qm_weather_info')" />
-            </a>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <a href="./Contacts.aspx">
-                <img id="Contacts" src="./Images/contacts_btn.png" alt="" style="position: absolute;
-                    left: 850px; width: 100px; border-style: none;" onmouseover="zoomIn('Contacts'); show('qm_contacts_info', 1000, true);"
-                    onmouseout="zoomOut('Contacts'); hide('qm_contacts_info');" onmousemove="setPosition('qm_contacts_info')" />
-            </a>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <a href="./Download.aspx">
-                <img id="Download" src="./Images/download_btn.png" alt="" style="position: absolute;
-                    left: 800px; width: 100px; border-style: none;" onmouseover="zoomIn('Download'); show('qm_download_info', 1000, true);"
-                    onmouseout="zoomOut('Download'); hide('qm_download_info')" onmousemove="setPosition('qm_download_info');" />
-            </a>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <!-- <label id="qm_weather_info" style="background-color: Transparent; color:Blue; visibility: hidden;">Quick menu to Weather information</label>
-            <label id="qm_download_info" style="background-color: Transparent; color:Blue; visibility: hidden;">Quick menu to Downloads area</label>
-            <label id="qm_contacts_info" style="background-color: Transparent; color:Blue; visibility: hidden;">Quick menu to Contacts area</label> -->
+           
         </asp:Panel>
     </div>
     <asp:Panel ID="LocationPage" runat="server">
