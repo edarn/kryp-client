@@ -1,0 +1,4 @@
+1. Fixa rätt pin layout på rj12 kontakterna. - Använd dock möjligen RJ45 istället då de är billigare. Låt 
+2. För liten font på kretskortet på vissa ställen.
+3. RJ11 kontakt istället för RJ12 för Anemometern, de andra används ju inte. Och gör det svårare att sätta i fel kontakt
+4. Rotera säkringshållarna 180 grader, så dom går att öppna. Alternativt flytta reläerna lite.

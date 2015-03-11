@@ -121,21 +121,20 @@ public class KrypgrundsService extends IOIOService {
 				try {
 					//Keep this watchdog at top. Other dog will catch if no good data is returned.
 					mWatchdogTime = System.currentTimeMillis();
-
+                    helper.toggleWatchdog();
 					if (System.currentTimeMillis() - watchdog_TimeSinceLastOkData > TimeUnit.MINUTES.toMillis(60)) {
 						Helper.appendLog("Restarting ioio due to no good data for a long time.");
 						ioio_.hardReset();
 					}
 
 					if (serviceMode == ServiceMode.Krypgrund) {
-
 						// Always create a new object, as this is added to the
 						// list.
 						oneMeasurement = new KrypgrundStats();
 
 						if (krypgrundSensor == HumidSensor.ChipCap2) {
 							KrypgrundStats oneKrypgrundMeasurement = (KrypgrundStats) oneMeasurement;
-							ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
+							ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorOnBoard);
 							ChipCap2 ute = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 							oneKrypgrundMeasurement.temperatureInne = inne.temperature;
 							oneKrypgrundMeasurement.moistureInne = inne.humidity;
@@ -166,7 +165,7 @@ public class KrypgrundsService extends IOIOService {
 						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
 						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
 
-                        ChipCap2 tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+                        ChipCap2 tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorOnBoard);
                         temp.moisture = tempAndHumidity.humidity;
                         temp.temperature = tempAndHumidity.temperature;
 

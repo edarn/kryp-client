@@ -31,6 +31,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.WaitingThread;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,10 +45,12 @@ import android.util.Log;
 import android.util.TimeUtils;
 
 public class Helper {
-	IOIO ioio = null;
+    private boolean watchValue=true;
+    IOIO ioio = null;
 
 	DigitalOutput B1 = null;
 	DigitalOutput B2 = null;
+    DigitalOutput WatchDog = null;
 	PwmOutput BSpeed = null;
 
 	CapSense humidityInside = null;
@@ -55,17 +58,18 @@ public class Helper {
 
 	DigitalOutput Standby = null;
 	TwiMaster i2cInne = null;
-	TwiMaster i2cUte = null;
+    TwiMaster i2cUte = null;
+    TwiMaster i2cOnBoard = null;
 
-	KrypgrundsService krypService = null;
+    KrypgrundsService krypService = null;
 
 	PulseInput pulseCounter = null;
 	AnalogInput anemometer = null;
 	private AnalogInput power;
 	private AnalogInput mAnalogPulsecounter;
 
-	private static final int ANEMOMETER_WIND_VANE = 45;
-	private static final int ANEMOMETER_SPEED = 46;
+	private static final int ANEMOMETER_WIND_VANE = 41;
+	private static final int ANEMOMETER_SPEED = 40;
 
 	private static final int chipCap2Adress = 0x50;
 	private String imei = "123456789";
@@ -76,7 +80,7 @@ public class Helper {
 	};
 
 	public enum SensorLocation {
-		SensorInne, SensorUte;
+		SensorInne, SensorUte, SensorOnBoard;
 	}
 
 	public class ChipCap2 {
@@ -109,15 +113,18 @@ public class Helper {
 					// call.
 				}
 				// } else if (mode == ServiceMode.Krypgrund) {
-				i2cInne = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
+				i2cInne = ioio.openTwiMaster(0, TwiMaster.Rate.RATE_100KHz, false);
 				i2cUte = ioio.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
+                i2cOnBoard = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
 				// }
 
 				// On board sensors. Are they used?
 				power = ioio.openAnalogInput(42);
 
+                WatchDog = ioio.openDigitalOutput(9);
 				B2 = ioio.openDigitalOutput(20);
 				B1 = ioio.openDigitalOutput(19);
+                WatchDog.write(watchValue);
 				B1.write(mFanOn);
 				B2.write(mFanOn);
 
@@ -131,19 +138,28 @@ public class Helper {
 
 		if (i2cInne != null)
 			i2cInne.close();
-		if (i2cUte != null)
-			i2cUte.close();
-		if (anemometer != null)
+        if (i2cUte != null)
+            i2cUte.close();
+        if (i2cOnBoard != null)
+            i2cOnBoard.close();
+        if (anemometer != null)
 			anemometer.close();
 		if (pulseCounter != null)
 			pulseCounter.close();
 		B1.close();
 		B2.close();
+        WatchDog.close();
 		power.close();
 	}
 
 	static File logFile = null;
 	static BufferedWriter bufWriter;
+
+    public void toggleWatchdog() throws ConnectionLostException
+    {
+        WatchDog.write(watchValue);
+        watchValue=!watchValue;
+    }
 
 	public static void appendLog(String text) {
 		System.out.println(text);
@@ -207,7 +223,10 @@ public class Helper {
 				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
 			} else if (type == SensorLocation.SensorUte) {
 				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
-			}
+			} else if (type == SensorLocation.SensorOnBoard) {
+                i2cOnBoard.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
+            }
+
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
 			return null;
@@ -405,7 +424,7 @@ public class Helper {
 
 			voltage = power.getVoltage();
 
-			voltage += voltage / 4400 * 24000;
+			voltage += voltage / 4700 * 24000 + 0.7; //0.7 is voltage drop over diode.
 			System.out.println("VBatt: " + voltage);
 			// voltage *= 100;
 
@@ -422,7 +441,7 @@ public class Helper {
 	/**
 	 * Sends the measurements to the webserver. If there are many measurements
 	 * this functions will send it as multiple requests.
-	 * 
+	 *
 	 * @param measurements
 	 *            The measurements to send.
 	 * @param mode
