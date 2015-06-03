@@ -26,15 +26,8 @@ public partial class Default : System.Web.UI.Page
         update(location);
     }
 
-    private void update(String location)
+    private void update(String imei)
     {
-        if (location == null)
-        {
-            // welcome page
-            WelcomePage.Visible = true;
-            LocationPage.Visible = false;
-            return;
-        }
 
         String dbToUse = "";
         dbToUse = "Surfvind_data";
@@ -44,7 +37,12 @@ public partial class Default : System.Web.UI.Page
 
         List<Location> loc = Helper.getLocations();
 
-        String imei = location; // getLocation(location, loc).imei.ToString();
+        if (imei == null)
+        {
+            Location l = loc[0];
+            imei = l.imei;
+        }
+
         if (imei == null)
         {
             /* Default to something */
@@ -61,18 +59,15 @@ public partial class Default : System.Web.UI.Page
         //  water_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_water_temp.png";
         //  air_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_air_temp.png";
 
-        int w_temp;
-        int a_temp;
+        float w_temp;
+        float a_temp;
 
         WindRecord wr = wd.GetCurrentWind();
         w_temp = wr.AverageWaterTemp;
         a_temp = wr.AverageAirTemp;
 
-        //   water_temp.ToolTip = "Water temperature: " + w_temp + " °C";
-        //   air_temp.ToolTip = "Air temperature: " + a_temp + " °C";
-
         /* Set google map location */
-        Location loca = getLocation(location, loc);
+        Location loca = getLocation(imei, loc);
 
         setAppletLocation(imei);
 
@@ -85,8 +80,25 @@ public partial class Default : System.Web.UI.Page
             Title += loca;
         }
 
-        WelcomePage.Visible = false;
+        if (wr.Moisture != 0)
+        {
+            // Set temp images
+            air_temp.ImageUrl = "~/Images/" + imei + "_img_air_temp.png";
+            power.Text = wr.AverageWaterTemp + " V";
+            moisture.Text = wr.Moisture + " %";
+
+            air_temp.ToolTip = "Air temperature: " + wr.AverageAirTemp + " °C";
+            temperature_container.Visible = true;
+            water.Visible = true;
+        }
+        else
+        {
+            temperature_container.Visible = false;
+            water.Visible = false;
+        }
+
         LocationPage.Visible = true;
+        graphview.Attributes["src"] = "http://www.surfvind.se/GenGraphs.aspx?Location=" + imei+"&Duration=2";
     }
 
     /* 
@@ -120,8 +132,6 @@ public partial class Default : System.Web.UI.Page
     private void setAppletLocation(String imei)
     {
         String html;
-        //html = "http://www.surfvind.se/Applet.aspx?location=" + imei;
         html = "http://www.vindinfo.se/slideshow.aspx?Location=" + imei;
-        slideshow.Attributes["src"] = html;
     }
 }

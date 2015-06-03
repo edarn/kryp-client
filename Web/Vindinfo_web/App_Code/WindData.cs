@@ -67,7 +67,7 @@ namespace WindInfo
 
         public List<WindRecord> GetFullList()
 		{
-            string cmdText = "select * from " + dbToUse + " imei=" + imei + "order by time";
+            string cmdText = "select * from " + dbToUse + " imei='" + imei + "' order by time";
 			using (DbConnection conn = GetDbConnection(GetDBConnString()))
 			{
 				conn.Open();
@@ -85,6 +85,9 @@ namespace WindInfo
 						wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
 						wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
 						wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
+                        wr.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
+                        wr.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
+                        wr.Moisture = float.Parse(reader["moisture"].ToString());
 						list.Add(wr);
 					}
 				}
@@ -94,7 +97,7 @@ namespace WindInfo
 
         public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
         {
-            string cmdText = string.Format("select * from " + dbToUse + " WHERE imei=" + imei + " AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 List<WindRecord> list = new List<WindRecord>();
@@ -114,6 +117,10 @@ namespace WindInfo
                         wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
                         wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
                         wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
+                        wr.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
+                        wr.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
+                        wr.Moisture = float.Parse(reader["moisture"].ToString());
+
                         list.Add(wr);
                     }
                 }
@@ -135,7 +142,7 @@ namespace WindInfo
                     conn.Open();
                     for (int i = 0; i < 50; i++)
                     {
-                        string cmdText = string.Format("select avg(averageDir),avg(maxDir),avg(minDir),avg(averageSpeed),avg(maxSpeed),avg(minSpeed) from " + dbToUse + " WHERE imei=" + imei + " AND time >\"" + startDate.ToString() + "\" and time <\"" + endDate.ToString() + "\" order by time desc");
+                        string cmdText = string.Format("select avg(averageDir),avg(maxDir),avg(minDir),avg(averageSpeed),avg(maxSpeed),avg(minSpeed) from " + dbToUse + " WHERE imei='" + imei + "' AND time >\"" + startDate.ToString() + "\" and time <\"" + endDate.ToString() + "\" order by time desc");
                         using (DbCommand cmd = GetDBCommand(cmdText, conn))
                         {
                             DbDataReader reader = cmd.ExecuteReader();
@@ -178,8 +185,7 @@ namespace WindInfo
             }
             catch (Exception e)
             {
-                int a=0;
-                a++;
+                System.Console.Write(e.StackTrace);
             }
             return list;
         }
@@ -196,8 +202,8 @@ namespace WindInfo
             }
             
 
-            string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM `Surfvind_location`,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time > \"2015-01-01\"");
-            //string cmdText = string.Format("SELECT Location,imei, Latitiud, Longitud FROM `Surfvind_location` WHERE 1");
+            string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM Surfvind_location,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time > \"2015-01-01\"");
+            //string cmdText = string.Format("SELECT Location,imei, Latitiud, Longitud FROM 'Surfvind_location' WHERE 1");
 
             if (resp != null)
             {
@@ -238,7 +244,7 @@ namespace WindInfo
 		#region # Aggregated functions
 		public float GetMiddleSpeedValueBetweenDate(DateTime startDate, DateTime endDate)
 		{
-            string cmdText = string.Format("SELECT AVG(averageSpeed) as AvgSpeed from " + dbToUse + " where imei=" + imei + "time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("SELECT AVG(averageSpeed) as AvgSpeed from " + dbToUse + " where imei='" + imei + "' time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
 			using (DbConnection conn = GetDbConnection(GetDBConnString()))
 			{
 				float rez = -1;
@@ -271,7 +277,7 @@ namespace WindInfo
 			// use AVG to once value to return null if not have result instead empty result
 			
 			//string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from "+dbToUse+" where (time = (select MAX(time) from "+dbToUse+")) and (time between {0}) ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
-            string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from " + dbToUse + " where imei=" + imei + " AND time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from " + dbToUse + " where imei='" + imei + "' AND time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
 			using (DbConnection conn = GetDbConnection(GetDBConnString()))
 			{
 				float rez = -1;
@@ -304,7 +310,7 @@ namespace WindInfo
 			WindRecord currWind = new WindRecord();
 
 			using (DbConnection conn = GetDbConnection(GetDBConnString()))
-			using (DbCommand cmd = GetDBCommand("select * from "+dbToUse+" WHERE imei="+imei+" order by time desc limit 0,1", conn))
+            using (DbCommand cmd = GetDBCommand("select * from " + dbToUse + " WHERE imei='" + imei + "' order by time desc limit 0,1", conn))
 			{
 				conn.Open();
 				DbDataReader reader = cmd.ExecuteReader(CommandBehavior.SingleRow);
@@ -318,8 +324,9 @@ namespace WindInfo
 					currWind.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
 					currWind.MinSpeed = float.Parse(reader["minSpeed"].ToString());
                     // TODO, uncomment next two lines when the database has posts for temperature
-                    //currWind.AverageAirTemp = int.Parse(reader["averageAirTemp"].ToString());
-                    //currWind.AverageWaterTemp = int.Parse(reader["averageWaterTemp"].ToString());
+                    currWind.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
+                    currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
+                    currWind.Moisture = float.Parse(reader["moisture"].ToString());
 				}
 			}
 
@@ -347,73 +354,80 @@ namespace WindInfo
             return this.Name.CompareTo(target.Name);
         }
     }
-	public class WindRecord
-	{
-		DateTime _time;
-		int _averageDir;
-		int _maxDir;
-		int _minDir;
-		float _averageSpeed;
-		float _maxSpeed;
-		float _minSpeed;
-        int _averageWaterTemp;
-        int _averageAirTemp;
-        
+    public class WindRecord
+    {
+        DateTime _time;
+        int _averageDir;
+        int _maxDir;
+        int _minDir;
+        float _averageSpeed;
+        float _maxSpeed;
+        float _minSpeed;
+        float _averageWaterTemp;
+        float _averageAirTemp;
+        float _moisture;
 
-		public DateTime Time
-		{
-			get { return _time; }
-			set { _time = value; }
-		}
 
-		public int AverageDirection
-		{
-			get { return _averageDir; }
-			set { _averageDir = value; }
-		}
+        public DateTime Time
+        {
+            get { return _time; }
+            set { _time = value; }
+        }
 
-		public int MaxDirection
-		{
-			get { return _maxDir; }
-			set { _maxDir = value; }
-		}
+        public int AverageDirection
+        {
+            get { return _averageDir; }
+            set { _averageDir = value; }
+        }
 
-		public int MinDirection
-		{
-			get { return _minDir; }
-			set { _minDir = value; }
-		}
+        public int MaxDirection
+        {
+            get { return _maxDir; }
+            set { _maxDir = value; }
+        }
 
-		public float AverageSpeed
-		{
-			get { return _averageSpeed; }
-			set { _averageSpeed = value; }
-		}
+        public int MinDirection
+        {
+            get { return _minDir; }
+            set { _minDir = value; }
+        }
 
-		public float MaxSpeed
-		{
-			get { return _maxSpeed; }
-			set { _maxSpeed = value; }
-		}
+        public float AverageSpeed
+        {
+            get { return _averageSpeed; }
+            set { _averageSpeed = value; }
+        }
 
-		public float MinSpeed
-		{
-			get { return _minSpeed; }
-			set { _minSpeed = value; }
-		}
+        public float MaxSpeed
+        {
+            get { return _maxSpeed; }
+            set { _maxSpeed = value; }
+        }
+
+        public float MinSpeed
+        {
+            get { return _minSpeed; }
+            set { _minSpeed = value; }
+        }
 
         // TODO
-        public int AverageWaterTemp
+        public float AverageWaterTemp
         {
-            get { return 19 /*_averageWaterTemp*/; }
+            get { return _averageWaterTemp; }
             set { _averageWaterTemp = value; }
         }
 
         // TODO
-        public int AverageAirTemp
+        public float AverageAirTemp
         {
-            get { return 27/*_averageAirTemp*/; }
+            get { return _averageAirTemp; }
             set { _averageAirTemp = value; }
         }
-	}
+
+        public float Moisture
+        {
+            get { return _moisture; }
+            set { _moisture = value; }
+        }
+    }
 }

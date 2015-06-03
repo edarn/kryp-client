@@ -20,9 +20,13 @@ margin: 0em;
 
 table
 {
-border-collapse: collapse;
-border: 0em;
-margin: 0em;
+border-style: none;
+    border-color: inherit;
+    border-width: 0em;
+    border-collapse: collapse;
+    margin: 0em;
+    height: 197px;
+    width: 123px;
 }
 
 td, div, form

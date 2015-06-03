@@ -71,7 +71,7 @@ namespace Surfvind_2011
 
         public List<WindRecord> GetFullList()
         {
-            string cmdText = "select * from " + dbToUse + " imei=" + imei + "order by time";
+            string cmdText = "select * from " + dbToUse + " imei='" + imei + "'order by time";
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 conn.Open();
@@ -98,7 +98,7 @@ namespace Surfvind_2011
 
         public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
         {
-            string cmdText = string.Format("select * from " + dbToUse + " WHERE imei=" + imei + " AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 List<WindRecord> list = new List<WindRecord>();
@@ -139,7 +139,7 @@ namespace Surfvind_2011
                     conn.Open();
                     for (int i = 0; i < 50; i++)
                     {
-                        string cmdText = string.Format("select avg(averageDir),max(maxDir),min(minDir),avg(averageSpeed),max(maxSpeed),min(minSpeed) from " + dbToUse + " WHERE imei=" + imei + " AND time >\"" + startDate.ToString() + "\" and time <\"" + endDate.ToString() + "\" order by time desc");
+                        string cmdText = string.Format("select avg(averageDir),max(maxDir),min(minDir),avg(averageSpeed),max(maxSpeed),min(minSpeed) from " + dbToUse + " WHERE imei='" + imei + "' AND time >\"" + startDate.ToString() + "\" and time <\"" + endDate.ToString() + "\" order by time desc");
                         using (DbCommand cmd = GetDBCommand(cmdText, conn))
                         {
                             DbDataReader reader = cmd.ExecuteReader();
@@ -217,7 +217,7 @@ namespace Surfvind_2011
         #region # Aggregated functions
         public float GetMiddleSpeedValueBetweenDate(DateTime startDate, DateTime endDate)
         {
-            string cmdText = string.Format("SELECT AVG(averageSpeed) as AvgSpeed from " + dbToUse + " where imei=" + imei + "time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("SELECT AVG(averageSpeed) as AvgSpeed from " + dbToUse + " where imei='" + imei + "'time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 float rez = -1;
@@ -250,7 +250,7 @@ namespace Surfvind_2011
             // use AVG to once value to return null if not have result instead empty result
 
             //string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from "+dbToUse+" where (time = (select MAX(time) from "+dbToUse+")) and (time between {0}) ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
-            string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from " + dbToUse + " where imei=" + imei + " AND time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            string cmdText = string.Format("SELECT AVG(averageDir) AS TopDirection from " + dbToUse + " where imei='" + imei + "' AND time between {0} ", (isMySqlDB ? "?start and ?end" : "@start and @end"));
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 float rez = -1;
@@ -283,7 +283,7 @@ namespace Surfvind_2011
             WindRecord currWind = new WindRecord();
 
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
-            using (DbCommand cmd = GetDBCommand("select * from " + dbToUse + " WHERE imei=" + imei + " order by time desc limit 0,1", conn))
+            using (DbCommand cmd = GetDBCommand("select * from " + dbToUse + " WHERE imei='" + imei + "' order by time desc limit 0,1", conn))
             {
                 conn.Open();
                 DbDataReader reader = cmd.ExecuteReader(CommandBehavior.SingleRow);

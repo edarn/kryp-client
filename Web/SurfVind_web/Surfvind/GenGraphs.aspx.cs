@@ -69,7 +69,7 @@ namespace Surfvind_2011
             List<Location> loc = wd.GetLocations();
             loc.Sort();
 
-            placeholder.InnerHtml += "Thomas "+ loc.Count;
+            //placeholder.InnerHtml += "Thomas "+ loc.Count;
           
             if (!checkArguments(location, duration, loc))
             {  /* Update everything */

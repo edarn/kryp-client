@@ -7,16 +7,6 @@
     <br />
     <br />
     <br />
-    <!-- <div>
-        <asp:Panel ID="commercialPanel" runat="server">
-            <div style="text-align:center; font-size: xx-large;">
-                <asp:Label ID="WindMasterTitle" runat="server" Text="Wind Master"></asp:Label> <br /> <br />
-                <img src="./Images/Windmaster1.PNG" alt="" />
-                <br /> <br />
-                <img src="./Images/Windmaster2.PNG" alt="" />
-            </div>
-        </asp:Panel>
-    </div> -->
 
     <asp:Panel ID="contactsPanel" runat="server">
         <div style="text-align: center;">

@@ -48,10 +48,10 @@
                     </tr>
                 </table>
             </div>
-            <div id="air" runat="server" style="position: absolute; left: 450px; top: 203px;
+            <div id="temperature_container" runat="server" style="position: absolute; left: 450px; top: 203px;
                 z-index: 1;">
-                &nbsp Air
-                <table id="temperature_container" runat=server style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
+                Air
+                <table  runat="server" style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
                     height: 180px;">
                     <tr>
                         <td>
@@ -60,9 +60,15 @@
                     </tr>
                 </table>
             </div>
-            <div id="water" runat="server" style="position: absolute; left: 540px; top: 253px;"          >
+            <div id="water" runat="server" 
+                style="position: absolute; left: 520px; top: 203px; width: 140px;"          >
                 <table>
-                    <tr id="moisture_container" runat=server>
+                    <div id="moisture_container" runat=server>
+                    <tr> 
+                       <td> Humidity</td>
+                    </tr>
+                    
+                    <tr >
                         <td align=center>
                             <asp:Image ID="moisture_image" runat="server" AlternateText="moisture" Height="50px"
                                 ImageUrl="design/water_drop.png"/>
@@ -71,15 +77,23 @@
                             <asp:Label ID="moisture" runat="server" Text="52 %" />
                         </td>
                     </tr>
-                                        <tr id="battery_container" runat=server>
-                        <td>
-                            <asp:Image ID="water_temp" runat="server" AlternateText="Water temp" Width="50px"
-                                ImageUrl="Images/battery_icon.png" />
-                        </td>
-                        <td>
-                            <asp:Label ID="power" runat="server" Text="12 V" />
-                        </td>
+                    </div>
+                    <div ID="battery_container" runat="server">
                     </tr>
+                                        <tr>
+                        <td>
+                            Battery</td>
+                                            <tr >
+                                                <td>
+                                                    <asp:Image ID="water_temp" runat="server" AlternateText="Water temp" 
+                                                        ImageUrl="Images/battery_icon.png" Width="50px" />
+                                                </td>
+                                                <td>
+                                                    <asp:Label ID="power" runat="server" Text="12 V" />
+                                                </td>
+                                            </tr>
+                    </tr>
+                    </div>
 
                 </table>
             </div>

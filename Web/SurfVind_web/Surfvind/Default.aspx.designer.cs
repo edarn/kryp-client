@@ -76,22 +76,13 @@ namespace Surfvind_2011 {
         protected global::System.Web.UI.WebControls.Image imgSpeed;
         
         /// <summary>
-        /// air control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl air;
-        
-        /// <summary>
         /// temperature_container control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTable temperature_container;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl temperature_container;
         
         /// <summary>
         /// air_temp control.
@@ -118,7 +109,7 @@ namespace Surfvind_2011 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow moisture_container;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl moisture_container;
         
         /// <summary>
         /// moisture_image control.
@@ -145,7 +136,7 @@ namespace Surfvind_2011 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow battery_container;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl battery_container;
         
         /// <summary>
         /// water_temp control.

@@ -21,10 +21,8 @@ public partial class contacts : System.Web.UI.Page
         string page = Request.QueryString["page"];
 
         if(page != null && page.Equals("info")) {
-            commercialPanel.Visible = true;
             contactsPanel.Visible = false;
         } else {
-            commercialPanel.Visible = false;
             contactsPanel.Visible = true;
         }
     }
