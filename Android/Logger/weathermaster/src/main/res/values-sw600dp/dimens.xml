@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="margin">15dp</dimen>
+    <dimen name="large_font">35sp</dimen>
+    <dimen name="medium_font">25sp</dimen>
+    <dimen name="icon_size">60dp</dimen>
+</resources>
