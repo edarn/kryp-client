@@ -78,7 +78,6 @@ public class KrypgrundsService extends IOIOService {
 		OldAnalog, Capacitive, ChipCap2, Random
 	}
 
-	Stats oneMeasurement;
 
 	private HumidSensor krypgrundSensor = HumidSensor.ChipCap2;
 	@SuppressLint("UseSparseArrays")
@@ -137,16 +136,16 @@ public class KrypgrundsService extends IOIOService {
 					if (serviceMode == ServiceMode.Krypgrund) {
 						// Always create a new object, as this is added to the
 						// list.
-						oneMeasurement = new KrypgrundStats();
 
 						if (krypgrundSensor == HumidSensor.ChipCap2) {
-							KrypgrundStats oneKrypgrundMeasurement = (KrypgrundStats) oneMeasurement;
+							KrypgrundStats oneKrypgrundMeasurement = new KrypgrundStats();
 							ChipCap2 inne = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorOnBoard);
 							ChipCap2 ute = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 							oneKrypgrundMeasurement.temperatureInne = inne.temperature;
 							oneKrypgrundMeasurement.moistureInne = inne.humidity;
 							oneKrypgrundMeasurement.temperatureUte = ute.temperature;
 							oneKrypgrundMeasurement.moistureUte = ute.humidity;
+                            oneKrypgrundMeasurement.batteryVoltage = helper.getBatteryVoltage();
 							if (inne.okReading || ute.okReading) {
 								// Update the watchdog.
 								watchdog_TimeSinceLastOkData = System.currentTimeMillis();
@@ -167,31 +166,31 @@ public class KrypgrundsService extends IOIOService {
 
 						// Always create a new object, as this is added to the
 						// list.
-						SurfvindStats temp = new SurfvindStats();
-						oneMeasurement = temp;
-						temp.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
-						temp.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
 
+						SurfvindStats oneMeasurement = new SurfvindStats();
+						oneMeasurement.windDirectionAvg = helper.queryIOIO(Helper.ANALOG);
+						oneMeasurement.windSpeedAvg = helper.queryIOIO(Helper.FREQ);
+						oneMeasurement.batteryVoltage = helper.getBatteryVoltage();
                         ChipCap2 tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorOnBoard);
-                        temp.onBoardHumidity = tempAndHumidity.humidity;
-                        temp.onBoardTemperature = tempAndHumidity.temperature;
+                        oneMeasurement.onBoardHumidity = tempAndHumidity.humidity;
+                        oneMeasurement.onBoardTemperature = tempAndHumidity.temperature;
 
 						tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
-						temp.firstExternalHumidity = tempAndHumidity.humidity;
-						temp.firstExternalTemperature = tempAndHumidity.temperature;
+                        oneMeasurement.firstExternalHumidity = tempAndHumidity.humidity;
+                        oneMeasurement.firstExternalTemperature = tempAndHumidity.temperature;
 
 						//tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
+						System.out.println(oneMeasurement.getJSON());
 
-
-						if (temp.windDirectionAvg != -1 || temp.windSpeedAvg != -1 || temp.onBoardHumidity != 0 || temp.onBoardTemperature
+						if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
 								!= -40) {
-							rawSurfvindsMeasurements.add(temp);
+							rawSurfvindsMeasurements.add(oneMeasurement);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
 						}
 
 					}
-					oneMeasurement.batteryVoltage = helper.getBatteryVoltage();
+
 					Thread.sleep(timeBetweenReading);
 					
 				} catch (Exception e) {

@@ -88,6 +88,8 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 				total.onBoardTemperature += stat.onBoardTemperature;
 				total.batteryVoltage += stat.batteryVoltage;
                 total.onBoardHumidity += stat.onBoardHumidity;
+				total.firstExternalHumidity += stat.firstExternalHumidity;
+				total.firstExternalTemperature += stat.firstExternalTemperature;
 			}
 			int size = rawMeasurements.size();
 			total.windDirectionAvg /= size;
@@ -95,6 +97,9 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 			total.onBoardTemperature /= size;
 			total.batteryVoltage /= size;
             total.onBoardHumidity /= size;
+			total.firstExternalTemperature /= size;
+			total.firstExternalHumidity /= size;
+
 		}
 		return total;
 	}
