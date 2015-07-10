@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -82,6 +83,12 @@ public class SetupActivity extends Activity {
 				R.id.twoSecondsMeasurement));
 
 		String sensorName = prefs.getString(STATION_NAME, "");
+
+		if (sensorName.isEmpty()) {
+			BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+			sensorName = myDevice.getName();
+		}
+
 		name.setText(sensorName);
 
 		String lat = prefs.getString(GPS_LATITUDE, "55");

@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:layout_gravity="center_vertical">
+    android:layout_width="match_parent" android:layout_height="match_parent">
     <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
         android:src="@drawable/bakgrund_weather" android:scaleType="centerCrop"/>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/mainContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_gravity="center_vertical">
+            android:gravity="center_vertical">
 
             <!-- ################ WEATHER STATION ###################### -->
 
@@ -46,7 +43,7 @@
                         android:layout_marginBottom="15dp"
                         android:layout_gravity="center_horizontal"
                         android:background="#b0000000"
-                        android:text="Zebra"
+                        android:text="Zebra är en film av alistair maclean"
                         android:textColor="#ff00ff"
                         android:textSize="35dp"/>
 

@@ -1,9 +1,11 @@
 package se.tna.weathermaster;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -306,8 +308,29 @@ public class KrypgrundGUI extends Activity {
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
         if (name != null && name.isEmpty())
         {
-            BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
-            name = myDevice.getName();
+
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("It appears you are a new user, launching setup")
+                    .setTitle("New user?");
+
+            // Add the buttons
+            builder.setPositiveButton("OK!", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    startActivity(new Intent(KrypgrundGUI.this, SetupActivity.class));
+                }
+            });
+            builder.setNegativeButton("Nope!", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+// 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
         }
         textStationName.setText(name);
     }
