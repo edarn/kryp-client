@@ -1,6 +1,7 @@
 package se.tna.weathermaster;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -302,8 +303,13 @@ public class KrypgrundGUI extends Activity {
         SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
 
        // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
-
-        textStationName.setText(preferences.getString(SetupActivity.STATION_NAME,""));
+        String name = preferences.getString(SetupActivity.STATION_NAME, "");
+        if (name != null && name.isEmpty())
+        {
+            BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+            name = myDevice.getName();
+        }
+        textStationName.setText(name);
     }
 
     private int getMoistureAngle(float moisture) {

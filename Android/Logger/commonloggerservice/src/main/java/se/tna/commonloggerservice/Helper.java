@@ -244,9 +244,11 @@ public class Helper {
 		//double temp = ((toReceive[2] & 0xFF) << 6 | ((toReceive[3] &0xFC) >> 2)) & 0x3FFF;
 		double temp = (((toReceive[2] & 0xFF) << 6) + (((toReceive[3] &0xFC) / 4))) & 0x3FFF;
 		temp /= 99.29;
-		temp -= 40;
+        temp -= 40;
+        temp -= 0.8; //Thomas own extra calibration as ChipCap seems to return aprox 0.8 degrees to high temperature.
 
-		result.humidity = humid;
+
+        result.humidity = humid;
 		result.temperature = (float) temp;
         System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature + " Status: " + status);
 

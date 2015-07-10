@@ -63,6 +63,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center_vertical"
+                            android:paddingLeft="60dp"
                             android:layout_weight="1"
                             android:orientation="vertical"
                             android:layout_marginBottom="@dimen/margin">
