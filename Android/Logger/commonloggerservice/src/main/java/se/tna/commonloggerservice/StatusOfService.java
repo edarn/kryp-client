@@ -23,7 +23,8 @@ public class StatusOfService {
 	public int windDirection = 0;
 	public float windSpeed = 0;
 	public float voltage;
-	
+	public boolean isIOIOConnected;
+
 	public StatusOfService(){
 		timeOfCreation = System.currentTimeMillis();
 	}

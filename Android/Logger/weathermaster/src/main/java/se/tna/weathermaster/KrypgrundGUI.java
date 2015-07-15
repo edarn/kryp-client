@@ -70,6 +70,7 @@ public class KrypgrundGUI extends Activity {
 
     private int angle = 0;
     private TextView textStationName;
+    private LinearLayout noConnectionContainer;
 
     @Override
     public void onPause() {
@@ -197,6 +198,10 @@ public class KrypgrundGUI extends Activity {
         if(debugContainer != null) {
             debugContainer.setVisibility(View.GONE);
         }
+
+        noConnectionContainer = (LinearLayout) findViewById(R.id.noConnectionContainer);
+
+
         if(debugButton != null) {
             debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -392,6 +397,14 @@ public class KrypgrundGUI extends Activity {
 
                     debugText.setText(sb.toString());
                     // debugText.setText(status.)
+
+                    if (noConnectionContainer != null) {
+                        if (status.isIOIOConnected) {
+                            noConnectionContainer.setVisibility(View.GONE);
+                        } else {
+                            noConnectionContainer.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             });
         }

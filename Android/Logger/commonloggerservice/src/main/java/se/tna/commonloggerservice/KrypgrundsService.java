@@ -99,7 +99,7 @@ public class KrypgrundsService extends IOIOService {
 				isIOIOConnected = false;
 				isInitialized = false;
 				helper = null;
-				id = "123456789";
+				id = "";
 				Helper.appendLog("*** IOIO disconnected. ***");
 			}
 
@@ -468,6 +468,7 @@ public class KrypgrundsService extends IOIOService {
 		status.timeBetweenReading = timeBetweenReading;
 		status.timeForLastFanControl = timeForLastFanControl;
 		status.deviceId = id;
+		status.isIOIOConnected = isIOIOConnected;
 		
 		return status;
 	}
