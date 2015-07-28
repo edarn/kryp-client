@@ -1,5 +1,7 @@
 package se.tna.commonloggerservice;
 
+import android.os.Environment;
+import android.text.format.DateFormat;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.CapSense;
 import ioio.lib.api.DigitalInput.Spec;
@@ -15,6 +17,7 @@ import ioio.lib.api.exception.ConnectionLostException;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -154,7 +157,7 @@ public class Helper {
 	public static void appendLog(String text) {
 		System.out.println(text);
 		// if (mCtx != null) {
-        /*
+/*
 		try {
 			if (logFile == null) {
 				// logFile = new File(mCtx.getFilesDir() +
@@ -197,7 +200,7 @@ public class Helper {
 				bufWriter = null;
 				logFile = null;
 			}
-		} */
+		}*/
 	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
@@ -226,7 +229,25 @@ public class Helper {
 				Thread.sleep(500);
 				i2cOnBoard.writeRead(chipCap2Adress / 2, false, toSend, 0, toReceive, 4);
             }
+			float status = (toReceive[0] &0xFF) >>> 6;
 
+			float humid = ((toReceive[0] & 0x3F) << 8) + (toReceive[1] & 0xFF);
+			humid /= 163.84;
+
+			//double temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] &0xFC) /4f) /4f;
+			//double temp = ((toReceive[2] & 0xFF) << 6 | ((toReceive[3] &0xFC) >> 2)) & 0x3FFF;
+			double temp = (((toReceive[2] & 0xFF) *64) + (((toReceive[3] &0xFC) / 4))) & 0x3FFF;
+
+			temp /= 99.29;
+			temp -= 40;
+			temp -= 0.8; //Thomas own extra calibration as ChipCap seems to return aprox 0.8 degrees to high temperature.
+
+            //if no sensor responds, make sure we don´t send -40.8 as response.
+            if (temp == -40.8) temp = 0;
+
+			result.humidity = humid;
+			result.temperature = (float) temp;
+			System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature + " Status: " + status);
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
 			return null;
@@ -234,24 +255,6 @@ public class Helper {
             System.out.println("GetChipCap2 interrupted. Comm error.");
             return null;
 		}
-
-		float status = (toReceive[0] &0xFF) >>> 6;
-
-		float humid = ((toReceive[0] & 0x3F) << 8) + (toReceive[1] & 0xFF);
-		humid /= 163.84;
-
-		//double temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] &0xFC) /4f) /4f;
-		//double temp = ((toReceive[2] & 0xFF) << 6 | ((toReceive[3] &0xFC) >> 2)) & 0x3FFF;
-		double temp = (((toReceive[2] & 0xFF) *64) + (((toReceive[3] &0xFC) / 4))) & 0x3FFF;
-
-		temp /= 99.29;
-        temp -= 40;
-        temp -= 0.8; //Thomas own extra calibration as ChipCap seems to return aprox 0.8 degrees to high temperature.
-
-
-        result.humidity = humid;
-		result.temperature = (float) temp;
-        System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature + " Status: " + status);
 
         return result;
 	}
@@ -284,8 +287,8 @@ public class Helper {
 			commandExecutor.join(4000);
 			if (commandExecutor.isAlive()) {
 				commandExecutor.interrupt();
-				tempAndHumidity.humidity = -100;
-				tempAndHumidity.temperature = -100;
+				tempAndHumidity.humidity = 0;
+				tempAndHumidity.temperature = 0;
 				tempAndHumidity.okReading = false;
 			}
 			commandExecutor = null;

@@ -101,6 +101,7 @@ public class KrypgrundsService extends IOIOService {
 				helper = null;
 				id = "";
 				Helper.appendLog("*** IOIO disconnected. ***");
+
 			}
 
 			@Override
@@ -184,6 +185,8 @@ public class KrypgrundsService extends IOIOService {
 
 						if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
 								!= -40) {
+                            if (oneMeasurement.windSpeedAvg == -1) oneMeasurement.windSpeedAvg = 0;
+
 							rawSurfvindsMeasurements.add(oneMeasurement);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
@@ -346,14 +349,14 @@ public class KrypgrundsService extends IOIOService {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.MINUTES.toMillis(60)) {
+					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.SECONDS.toMillis(15)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
 						KrypgrundsService.this.restart();
 					}
 				}
 			};
 			ioioConnectorTimer = new Timer("IOIOConnector");
-			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(10));
+			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.SECONDS.toMillis(14), TimeUnit.SECONDS.toMillis(10));
 		}
 
 		if (mSendDataTask == null) {
