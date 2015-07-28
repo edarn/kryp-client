@@ -99,9 +99,7 @@ public abstract class IOIOService extends Service implements
 			helper_.start();
 			started_ = true;
 		} else {
-			if ((intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0) {
-				helper_.restart();
-			}
+			helper_.restart();
 		}
 	}
 	
