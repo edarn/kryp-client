@@ -117,6 +117,7 @@ public class KrypgrundGUI extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Helper.appendLog("App started");
+        Helper.setupGoogleAnalytics(this);
         mConnection = new ServiceConnection() {
 
             @Override
@@ -309,7 +310,7 @@ public class KrypgrundGUI extends Activity {
         //Launch setup activty
         SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
 
-       // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
+        // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
         if (name != null && name.isEmpty())
         {
@@ -360,8 +361,8 @@ public class KrypgrundGUI extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                 //   textWindDirection.setText(status.windDirection);
-                    textWindSpeed.setText(String.format("%.2f", status.windSpeed));
+                    //   textWindDirection.setText(status.windDirection);
+                    textWindSpeed.setText(String.format("%.1f", status.windSpeed));
                     temperatureText.setText(String.format("%.1f", status.temperatureInne));
                     humidText.setText(String.format("%.1f", status.moistureInne));
                     compassImageView.setRotation(status.windDirection);
@@ -376,7 +377,11 @@ public class KrypgrundGUI extends Activity {
                     textVoltage.setText(String.format("%.2f", status.voltage));
 */
                     // Is ioio chip initialized etc
-                    initializedText.setText(status.statusMessage);
+                    if (status.isIOIOConnected)
+                        initializedText.setText("Controlunit connected OK");
+                    else
+                        initializedText.setText("No controlunit detected");
+
                     phoneId.setText("IMEI:" + status.deviceId);
                     StringBuilder sb = new StringBuilder();
                     sb.append("HistorySize: ");

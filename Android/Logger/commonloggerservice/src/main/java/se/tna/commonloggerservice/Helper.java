@@ -1,25 +1,12 @@
 package se.tna.commonloggerservice;
 
-import android.os.Environment;
-import android.text.format.DateFormat;
-import ioio.lib.api.AnalogInput;
-import ioio.lib.api.CapSense;
-import ioio.lib.api.DigitalInput.Spec;
-import ioio.lib.api.DigitalInput.Spec.Mode;
-import ioio.lib.api.DigitalOutput;
-import ioio.lib.api.IOIO;
-import ioio.lib.api.PulseInput;
-import ioio.lib.api.PulseInput.ClockRate;
-import ioio.lib.api.PulseInput.PulseMode;
-import ioio.lib.api.PwmOutput;
-import ioio.lib.api.TwiMaster;
-import ioio.lib.api.exception.ConnectionLostException;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -33,11 +20,27 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput.Spec;
+import ioio.lib.api.DigitalInput.Spec.Mode;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.IOIO;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PulseInput.ClockRate;
+import ioio.lib.api.PulseInput.PulseMode;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.TwiMaster;
+import ioio.lib.api.exception.ConnectionLostException;
 import se.tna.commonloggerservice.KrypgrundsService.ServiceMode;
-import android.content.Context;
-import android.util.Log;
 
 public class Helper {
+    private static Tracker mainTracker;
     private boolean watchValue=true;
     IOIO ioio = null;
 
@@ -144,6 +147,34 @@ public class Helper {
         WatchDog.close();
 		power.close();
 	}
+	public static void setupGoogleAnalytics(Activity activity/*, String id */){
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(activity);
+		mainTracker = analytics.newTracker(
+                R.xml.global_tracker);
+		//mainTracker.setAppId(id);
+		//mainTracker.enableAutoActivityTracking(true);
+		mainTracker.enableAdvertisingIdCollection(true);
+		mainTracker.enableExceptionReporting(true);
+	}
+
+
+
+	public static void trackScreenName(String name)
+	{
+		if (mainTracker != null) {
+			mainTracker.setScreenName(name);
+			mainTracker.send(new HitBuilders.AppViewBuilder().build());
+		}
+	}
+	public static void trackEvent(String category, String action, String label, Long value)
+	{
+		if (mainTracker != null) {
+			mainTracker.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).setValue(value).build());
+
+		}
+	}
+
+
 
 	static File logFile = null;
 	static BufferedWriter bufWriter;

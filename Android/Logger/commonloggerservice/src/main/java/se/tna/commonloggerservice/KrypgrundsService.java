@@ -101,12 +101,15 @@ public class KrypgrundsService extends IOIOService {
 				helper = null;
 				id = "";
 				Helper.appendLog("*** IOIO disconnected. ***");
+				Helper.trackEvent("LoggerService", "Lifecycle", "IOIO Disconnect", 0L);
 
 			}
 
 			@Override
 			public void setup() throws ConnectionLostException, InterruptedException {
 				isIOIOConnected = true;
+				Helper.trackEvent("LoggerService", "Lifecycle","IOIO Connected", 0L);
+
 				timeForLastSendData = System.currentTimeMillis();
 				timeForLastAddToHistory = System.currentTimeMillis();
 				timeForLastFanControl = System.currentTimeMillis();
@@ -210,11 +213,6 @@ public class KrypgrundsService extends IOIOService {
 		};
 	}
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-
-	}
 
 	/**
 	 * Starts or stops the fan depending on the Stats data.
@@ -273,14 +271,17 @@ public class KrypgrundsService extends IOIOService {
 		}
 
 	}
-
+    static long IOIOrestarted = 0;
 	class PreventIOIOHWLockTask extends TimerTask {
 		@Override
 		public void run() {
 			if (isIOIOConnected && helper != null && helper.ioio != null) {
 				try {
-					helper.ioio.hardReset();
-				} catch (ConnectionLostException e) {
+                    Helper.trackEvent("LoggerService","Timer","IOIOHWLock thread restarted IOIO device",IOIOrestarted);
+                    IOIOrestarted++;
+                    helper.ioio.hardReset();
+
+                } catch (ConnectionLostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -322,11 +323,17 @@ public class KrypgrundsService extends IOIOService {
 		}
 	}
 
-	@Override
+    static long started = 0;
+    static long restarted = 0;
+
+    @Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
+        int result = super.onStartCommand(intent, flags, startId);
 		Helper.appendLog("\n\n\n\nKrypgrundService Started");
-		UncaughtExceptionHandler s = new UncaughtExceptionHandler() {
+        Helper.trackEvent("LoggerService","Lifecycle","onStartCommand",started);
+        started++;
+
+        UncaughtExceptionHandler s = new UncaughtExceptionHandler() {
 
 			@Override
 			public void uncaughtException(Thread thread, Throwable ex) {
@@ -351,7 +358,10 @@ public class KrypgrundsService extends IOIOService {
 				public void run() {
 					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.SECONDS.toMillis(15)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
-						KrypgrundsService.this.restart();
+                        Helper.trackEvent("LoggerService","Timer","IOIOConnector thread restarted service",restarted);
+                        restarted++;
+
+                        KrypgrundsService.this.restart();
 					}
 				}
 			};
@@ -380,7 +390,7 @@ public class KrypgrundsService extends IOIOService {
 		Helper.appendLog("TimeBetweenSendingDataToServer = " + timeBetweenSendingDataToServer);
 		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
 		
-		return Service.START_STICKY;
+		return result;
 	}
 
 	@Override
