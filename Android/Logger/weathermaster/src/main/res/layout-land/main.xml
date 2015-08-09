@@ -80,7 +80,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:background="#b0000000"
-                            android:text="WindSpeed"
+                            android:text="WindSpeed (m/s)"
                             android:textColor="#ffffff"
                             android:textSize="@dimen/medium_font"/>
                         <LinearLayout
@@ -101,7 +101,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:background="#b0000000"
-                                android:text="0 m/s"
+                                android:text="0"
                                 android:textColor="#ffffff"
                                 android:textSize="@dimen/large_font"/>
                         </LinearLayout>
@@ -111,7 +111,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:background="#b0000000"
-                            android:text="Temperature"
+                            android:text="Temperature (\u2103)"
                             android:textColor="#ffffff"
                             android:textSize="@dimen/medium_font"/>
                         <LinearLayout
@@ -136,15 +136,6 @@
                                 android:textColor="#ffffff"
                                 android:textSize="@dimen/large_font"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text=" \u2103"
-                                android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
-
                         </LinearLayout>
                         <TextView
 
@@ -152,7 +143,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:background="#b0000000"
-                            android:text="Humidity"
+                            android:text="Humidity (%)"
                             android:textColor="#ffffff"
                             android:textSize="@dimen/medium_font"/>
                         <LinearLayout
@@ -177,14 +168,6 @@
                                 android:textColor="#ffffff"
                                 android:textSize="@dimen/large_font"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text=" %"
-                                android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
 
                         </LinearLayout>
 
@@ -193,7 +176,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:background="#b0000000"
-                            android:text="Power"
+                            android:text="Power (V)"
                             android:textColor="#ffffff"
                             android:textSize="@dimen/medium_font"/>
                         <LinearLayout
@@ -230,14 +213,6 @@
                                 android:textColor="#ffffff"
                                 android:textSize="@dimen/large_font"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text=" V"
-                                android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
 
                         </LinearLayout>
                     </LinearLayout>
