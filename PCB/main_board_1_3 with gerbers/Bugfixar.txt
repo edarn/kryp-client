@@ -1,4 +1,5 @@
 1. Fixa rätt pin layout på rj12 kontakterna. - Använd dock möjligen RJ45 istället då de är billigare. Låt 
 2. För liten font på kretskortet på vissa ställen.
 3. RJ11 kontakt istället för RJ12 för Anemometern, de andra används ju inte. Och gör det svårare att sätta i fel kontakt
-4. Rotera säkringshållarna 180 grader, så dom går att öppna. Alternativt flytta reläerna lite.
+4. *Då går det väl inte alls att öppna dom?* Rotera säkringshållarna 180 grader, så dom går att öppna. Alternativt flytta reläerna lite.
+5. Fundera på om man kan använda en vanlig USB istället för den mystiska. Men kalibreringen vid första uppstart kräver koppling till dator? Hur göra?

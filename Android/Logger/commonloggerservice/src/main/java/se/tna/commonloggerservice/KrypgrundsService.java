@@ -99,13 +99,17 @@ public class KrypgrundsService extends IOIOService {
 				isIOIOConnected = false;
 				isInitialized = false;
 				helper = null;
-				id = "123456789";
+				id = "";
 				Helper.appendLog("*** IOIO disconnected. ***");
+				Helper.trackEvent("LoggerService", "Lifecycle", "IOIO Disconnect", 0L);
+
 			}
 
 			@Override
 			public void setup() throws ConnectionLostException, InterruptedException {
 				isIOIOConnected = true;
+				Helper.trackEvent("LoggerService", "Lifecycle","IOIO Connected", 0L);
+
 				timeForLastSendData = System.currentTimeMillis();
 				timeForLastAddToHistory = System.currentTimeMillis();
 				timeForLastFanControl = System.currentTimeMillis();
@@ -184,6 +188,8 @@ public class KrypgrundsService extends IOIOService {
 
 						if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
 								!= -40) {
+                            if (oneMeasurement.windSpeedAvg == -1) oneMeasurement.windSpeedAvg = 0;
+
 							rawSurfvindsMeasurements.add(oneMeasurement);
 							// Update the watchdog.
 							watchdog_TimeSinceLastOkData = System.currentTimeMillis();
@@ -207,11 +213,6 @@ public class KrypgrundsService extends IOIOService {
 		};
 	}
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-
-	}
 
 	/**
 	 * Starts or stops the fan depending on the Stats data.
@@ -270,14 +271,17 @@ public class KrypgrundsService extends IOIOService {
 		}
 
 	}
-
+    static long IOIOrestarted = 0;
 	class PreventIOIOHWLockTask extends TimerTask {
 		@Override
 		public void run() {
 			if (isIOIOConnected && helper != null && helper.ioio != null) {
 				try {
-					helper.ioio.hardReset();
-				} catch (ConnectionLostException e) {
+                    Helper.trackEvent("LoggerService","Timer","IOIOHWLock thread restarted IOIO device",IOIOrestarted);
+                    IOIOrestarted++;
+                    helper.ioio.hardReset();
+
+                } catch (ConnectionLostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -319,11 +323,17 @@ public class KrypgrundsService extends IOIOService {
 		}
 	}
 
-	@Override
+    static long started = 0;
+    static long restarted = 0;
+
+    @Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
+        int result = super.onStartCommand(intent, flags, startId);
 		Helper.appendLog("\n\n\n\nKrypgrundService Started");
-		UncaughtExceptionHandler s = new UncaughtExceptionHandler() {
+        Helper.trackEvent("LoggerService","Lifecycle","onStartCommand",started);
+        started++;
+
+        UncaughtExceptionHandler s = new UncaughtExceptionHandler() {
 
 			@Override
 			public void uncaughtException(Thread thread, Throwable ex) {
@@ -346,14 +356,17 @@ public class KrypgrundsService extends IOIOService {
 
 				@Override
 				public void run() {
-					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.MINUTES.toMillis(60)) {
+					if (!isIOIOConnected && System.currentTimeMillis() - mWatchdogTime > TimeUnit.SECONDS.toMillis(15)) {
 						Helper.appendLog("IOIO is not connected, lets restart to try to connect.");
-						KrypgrundsService.this.restart();
+                        Helper.trackEvent("LoggerService","Timer","IOIOConnector thread restarted service",restarted);
+                        restarted++;
+
+                        KrypgrundsService.this.restart();
 					}
 				}
 			};
 			ioioConnectorTimer = new Timer("IOIOConnector");
-			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(10));
+			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.SECONDS.toMillis(14), TimeUnit.SECONDS.toMillis(10));
 		}
 
 		if (mSendDataTask == null) {
@@ -377,7 +390,7 @@ public class KrypgrundsService extends IOIOService {
 		Helper.appendLog("TimeBetweenSendingDataToServer = " + timeBetweenSendingDataToServer);
 		Helper.appendLog("TimeBetweenReading = " + timeBetweenReading);
 		
-		return Service.START_STICKY;
+		return result;
 	}
 
 	@Override
@@ -468,6 +481,7 @@ public class KrypgrundsService extends IOIOService {
 		status.timeBetweenReading = timeBetweenReading;
 		status.timeForLastFanControl = timeForLastFanControl;
 		status.deviceId = id;
+		status.isIOIOConnected = isIOIOConnected;
 		
 		return status;
 	}

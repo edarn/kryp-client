@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherMaster</string>
+    <string name="app_name">WindMaster</string>
     <string name="service_name">DataLogger</string>
 
 </resources>

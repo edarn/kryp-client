@@ -1,8 +1,11 @@
 package se.tna.weathermaster;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -67,6 +70,7 @@ public class KrypgrundGUI extends Activity {
 
     private int angle = 0;
     private TextView textStationName;
+    private LinearLayout noConnectionContainer;
 
     @Override
     public void onPause() {
@@ -113,6 +117,7 @@ public class KrypgrundGUI extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Helper.appendLog("App started");
+        Helper.setupGoogleAnalytics(this);
         mConnection = new ServiceConnection() {
 
             @Override
@@ -194,6 +199,10 @@ public class KrypgrundGUI extends Activity {
         if(debugContainer != null) {
             debugContainer.setVisibility(View.GONE);
         }
+
+        noConnectionContainer = (LinearLayout) findViewById(R.id.noConnectionContainer);
+
+
         if(debugButton != null) {
             debugButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -301,9 +310,35 @@ public class KrypgrundGUI extends Activity {
         //Launch setup activty
         SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
 
-       // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
+        // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
+        String name = preferences.getString(SetupActivity.STATION_NAME, "");
+        if (name != null && name.isEmpty())
+        {
 
-        textStationName.setText(preferences.getString(SetupActivity.STATION_NAME,""));
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("It appears you are a new user, launching setup")
+                    .setTitle("New user?");
+
+            // Add the buttons
+            builder.setPositiveButton("OK!", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    startActivity(new Intent(KrypgrundGUI.this, SetupActivity.class));
+                }
+            });
+            builder.setNegativeButton("Nope!", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+// 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
+        textStationName.setText(name);
     }
 
     private int getMoistureAngle(float moisture) {
@@ -326,8 +361,8 @@ public class KrypgrundGUI extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                 //   textWindDirection.setText(status.windDirection);
-                    textWindSpeed.setText(String.format("%.2f", status.windSpeed));
+                    //   textWindDirection.setText(status.windDirection);
+                    textWindSpeed.setText(String.format("%.1f", status.windSpeed));
                     temperatureText.setText(String.format("%.1f", status.temperatureInne));
                     humidText.setText(String.format("%.1f", status.moistureInne));
                     compassImageView.setRotation(status.windDirection);
@@ -342,7 +377,11 @@ public class KrypgrundGUI extends Activity {
                     textVoltage.setText(String.format("%.2f", status.voltage));
 */
                     // Is ioio chip initialized etc
-                    initializedText.setText(status.statusMessage);
+                    if (status.isIOIOConnected)
+                        initializedText.setText("Controlunit connected OK");
+                    else
+                        initializedText.setText("No controlunit detected");
+
                     phoneId.setText("IMEI:" + status.deviceId);
                     StringBuilder sb = new StringBuilder();
                     sb.append("HistorySize: ");
@@ -363,6 +402,14 @@ public class KrypgrundGUI extends Activity {
 
                     debugText.setText(sb.toString());
                     // debugText.setText(status.)
+
+                    if (noConnectionContainer != null) {
+                        if (status.isIOIOConnected) {
+                            noConnectionContainer.setVisibility(View.GONE);
+                        } else {
+                            noConnectionContainer.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             });
         }

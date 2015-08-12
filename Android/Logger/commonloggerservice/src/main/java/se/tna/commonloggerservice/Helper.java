@@ -1,22 +1,12 @@
 package se.tna.commonloggerservice;
 
-import ioio.lib.api.AnalogInput;
-import ioio.lib.api.CapSense;
-import ioio.lib.api.DigitalInput.Spec;
-import ioio.lib.api.DigitalInput.Spec.Mode;
-import ioio.lib.api.DigitalOutput;
-import ioio.lib.api.IOIO;
-import ioio.lib.api.PulseInput;
-import ioio.lib.api.PulseInput.ClockRate;
-import ioio.lib.api.PulseInput.PulseMode;
-import ioio.lib.api.PwmOutput;
-import ioio.lib.api.TwiMaster;
-import ioio.lib.api.exception.ConnectionLostException;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -30,11 +20,27 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput.Spec;
+import ioio.lib.api.DigitalInput.Spec.Mode;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.IOIO;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PulseInput.ClockRate;
+import ioio.lib.api.PulseInput.PulseMode;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.TwiMaster;
+import ioio.lib.api.exception.ConnectionLostException;
 import se.tna.commonloggerservice.KrypgrundsService.ServiceMode;
-import android.content.Context;
-import android.util.Log;
 
 public class Helper {
+    private static Tracker mainTracker;
     private boolean watchValue=true;
     IOIO ioio = null;
 
@@ -141,6 +147,34 @@ public class Helper {
         WatchDog.close();
 		power.close();
 	}
+	public static void setupGoogleAnalytics(Activity activity/*, String id */){
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(activity);
+		mainTracker = analytics.newTracker(
+                R.xml.global_tracker);
+		//mainTracker.setAppId(id);
+		//mainTracker.enableAutoActivityTracking(true);
+		mainTracker.enableAdvertisingIdCollection(true);
+		mainTracker.enableExceptionReporting(true);
+	}
+
+
+
+	public static void trackScreenName(String name)
+	{
+		if (mainTracker != null) {
+			mainTracker.setScreenName(name);
+			mainTracker.send(new HitBuilders.AppViewBuilder().build());
+		}
+	}
+	public static void trackEvent(String category, String action, String label, Long value)
+	{
+		if (mainTracker != null) {
+			mainTracker.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).setValue(value).build());
+
+		}
+	}
+
+
 
 	static File logFile = null;
 	static BufferedWriter bufWriter;
@@ -154,7 +188,7 @@ public class Helper {
 	public static void appendLog(String text) {
 		System.out.println(text);
 		// if (mCtx != null) {
-        /*
+/*
 		try {
 			if (logFile == null) {
 				// logFile = new File(mCtx.getFilesDir() +
@@ -197,7 +231,7 @@ public class Helper {
 				bufWriter = null;
 				logFile = null;
 			}
-		} */
+		}*/
 	}
 
 	private ChipCap2 GetChipCap2(SensorLocation type) {
@@ -212,9 +246,9 @@ public class Helper {
 			Thread.sleep(200);
 			if (type == SensorLocation.SensorInne) {
 				System.out.print("Inne: ");
-				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 0);
-				Thread.sleep(500);
-				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 0, toReceive, 4);
+				//i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 0);
+				//Thread.sleep(500);
+				i2cInne.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 4);
 			} else if (type == SensorLocation.SensorUte) {
 				System.out.print("Ute: ");
 				i2cUte.writeRead(chipCap2Adress / 2, false, toSend, 1, toReceive, 0);
@@ -226,7 +260,25 @@ public class Helper {
 				Thread.sleep(500);
 				i2cOnBoard.writeRead(chipCap2Adress / 2, false, toSend, 0, toReceive, 4);
             }
+			float status = (toReceive[0] &0xFF) >>> 6;
 
+			float humid = ((toReceive[0] & 0x3F) << 8) + (toReceive[1] & 0xFF);
+			humid /= 163.84;
+
+			//double temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] &0xFC) /4f) /4f;
+			//double temp = ((toReceive[2] & 0xFF) << 6 | ((toReceive[3] &0xFC) >> 2)) & 0x3FFF;
+			double temp = (((toReceive[2] & 0xFF) *64) + (((toReceive[3] &0xFC) / 4))) & 0x3FFF;
+
+			temp /= 99.29;
+			temp -= 40;
+			temp -= 0.8; //Thomas own extra calibration as ChipCap seems to return aprox 0.8 degrees to high temperature.
+
+            //if no sensor responds, make sure we don´t send -40.8 as response.
+            if (temp == -40.8) temp = 0;
+
+			result.humidity = humid;
+			result.temperature = (float) temp;
+			System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature + " Status: " + status);
 		} catch (ConnectionLostException e) {
 			e.printStackTrace();
 			return null;
@@ -234,21 +286,6 @@ public class Helper {
             System.out.println("GetChipCap2 interrupted. Comm error.");
             return null;
 		}
-
-		float status = (toReceive[0] &0xFF) >> 6;
-
-		float humid = ((toReceive[0] & 0x3F) << 8) + (toReceive[1] & 0xFF);
-		humid /= 163.84;
-
-		//double temp = (toReceive[2] & 0xFF) * 64 + ((toReceive[3] &0xFC) /4f) /4f;
-		//double temp = ((toReceive[2] & 0xFF) << 6 | ((toReceive[3] &0xFC) >> 2)) & 0x3FFF;
-		double temp = (((toReceive[2] & 0xFF) << 6) + (((toReceive[3] &0xFC) / 4))) & 0x3FFF;
-		temp /= 99.29;
-		temp -= 40;
-
-		result.humidity = humid;
-		result.temperature = (float) temp;
-        System.out.println("Humid: "+result.humidity +" temp: "+ result.temperature + " Status: " + status);
 
         return result;
 	}
@@ -281,8 +318,8 @@ public class Helper {
 			commandExecutor.join(4000);
 			if (commandExecutor.isAlive()) {
 				commandExecutor.interrupt();
-				tempAndHumidity.humidity = -100;
-				tempAndHumidity.temperature = -100;
+				tempAndHumidity.humidity = 0;
+				tempAndHumidity.temperature = 0;
 				tempAndHumidity.okReading = false;
 			}
 			commandExecutor = null;
@@ -384,27 +421,6 @@ public class Helper {
 		return result;
 	}
 
-	public float getWindDirection() throws ConnectionLostException {
-		float direction = 0;
-		try {
-			Thread.sleep(200);
-			anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
-			Thread.sleep(200);
-			float voltage = anemometer.getVoltage();
-			voltage *= 360 / 3.3f;
-			direction = voltage;
-		} catch (InterruptedException e) {
-			System.out.println("------- GetWindDirection is interrupted----");
-			e.printStackTrace();
-			Log.e("Helper", "Now issuing a hard reset on IOIO");
-			ioio.hardReset();
-		} finally {
-			System.out.println("======= GetWindDirection anemometer close.----");
-			anemometer.close();
-		}
-		return direction;
-	}
-
 	public float getWindDirection2() throws ConnectionLostException {
 		float direction = 0;
 		try {
@@ -488,6 +504,7 @@ public class Helper {
 					Stats temp = (Stats) measurements.get(i);
 					if (temp != null) {
 						dataArray.put(temp.getJSON());
+						System.out.println("Sending data: "+temp.getJSON());
 					}
 				}
 				data.put("measure", dataArray);
@@ -532,159 +549,6 @@ public class Helper {
 		return sb.toString();
 	}
 
-	public float GetTemperatureNew(SensorLocation type) {
-		float temperature = -1; // Result in %
-		// float supply = 5;
-
-		int high = 0, low = 0, total = 0;
-		float voltage = (float) 4.93;
-
-		if (type == SensorLocation.SensorInne)
-			SendI2CCommand(0x40, 0, 0x3); // Request ADC measurement from AD0
-											// channel
-		else if (type == SensorLocation.SensorUte)
-			SendI2CCommand(0x40, 0, 0x5); // Request ADC measurement from AD2
-											// channel
-
-		high = ReadI2CData(0x40, 1); // Read Highbyte
-		low = ReadI2CData(0x40, 2); // Read Lowbyte
-		total = (high << 8) + low; // Raw measurement 0-1023 value representing
-									// 0-5V
-		voltage = (float) ((float) total * (float) voltage / (float) 1023);
-		temperature = 100 * voltage - 50;
-		return temperature;
-	}
-
-	public float GetTemperature(SensorLocation type) {
-		float temperature = -1; // Result in %
-		float supply = 5;
-
-		int high = 0, low = 0, total = 0;
-		float voltage = (float) 4.93;
-
-		if (type == SensorLocation.SensorInne)
-			SendI2CCommand(0x40, 0, 0x3); // Request ADC measurement from AD0
-											// channel
-		// SendI2CCommand(0x40,0,0x4); //Request ADC measurement from AD0
-		// channel
-		else if (type == SensorLocation.SensorUte)
-			SendI2CCommand(0x40, 0, 0x5); // Request ADC measurement from AD2
-											// channel
-		// SendI2CCommand(0x40,0,0x6); //Request ADC measurement from AD2
-		// channel
-
-		high = ReadI2CData(0x40, 1); // Read Highbyte
-		// ClearScreen();
-		// CursorHome();
-		// WriteText("High:" + Integer.toString(high));
-		// NewLine();
-		low = ReadI2CData(0x40, 2); // Read Lowbyte
-		// WriteText("Low :" + Integer.toString(low));
-		// NewLine();
-		total = (high << 8) + low; // Raw measurement 0-1023 value representing
-									// 0-5V
-		// WriteText("Tot :" + Integer.toString(total));
-		// NewLine();
-		voltage = (float) ((float) total * (float) voltage / (float) 1024);
-		// WriteText("Volt:" + Float.toString(voltage));
-		// onBoardTemperature =
-		// (float)(((float)((float)voltage/(float)supply)-(float)0.16)/(float)0.0062);
-		temperature = ((float) ((float) (voltage / ((float) supply / (float) 5)) - 1.375)) / (float) 0.0225;
-		// Temperature compensation for onBoardHumidity
-		// int onBoardTemperature = xxx;
-		// onBoardHumidity =
-		// (float)((float)rawMoisture/(float)((1.0546-0.00216*onBoardTemperature)));
-		// = rawMoisture;
-
-		return temperature;
-	}
-
-	public final static float CalibrationDataHumidity = 0.00000000000330f;
-	public final static float CalibrationDataHumiditySensitivity = 0.000000000000006f;
-
-	public float GetMoistureCap(SensorLocation type, float temperature) {
-		float moisture = -1; // Result in %
-
-		float capacitance = 0;
-		try {
-			if (type == SensorLocation.SensorInne) {
-				capacitance = humidityInside.read();
-			} else if (type == SensorLocation.SensorUte) {
-				capacitance = humidityOutside.read();
-			}
-			moisture = (capacitance - CalibrationDataHumidity) / CalibrationDataHumiditySensitivity + 55;
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConnectionLostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return moisture;
-	}
-
-	public float GetMoisture(SensorLocation type, float temperature) {
-		float moisture = -1; // Result in %
-		float rawMoisture = -1;
-		float supply = (float) 4.93;
-
-		int high = 0, low = 0, total = 0;
-		float voltage = 0;
-
-		if (type == SensorLocation.SensorInne)
-			SendI2CCommand(0x40, 0, 0x4); // Request ADC measurement from AD1
-											// channel
-		else if (type == SensorLocation.SensorUte)
-			SendI2CCommand(0x40, 0, 0x6); // Request ADC measurement from AD3
-											// channel
-
-		high = ReadI2CData(0x40, 1); // Read Highbyte
-		// ClearScreen();
-		// CursorHome();
-		// WriteText("High:" + Integer.toString(high));
-		// NewLine();
-		low = ReadI2CData(0x40, 2); // Read Lowbyte
-		// WriteText("Low :" + Integer.toString(low));
-		// NewLine();
-		total = (high << 8) + low; // Raw measurement 0-1023 value representing
-									// 0-5V
-		// WriteText("Tot :" + Integer.toString(total));
-		// NewLine();
-		voltage = (float) ((float) total * (float) 4.93 / (float) 1024);
-		// WriteText("Volt:" + Float.toString(voltage));
-		rawMoisture = (float) (((float) ((float) voltage / (float) supply) - (float) 0.16) / (float) 0.0062);
-
-		// Temperature compensation for onBoardHumidity
-		// int onBoardTemperature = xxx;
-		moisture = (float) ((float) rawMoisture / (float) ((1.0546 - 0.00216 * temperature)));
-		// onBoardHumidity = rawMoisture;
-
-		return moisture;
-	}
-
-	public void ClearScreen() {
-		SendI2CCommand(0xC6, 0, 12);
-	}
-
-	public void TurnOnBacklight() {
-		SendI2CCommand(0xC6, 0, 19);
-	}
-
-	public void NewLine() {
-		SendI2CCommand(0xC6, 0, 13);
-	}
-
-	public void CursorHome() {
-		SendI2CCommand(0xC6, 0, 1);
-	}
-
-	public void WriteText(String text) {
-		for (char b : text.toCharArray()) {
-			SendI2CCommand(0xC6, 0, b);
-		}
-	}
 
 	public float getWindSpeed3() throws ConnectionLostException {
 		ArrayList<Boolean> values = new ArrayList<Boolean>();
@@ -838,31 +702,5 @@ public class Helper {
 		return (int) (toReceive[0] & 0xFF);
 	}
 
-	/*
-	 * static int GetTemperature(AnalogInput port){ float SensorTemp=0; try {
-	 * float SensorVolt = port.getVoltage(); float SupplyVolt = 5; //SensorTemp
-	 * = (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
-	 * 
-	 * //Temperature compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T
-	 * in �C //int TrueRH = SensorRF/(1.0546-0.00216*onBoardTemperature); } catch
-	 * (InterruptedException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (ConnectionLostException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } return (int)
-	 * SensorTemp; }
-	 * 
-	 * 
-	 * static int GetAnalogueMoisture(AnalogInput port){ float SensorRF=0; try {
-	 * float SensorVolt = port.getVoltage(); float SupplyVolt = 5; SensorRF =
-	 * (float) ((SupplyVolt-0.16)/(0.0062*SensorVolt));
-	 * 
-	 * 
-	 * // Voltage output (1 // st // order curve fit) VOUT // =(VSUPPLY //
-	 * )(0.0062(sensor RH) + 0.16), typical at 25 �C // Temperature
-	 * compensation True RH = (Sensor RH)/(1.0546 � 0.00216T), T in �C //int
-	 * TrueRH = SensorRF/(1.0546-0.00216*onBoardTemperature); } catch
-	 * (InterruptedException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (ConnectionLostException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } return (int) SensorRF;
-	 * }
-	 */
+
 }
