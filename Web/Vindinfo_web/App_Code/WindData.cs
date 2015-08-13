@@ -195,16 +195,16 @@ namespace WindInfo
             //string cmdText = string.Format("select distinct imei from Surfvind_data WHERE 1");
             DateTime start = DateTime.Now;
             start = start.AddDays(-7);
-            string t = start.ToString();
+            string d = String.Format("{0:yyyy-MM-dd HH:mm}", start);          // "03/09/2008"
+
             if (resp != null)
             {
-                resp.Write("Thomas: " + t);
+                resp.Write("Thomas: " + d);
             }
             
 
-            string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM Surfvind_location,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time > \"2015-01-01\"");
-            //string cmdText = string.Format("SELECT Location,imei, Latitiud, Longitud FROM 'Surfvind_location' WHERE 1");
-
+            string cmdText = string.Format("SELECT distinct Location,Surfvind_location.imei, Latitiud, Longitud FROM Surfvind_location,Surfvind_data WHERE Surfvind_location.imei=Surfvind_data.imei and Surfvind_data.Time >\"" + d + "\"");
+      
             if (resp != null)
             {
                 resp.Write("conn string: " + cmdText + "  ");
