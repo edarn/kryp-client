@@ -71,8 +71,26 @@ namespace Surfvind_2011
 
             //placeholder.InnerHtml += "Thomas "+ loc.Count;
           
-            if (!checkArguments(location, duration, loc))
-            {  /* Update everything */
+            if (checkArguments(location, duration, loc))
+           
+            {
+                this.location = location;
+                // Safe, we know this value can be parsed, we've tried it before 
+                int interval = int.Parse(duration);
+                wd.SetImei(this.location);
+             //   Response.Write("Generate Graph");
+
+                fetchData(interval, wd);
+                //    Response.Write("Create Graph");
+
+                System.Web.UI.WebControls.Image a = new System.Web.UI.WebControls.Image();
+                a.Width = 800;
+                a.Height = 200;
+                a.ImageUrl = generateGraphOnServer(interval,800,200);
+                placeholder.Controls.Add(a);
+            }
+			else if(location != null)
+			 {  /* Update everything */
                 foreach (Location l in loc)
                 {
                  //   Response.Write(l.imei.ToString());
@@ -91,24 +109,9 @@ namespace Surfvind_2011
                     }
                 }
             }
+			
                 
-            else
-            {
-                this.location = location;
-                // Safe, we know this value can be parsed, we've tried it before 
-                int interval = int.Parse(duration);
-                wd.SetImei(this.location);
-             //   Response.Write("Generate Graph");
-
-                fetchData(interval, wd);
-                //    Response.Write("Create Graph");
-
-                System.Web.UI.WebControls.Image a = new System.Web.UI.WebControls.Image();
-                a.Width = 800;
-                a.Height = 200;
-                a.ImageUrl = generateGraphOnServer(interval,800,200);
-                placeholder.Controls.Add(a);
-            }
+            
         }
 
        
