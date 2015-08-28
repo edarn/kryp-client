@@ -43,3 +43,7 @@ Android/Logger/gradle/gradle/
 *.orig
 Web/SurfVind_web/Surfvind.suo
 Web/Vindinfo_web/Vindinfo.suo
+Web/SurfVind_web/Surfvind/bin/Surfvind.dll
+Web/SurfVind_web/Surfvind/bin/Surfvind.pdb
+Web/SurfVind_web/Surfvind/bin/Surfvind_2011.dll
+Web/SurfVind_web/Surfvind/bin/Surfvind_2011.pdb
