@@ -19,7 +19,7 @@
                         <tr>
                             <td align="center" style="background: url('Images/ws_compass.png') no-repeat center;
                                 width: 177px; height: 127px; vertical-align: top;">
-                                <asp:Image align="center" ID="imgCompass" runat="server" AlternateText="Wind direction" />
+                                <asp:Image ID="imgCompass" runat="server" AlternateText="Wind direction" />
                             </td>
                         </tr>
                         <tr>

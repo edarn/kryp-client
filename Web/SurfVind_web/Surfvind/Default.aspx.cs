@@ -82,13 +82,13 @@ namespace Surfvind_2011
 
                     air_temp_text.Text = wr.AverageAirTemp + " °C";
                     moisture_container.Visible = true;
-                    battery_container.Visible = true;
+                  
                     temperature_container.Visible = true;
                 }
                 else
                 {
                     moisture_container.Visible = false;
-                    battery_container.Visible = false;
+                
                     temperature_container.Visible = false;
                 }
 

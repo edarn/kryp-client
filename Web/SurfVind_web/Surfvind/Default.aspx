@@ -16,95 +16,89 @@
     <asp:ScriptManager ID="MainScriptManager" runat="server" EnablePartialRendering="true"
         EnablePageMethods="true" ScriptMode="Auto" AsyncPostBackTimeout="86400">
     </asp:ScriptManager>
-  
     <div style="position: absolute; left: 0; top: 0; z-index: 0;">
         <img src="design/ws_head.png" alt="Windsurfing. Weather report" />
     </div>
     <div style="position: absolute; left: 0; top: 250px; z-index: 0;">
         <%--<img src="design/ws_background_sea.png" />--%>
     </div>
-    <div style="position: absolute; left: 0; top: 1250px; z-index: 0;">
+    <div style="position: absolute; left: 0; top: 1350px; z-index: 0;">
         <asp:TextBox ID="debug" runat="server" />
     </div>
-            <div style="position: absolute; left: 19px; top: 203px; z-index: 1;">
-                <table style="background: url('Images/ws_compass.png') 0 0 no-repeat; width: 127px;
-                    height: 127px;">
-                    <tr>
-                        <td>
-                            <asp:Image ID="imgCompass" runat="server" AlternateText="Wind direction" />
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div style="position: absolute; left: 230px; top: 203px; z-index: 1;">
-                <table style="background: url('Images/ws_speed.png') 0 0 no-repeat; width: 177px;
-                    height: 177px;">
-                    <tr>
-                        <td>
-                            <asp:Image ID="imgSpeed" runat="server" AlternateText="Wind speed" />
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div id="temperature_container" runat="server" style="position: absolute; left: 450px; top: 203px;
-                z-index: 1;">
-                <table  runat="server" >
-                    <tr>
-                                <td>
-                                    Air Temperature
-                                </td>
-                            </tr>
-                    <tr style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
-                    height: 180px;">
-                        <td>
-                            <asp:Image ID="air_temp" runat="server" AlternateText="Air temp" />
-                        </td>
-                    </tr>
-                    <tr>
-                                <td>
-                                    <asp:Label ID="air_temp_text" runat="server" />
-                                </td>
-                            </tr>
-                </table>
-            </div>
-            <div id="moisture_container" runat="server" 
-                style="position: absolute;  left:  580px; top: 200px; width: 140px;"          >
-                <table>
-                    <tr> 
-                       <td> Humidity</td>
-                    </tr>
-                    
-                    <tr >
-                        <td align=center>
-                            <asp:Image ID="moisture_image" runat="server" AlternateText="moisture" Height="50px"
-                                ImageUrl="design/water_drop.png"/>
-                        </td>
-                        <td>
-                            <asp:Label ID="moisture" runat="server" Text="52 %" />
-                        </td>
-                    </tr>
-                    </div>
-                    <div ID="battery_container" runat="server">
-                    </tr>
-                                        <tr>
-                        <td>
-                            Battery</td>
-                                            <tr >
-                                                <td>
-                                                    <asp:Image ID="water_temp" runat="server" AlternateText="Water temp" 
-                                                        ImageUrl="Images/battery_icon.png" Width="50px" />
-                                                </td>
-                                                <td>
-                                                    <asp:Label ID="power" runat="server" Text="12 V" />
-                                                </td>
-                                            </tr>
-                    </tr>
-                    </div>
-
-                </table>
-            </div>
-        
-    
+    <div style="position: absolute; left: 19px; top: 203px; z-index: 1;">
+        <table style="background: url('Images/ws_compass.png') 0 0 no-repeat; width: 127px;
+            height: 127px;">
+            <tr>
+                <td>
+                    <asp:Image ID="imgCompass" runat="server" AlternateText="Wind direction" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="position: absolute; left: 230px; top: 203px; z-index: 1;">
+        <table style="background: url('Images/ws_speed.png') 0 0 no-repeat; width: 177px;
+            height: 177px;">
+            <tr>
+                <td>
+                    <asp:Image ID="imgSpeed" runat="server" AlternateText="Wind speed" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="temperature_container" runat="server" style="position: absolute; left: 450px;
+        top: 203px; z-index: 1;">
+        <table runat="server">
+            <tr>
+                <td>
+                    Air Temperature
+                </td>
+            </tr>
+            <tr style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
+                height: 180px;">
+                <td>
+                    <asp:Image ID="air_temp" runat="server" AlternateText="Air temp" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:Label ID="air_temp_text" runat="server" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="moisture_container" runat="server" style="position: absolute; left: 580px;
+        top: 195px; width: 140px; z-index: 1;">
+        <table>
+            <tr>
+                <td>
+                    Humidity
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <asp:Image ID="moisture_image" runat="server" AlternateText="moisture" Height="50px"
+                        ImageUrl="design/water_drop.png" />
+                </td>
+                <td>
+                    <asp:Label ID="moisture" runat="server" Text="52 %" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Battery
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:Image ID="water_temp" runat="server" AlternateText="Water temp" ImageUrl="Images/battery_icon.png"
+                        Width="50px" />
+                </td>
+                <td>
+                    <asp:Label ID="power" runat="server" Text="12 V" />
+                </td>
+            </tr>
+        </table>
+    </div>
     <div style="position: absolute; left: 750px; top: 200px; width: 430px; z-index: 1;">
         <cc1:GMap ID="GMap1" runat="server" Height="270" Width="410" />
     </div>
@@ -128,42 +122,31 @@
     <div style="position: absolute; left: 32px; top: 750px;">
         <asp:Image ID="fiveHGraph" runat="server" AlternateText="5h interval" />
     </div>
-    <div style="position: absolute; left: 1100px; top: 203px; z-index: 1;">
-        <%--<img src="design/banner.png" alt="Banner" />--%>
-        <script type="text/javascript">
-            google_ad_client = "pub-0138803691600797";
-            /* Surfvind */
-            google_ad_slot = "5711094823";
-            google_ad_width = 160;
-            google_ad_height = 600;    
-        </script>
-        <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    <div style="position: absolute; left: 1200px; top: 203px; z-index: 1;">
+        <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Surfvind -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 160px; height: 600px"
+            data-ad-client="ca-pub-0138803691600797" data-ad-slot="5711094823"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </div>
-    <div style="position: absolute; left: 132px; top: 1000px; z-index: 1;">
-        <%--<img src="design/banner.png" alt="Banner" />--%>
-        <script type="text/javascript"><!--
-            google_ad_client = "pub-0138803691600797";
-            /* 728x90, skapad 2009-04-05 */
-            google_ad_slot = "0510411231";
-            google_ad_width = 728;
-            google_ad_height = 90;
-                //-->
-        </script>
-        <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    <div style="position: absolute; left: 132px; top: 1100px; z-index: 1;">
+        <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- 728x90, skapad 2009-04-05 -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 728px; height: 90px"
+            data-ad-client="ca-pub-0138803691600797" data-ad-slot="0510411231"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </div>
-    <div style="width: 640px; position: absolute; left: 450px; top: 1100px; z-index: 3;
+    <div style="width: 640px; position: relative; left: 450px; top: 1200px; z-index: 3;
         font-size: 14px;">
         &copy; 2008 Surfvind.se
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-   <!--     <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" /> -->
+        
+        <!--     <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" /> -->
     </div>
-   <!-- <script type="text/javascript">
+    <!-- <script type="text/javascript">
         var c = 0;
         if (window.attachEvent)
             window.attachEvent("onload", PageLoad);
