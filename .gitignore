@@ -41,3 +41,5 @@ Android/Logger/.gradle/
 Android/Logger/gradle/gradle/
 *.log
 *.orig
+Web/SurfVind_web/Surfvind.suo
+Web/Vindinfo_web/Vindinfo.suo
