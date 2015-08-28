@@ -3,7 +3,7 @@
 
 <html>
 <head id="Head1" runat="server">
-    <title>Windsurfing. Weather report Test Today</title>
+    <title>Weather report</title>
 </head>
 <body>
      <div  id="placeholder" runat="server"></div>

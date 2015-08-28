@@ -79,7 +79,8 @@ namespace Surfvind_2011
                     moisture.Text = wr.Moisture + " %";
 
                     air_temp.ToolTip = "Air temperature: " + wr.AverageAirTemp + " °C";
-                    
+
+                    air_temp_text.Text = wr.AverageAirTemp + " °C";
                     moisture_container.Visible = true;
                     battery_container.Visible = true;
                     temperature_container.Visible = true;

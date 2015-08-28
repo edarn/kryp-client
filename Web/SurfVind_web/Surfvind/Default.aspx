@@ -26,8 +26,6 @@
     <div style="position: absolute; left: 0; top: 1250px; z-index: 0;">
         <asp:TextBox ID="debug" runat="server" />
     </div>
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
-        <ContentTemplate>
             <div style="position: absolute; left: 19px; top: 203px; z-index: 1;">
                 <table style="background: url('Images/ws_compass.png') 0 0 no-repeat; width: 127px;
                     height: 127px;">
@@ -50,20 +48,28 @@
             </div>
             <div id="temperature_container" runat="server" style="position: absolute; left: 450px; top: 203px;
                 z-index: 1;">
-                Air
-                <table  runat="server" style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
-                    height: 180px;">
+                <table  runat="server" >
                     <tr>
+                                <td>
+                                    Air Temperature
+                                </td>
+                            </tr>
+                    <tr style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat; width: 53px;
+                    height: 180px;">
                         <td>
                             <asp:Image ID="air_temp" runat="server" AlternateText="Air temp" />
                         </td>
                     </tr>
+                    <tr>
+                                <td>
+                                    <asp:Label ID="air_temp_text" runat="server" />
+                                </td>
+                            </tr>
                 </table>
             </div>
-            <div id="water" runat="server" 
-                style="position: absolute; left: 520px; top: 203px; width: 140px;"          >
+            <div id="moisture_container" runat="server" 
+                style="position: absolute;  left:  580px; top: 200px; width: 140px;"          >
                 <table>
-                    <div id="moisture_container" runat=server>
                     <tr> 
                        <td> Humidity</td>
                     </tr>
@@ -97,12 +103,9 @@
 
                 </table>
             </div>
-        </ContentTemplate>
-        <Triggers>
-            <asp:AsyncPostBackTrigger ControlID="tmrUpdateCurrentValues" EventName="Tick" />
-        </Triggers>
-    </asp:UpdatePanel>
-    <div style="position: absolute; left: 650px; top: 200px; width: 430px; z-index: 1;">
+        
+    
+    <div style="position: absolute; left: 750px; top: 200px; width: 430px; z-index: 1;">
         <cc1:GMap ID="GMap1" runat="server" Height="270" Width="410" />
     </div>
     <div style="position: absolute; left: 950px; top: 10px; width: 470px; z-index: 2;">
@@ -158,7 +161,7 @@
         <br />
         <br />
         <br />
-        <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" />
+   <!--     <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" /> -->
     </div>
    <!-- <script type="text/javascript">
         var c = 0;

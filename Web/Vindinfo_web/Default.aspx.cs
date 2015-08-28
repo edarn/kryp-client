@@ -51,6 +51,8 @@ public partial class Default : System.Web.UI.Page
 
         wd.SetImei(imei);
 
+        graphview.Attributes["src"] = "http://www.surfvind.se/GenGraphs.aspx?Location=" + imei + "&Duration=2";
+
         /* Get pre-stored direction and speed arrows */
         imgSpeed.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_speed.png";
         imgCompass.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_compass.png";
@@ -83,11 +85,12 @@ public partial class Default : System.Web.UI.Page
         if (wr.Moisture != 0)
         {
             // Set temp images
-            air_temp.ImageUrl = "~/Images/" + imei + "_img_air_temp.png";
+            air_temp.ImageUrl = "http://www.surfvind.se/Images/" + imei + "_img_air_temp.png";
             power.Text = wr.AverageWaterTemp + " V";
             moisture.Text = wr.Moisture + " %";
 
             air_temp.ToolTip = "Air temperature: " + wr.AverageAirTemp + " °C";
+            air_temp_text.Text = wr.AverageAirTemp + " °C";
             temperature_container.Visible = true;
             water.Visible = true;
         }
@@ -98,7 +101,7 @@ public partial class Default : System.Web.UI.Page
         }
 
         LocationPage.Visible = true;
-        graphview.Attributes["src"] = "http://www.surfvind.se/GenGraphs.aspx?Location=" + imei+"&Duration=2";
+
     }
 
     /* 

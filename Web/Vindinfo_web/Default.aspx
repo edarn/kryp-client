@@ -47,12 +47,21 @@
                 </td>
                 <td>
                     <div id="temperature_container" runat="server">
-                        Air
-                        <table id="Table1" runat="server" style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat;
+                        <table id="Table1" runat="server" >
+                             <tr>
+                                <td>
+                                    Air Temperature
+                                </td>
+                            </tr>
+                            <tr style="background: url('Images/temp_air_new.PNG') 0 0 no-repeat;
                             width: 53px; height: 180px;">
-                            <tr>
                                 <td>
                                     <asp:Image ID="air_temp" runat="server" AlternateText="Air temp" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Label ID="air_temp_text" runat="server" />
                                 </td>
                             </tr>
                         </table>

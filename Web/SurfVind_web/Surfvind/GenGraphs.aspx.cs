@@ -46,12 +46,14 @@ namespace Surfvind_2011
             Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
             string location = Request.QueryString["location"];
             string duration = Request.QueryString["duration"];
+            //string tempImages = Request.QueryString["temp"];
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["Debug"]))
             {
               location = "354745031074596";  
               duration = "1"; 
             }
             update(location, duration);
+            
         }
 
      
@@ -68,6 +70,8 @@ namespace Surfvind_2011
 
             List<Location> loc = wd.GetLocations();
             loc.Sort();
+            wd.SetImei(location);
+            generateSensorImages(location, wd);
 
             //placeholder.InnerHtml += "Thomas "+ loc.Count;
           
