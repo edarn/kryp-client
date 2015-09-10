@@ -1,5 +1,16 @@
-1. Fixa rätt pin layout på rj12 kontakterna. - Använd dock möjligen RJ45 istället då de är billigare. Låt 
-2. För liten font på kretskortet på vissa ställen.
-3. RJ11 kontakt istället för RJ12 för Anemometern, de andra används ju inte. Och gör det svårare att sätta i fel kontakt
-4. *Då går det väl inte alls att öppna dom?* Rotera säkringshållarna 180 grader, så dom går att öppna. Alternativt flytta reläerna lite.
-5. Fundera på om man kan använda en vanlig USB istället för den mystiska. Men kalibreringen vid första uppstart kräver koppling till dator? Hur göra?
+1. Fix the pin layout for the RJ12 contact for the anemometer.
+2. Use RJ45 low profile "MX-95501-2881" for the other three connectors (as they are cheaper.)
+3. Too small font in two places of the old pcb. Make larger if possible. :)
+4. Detect if a sensor is connected or not. Windvane gives random output when not connected.
+5. Move onboard i2c sensor so it gets fresh air and not affected by heat generated internally. Possible put it close to the Rj45 connector where the plastic box will be open.
+6. Remove Relay and extra contacts? (make a Surfvind only board)
+7. Replace USB contact with normal?
+8. Extra sensors (Rain Sensor). Several of other sensors communicates wireless with RF 813 or 413MHz. How hard is it to add support for RF communication. For example (http://www.weatherconnection.com/product.asp?itmky=306377&cat=2&subcat=449657&sortby=&filtermfg=&page=)
+9. Find me a suitable 0.5A powersupply (to use when not using the relay function)
+10 Possible move relays abit so it can be opened.
+
+Sensor PCB
+1. Make smaller
+2. Add other nice weathersensors if they support i2c. (Air pressure, Water temperature ...)
+3. There exists one Rain sensor which gives more pulses the more it rains. (it is just a switch that is closed more frequently the more it rains - similar as the wind speed sensor). It has a rj11 connector and the two center pins are only used. Are there any i2c counters that could be connected to it and mounted on the sensor pcb?)
+4. Connector at the same side as components.
