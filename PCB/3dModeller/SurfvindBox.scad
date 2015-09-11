@@ -7,7 +7,7 @@ text("TNA 2015");
 }
 translate([20,80,1.8])
 linear_extrude(height = 1, center = false){
-text("V 1.1");
+text("V 1.2");
     
     
 }

@@ -12,7 +12,7 @@ text("TNA 2015");
 }
 translate([20,80,1.8])
 linear_extrude(height = 1, center = false){
-text("V 1.1");
+text("V 1.2");
     
     
 }
@@ -73,9 +73,9 @@ translate([width-thickness,start_offset+thickness+0.5,0])
 cube([thickness,rj45_width*antal_sensorer-1, height-(skruv_hojd+rj45_height)], center = false);
 
 //Short edge
-translate([thickness+usb_offset+0.5,0,thickness])
-cube([usb_width-1,thickness, height-(skruv_hojd+usb_height)], center = false);
+translate([thickness+usb_offset+1,0,thickness])
+cube([usb_width-2,thickness, height-(skruv_hojd+usb_height)], center = false);
 
-translate([width-(thickness+power_offset+power_width)+0.5,0,thickness])
-cube([power_width-1,thickness, height-(skruv_hojd+power_height)], center = false);
+translate([width-(thickness+power_offset+power_width)+1,0,thickness])
+cube([power_width-2,thickness, height-(skruv_hojd+power_height)], center = false);
 
