@@ -1,0 +1,8 @@
+[B]Sensor_Board_Digital_v1.1.GBL - copper bottom layer
+[B]Sensor_Board_Digital_v1.1.GBS - soldermask bottom layer
+[B]Sensor_Board_Digital_v1.1.GTO - silkscreen bottom layer
+[B]Sensor_Board_Digital_v1.1.GBO - silkscreen top layer
+[B]Sensor_Board_Digital_v1.1.gpi - gerber info
+
+[B]Sensor_Board_Digital_v1.1.drd - drill files
+[B]Sensor_Board_Digital_v1.1.dri - drill info

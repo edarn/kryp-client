@@ -401,7 +401,7 @@ public class KrypgrundGUI extends Activity {
                     sb.append(cs.toString());
 
                     debugText.setText(sb.toString());
-                    // debugText.setText(status.)
+                    debugText.setText(status.statusMessage);
 
                     if (noConnectionContainer != null) {
                         if (status.isIOIOConnected) {
