@@ -66,6 +66,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\MySql.Web.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -172,6 +175,7 @@
     <Content Include="Images\ws_speed_arrow.png" />
     <Content Include="Images\_WindDirectionChart.png" />
     <Content Include="Images\_WindSpeedChart.png" />
+    <Content Include="RestService\RestService1.svc" />
     <Content Include="Testing.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -238,6 +242,10 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RestService\IRestService1.cs" />
+    <Compile Include="RestService\RestService1.svc.cs">
+      <DependentUpon>RestService1.svc</DependentUpon>
     </Compile>
     <Compile Include="SmallEmbededDisplay.ashx.cs">
       <DependentUpon>SmallEmbededDisplay.ashx</DependentUpon>

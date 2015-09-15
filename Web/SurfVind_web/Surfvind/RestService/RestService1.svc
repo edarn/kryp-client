@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Surfvind_2011.RestService1" CodeBehind="RestService1.svc.cs" %>
