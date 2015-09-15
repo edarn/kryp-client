@@ -7,7 +7,7 @@ text("TNA 2015");
 }
 translate([20,80,1.8])
 linear_extrude(height = 1, center = false){
-text("V 1.2");
+text("V 1.3");
     
     
 }
@@ -45,7 +45,7 @@ translate([width-thickness,0,0])
 cube([thickness,length, height], center = false);
 
 radie = 4;
-inner_radie=1.7;
+inner_radie=1.6;
 
 
 
