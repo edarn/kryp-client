@@ -24,6 +24,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -101,7 +102,6 @@
     <Content Include="AddWindData2.php">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Applet.aspx" />
     <Content Include="Applet\test.png" />
     <Content Include="bin\AjaxControlToolkit.dll" />
     <Content Include="bin\Application_Log.txt" />
