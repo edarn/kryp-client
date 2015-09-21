@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23"
 
     defaultConfig {
         applicationId "se.tna.weathermaster"
@@ -24,4 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile project(':commonloggerservice')
     compile files('libs/GraphView-3.1.2.jar')
+}
+repositories {
+    mavenCentral()
 }

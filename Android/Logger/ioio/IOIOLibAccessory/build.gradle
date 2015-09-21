@@ -6,8 +6,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion "Google Inc.:Google APIs:17"
-    buildToolsVersion "19.1.0"
+    compileSdkVersion "Google Inc.:Google APIs:15"
+    buildToolsVersion "23"
 
     sourceSets {
         main {
