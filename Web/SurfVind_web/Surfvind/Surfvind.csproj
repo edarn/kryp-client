@@ -102,7 +102,6 @@
     <Content Include="AddWindData2.php">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Applet\test.png" />
     <Content Include="bin\AjaxControlToolkit.dll" />
     <Content Include="bin\Application_Log.txt" />
     <Content Include="bin\Artem.GoogleMap.dll" />
@@ -115,6 +114,7 @@
     <Content Include="bin\System.Web.Extensions.dll" />
     <Content Include="bin\ZedGraph.dll" />
     <Content Include="bin\ZedGraph.Web.dll" />
+    <Content Include="CrawlSpace\ViewCrawlspace.aspx" />
     <Content Include="css\StyleSheet1.css" />
     <Content Include="Default.aspx" />
     <Content Include="design\0.gif" />
@@ -143,25 +143,8 @@
     <Content Include="DownloadAs.aspx" />
     <Content Include="ErrorPage.aspx" />
     <Content Include="GenGraphs.aspx" />
-    <Content Include="Android\GetSensors.aspx" />
     <Content Include="HTMLPage1.htm" />
     <Content Include="ImagePage.aspx" />
-    <Content Include="Images\12345_img_air_temp.png" />
-    <Content Include="Images\12345_img_compass.png" />
-    <Content Include="Images\12345_img_speed.png" />
-    <Content Include="Images\12345_img_water_temp.png" />
-    <Content Include="Images\12345_WindDirectionChart.png" />
-    <Content Include="Images\12345_WindSpeedChart.png" />
-    <Content Include="Images\354745030513008_img_air_temp.png" />
-    <Content Include="Images\354745030513008_img_compass.png" />
-    <Content Include="Images\354745030513008_img_speed.png" />
-    <Content Include="Images\354745030513008_img_water_temp.png" />
-    <Content Include="Images\354745030513008_WindDirectionChart.png" />
-    <Content Include="Images\354745030513008_WindSpeedChart.png" />
-    <Content Include="Images\354745031035159_img_air_temp.png" />
-    <Content Include="Images\354745031035159_img_compass.png" />
-    <Content Include="Images\354745031035159_img_speed.png" />
-    <Content Include="Images\354745031035159_img_water_temp.png" />
     <Content Include="Images\battery_icon.png" />
     <Content Include="Images\img_compass.png" />
     <Content Include="Images\img_speed.png" />
@@ -175,6 +158,13 @@
     <Content Include="Images\ws_speed_arrow.png" />
     <Content Include="Images\_WindDirectionChart.png" />
     <Content Include="Images\_WindSpeedChart.png" />
+    <Content Include="JavaScript\jquery-1.11.3.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JavaScript\jquery-1.11.3.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="jquery-1.9.1.js" />
     <Content Include="RestService\RestService1.svc" />
     <Content Include="Testing.html" />
     <Content Include="Web.config">
@@ -186,9 +176,16 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="WebForm1.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrawlSpace\CrawlSpaceDatabaseConnection.cs" />
+    <Compile Include="CrawlSpace\ViewCrawlspace.aspx.cs">
+      <DependentUpon>ViewCrawlspace.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CrawlSpace\ViewCrawlspace.aspx.designer.cs">
+      <DependentUpon>ViewCrawlspace.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -221,13 +218,6 @@
     <Compile Include="GenGraphs.aspx.designer.cs">
       <DependentUpon>GenGraphs.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Android\GetSensors.aspx.cs">
-      <DependentUpon>GetSensors.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Android\GetSensors.aspx.designer.cs">
-      <DependentUpon>GetSensors.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Helper.cs" />
     <Compile Include="ImagePage.aspx.cs">
       <DependentUpon>ImagePage.aspx</DependentUpon>
@@ -250,13 +240,6 @@
     <Compile Include="SmallEmbededDisplay.ashx.cs">
       <DependentUpon>SmallEmbededDisplay.ashx</DependentUpon>
     </Compile>
-    <Compile Include="WebForm1.aspx.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebForm1.aspx.designer.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
-    </Compile>
     <Compile Include="WindData.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -277,8 +260,15 @@
     <Content Include="Documents\Embed components from surfvind_se.pdf" />
     <Content Include="Documents\WindMaster - Installationsanvisning v2.pdf" />
     <Content Include="Documents\Windmaster - Produktblad_v3.pdf" />
+    <Content Include="get.php" />
+    <Content Include="GetKrypgrundData.php" />
+    <Content Include="GetKrypgrundData2Days.php" />
+    <Content Include="GetLocations.php">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Images\Thumbs.db" />
     <None Include="Properties\PublishProfiles\ftp.pubxml" />
+    <None Include="Properties\PublishProfiles\Profile1 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="Properties\PublishProfiles\Profile2.pubxml" />
     <None Include="Properties\Settings.settings">

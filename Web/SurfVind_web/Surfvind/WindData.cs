@@ -96,6 +96,56 @@ namespace Surfvind_2011
             }
         }
 
+        public String InsertData(SurfvindData data)
+        {
+            String result = "Data inserted OK";
+            int rowsAffected = 0;
+
+            string baseText = "INSERT INTO " + dbToUse + " SET imei = " + data.id + ", version='" + data.version + "',";
+            using (DbConnection conn = GetDbConnection(GetDBConnString()))
+            {
+                try {
+                    conn.Open();
+                    foreach (SurfvindMeasurement mes in data.surfvindMeasurements)
+                    {
+                        string cmdText = baseText + " time = '" + mes.timeStamp +
+                            "', averageDir ='" + mes.windDirectionAvg +
+                            "',maxDir ='" + mes.windDirectionMax +
+                            "',minDir ='" + mes.windDirectionMin +
+                            "',averageSpeed ='" + mes.windSpeedAvg +
+                            "',maxSpeed ='" + mes.windSpeedMax +
+                            "',minSpeed ='" + mes.windSpeedMin +
+                            "',airTemp ='" + mes.firstExternalTemperature +
+                            "',waterTemp ='" + mes.batteryVoltage +
+                            "',moisture ='" + mes.firstExternalHumidity+"'";
+
+                        using (DbCommand cmd = GetDBCommand(cmdText, conn))
+                        {
+                            rowsAffected += cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (DbException exDb)
+                {
+                    result = "\nDbException.GetType: " + exDb.GetType() +
+                             "\nDbException.Source: " + exDb.Source +
+                             "\nDbException.ErrorCode: " + exDb.ErrorCode +
+                             "\nDbException.Message: " + exDb.Message;
+                             
+                }
+                // Handle all other exceptions. 
+                catch (Exception ex)
+                {
+                    result = "Exception.Message: " + ex.Message;
+                }
+                result += "\n\n" + rowsAffected + " rows was successfully inserted";
+
+            }
+            return result;
+        }
+	
+
+
         public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
         {
             string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));

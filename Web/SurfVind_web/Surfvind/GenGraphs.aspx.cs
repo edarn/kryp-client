@@ -65,8 +65,8 @@ namespace Surfvind_2011
         {
             String dbToUse = "";
             dbToUse = "Surfvind_data";
-            WindData wd = new WindData(true, dbToUse);
             bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
+            WindData wd = new WindData(isMySQL, dbToUse);
 
             List<Location> loc = wd.GetLocations();
             loc.Sort();

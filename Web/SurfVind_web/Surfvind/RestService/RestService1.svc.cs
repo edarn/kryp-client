@@ -7,6 +7,8 @@ using System.Text;
 using System.IO;
 using System.ServiceModel.Web;
 using System.Drawing;
+using System.Configuration;
+using Surfvind_2011.CrawlSpace;
 
 namespace Surfvind_2011
 
@@ -14,9 +16,24 @@ namespace Surfvind_2011
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "RestService1" in code, svc and config file together.
     public class RestService1 : IRestService1
     {
-        public string JsonData(string imei)
+        public CrawlSpaceMeasurements GetWindData(string imei)
         {
-            return "Dicken " + imei;
+            CrawlSpaceMeasurements result = new CrawlSpaceMeasurements();
+
+            String dbToUse = "";
+            dbToUse = "Krypgrund_data";
+            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
+            CrawlSpaceDatabaseConnection csdc = new CrawlSpaceDatabaseConnection(isMySQL, dbToUse);
+
+            List<Location> loc = csdc.GetLocations();
+            loc.Sort();
+            csdc.SetImei(imei);
+
+            DateTime endInterval = DateTime.Now;
+            DateTime beginInterval = DateTime.Now.AddDays(-365);
+            result =  csdc.GetListBetweenDate(beginInterval,endInterval);
+
+            return result;
         }
         public Stream GetImage()
         {
@@ -42,17 +59,15 @@ namespace Surfvind_2011
             return m;
         }
 
-        public void SendImage(RequestData request, string imei)
+        public string PostSurfvindMeasurements(SurfvindData request, string imei)
         {
-            Console.Out.WriteLine(request);
+            String dbToUse = "";
+            dbToUse = "Surfvind_data";
+            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
+            WindData wd = new WindData(isMySQL, dbToUse);
 
-            /*
-            image.Position = 0;
-            Bitmap bmp = new Bitmap(image);
-
-            bmp.Save(System.Web.HttpContext.Current.Server.MapPath("~/Images/" + imei + "_ScreenShot.png"), System.Drawing.Imaging.ImageFormat.Png);
-            bmp.Dispose();
-            */
+            String result = wd.InsertData(request);
+            return result;
         }
     }
 }
