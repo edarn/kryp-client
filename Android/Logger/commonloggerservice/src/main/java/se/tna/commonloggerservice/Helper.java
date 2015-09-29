@@ -7,6 +7,8 @@ import android.util.Log;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 import ioio.lib.api.AnalogInput;
@@ -68,8 +71,8 @@ public class Helper {
 	private static final int ANEMOMETER_SPEED = 40;
 
 	private static final int chipCap2Adress = 0x50;
-	private String imei = "123456789";
-	private String version = "NotSet";
+	private static String imei = "123456789";
+	private static String version = "NotSet";
 
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
@@ -151,8 +154,6 @@ public class Helper {
 		GoogleAnalytics analytics = GoogleAnalytics.getInstance(activity);
 		mainTracker = analytics.newTracker(
                 R.xml.global_tracker);
-		//mainTracker.setAppId(id);
-		//mainTracker.enableAutoActivityTracking(true);
 		mainTracker.enableAdvertisingIdCollection(true);
 		mainTracker.enableExceptionReporting(true);
 	}
@@ -466,13 +467,14 @@ public class Helper {
 	 *            Which server to send to.
 	 * @return A readable status line.
 	 */
-	public String SendDataToServer(ArrayList<?> measurements, ServiceMode mode) {
+	public static String SendDataToServer(ArrayList<?> measurements, ServiceMode mode) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Trying to send ");
 		sb.append(measurements.size());
 		sb.append(" items. \n");
 		DefaultHttpClient client = null;
 		JSONObject data;
+		String body ="";
 		boolean SendSuccess = true;
 
 		try {
@@ -485,15 +487,6 @@ public class Helper {
 
 				client = new DefaultHttpClient();
 
-				String postUrl = "";
-				if (mode == ServiceMode.Krypgrund) {
-					postUrl = "http://www.surfvind.se/Krypgrund.php";
-				} else if (mode == ServiceMode.Survfind) {
-					postUrl = "http://www.surfvind.se/AddSurfvindDataIOIOv1.php";
-				}
-
-				HttpPost message = new HttpPost(postUrl);
-				message.addHeader("content-type", "application/x-www-form-urlencoded");
 
 				JSONArray dataArray = new JSONArray();
 
@@ -503,14 +496,36 @@ public class Helper {
 				for (int i = 0; i < nbrOfItemsToSend; i++) {
 					Stats temp = (Stats) measurements.get(i);
 					if (temp != null) {
+
 						dataArray.put(temp.getJSON());
 						System.out.println("Sending data: "+temp.getJSON());
+
 					}
 				}
-				data.put("measure", dataArray);
-				data.put("id", "\"" + imei + "\"");
-				data.put("version", version);
-				message.setEntity(new StringEntity(data.toString()));
+                HttpPost message = new HttpPost();
+				String postUrl = "";
+				if (mode == ServiceMode.Krypgrund) {
+					postUrl = "http://www.surfvind.se/Krypgrund.php";
+					data.put("measure", dataArray);
+					data.put("id", "\"" + imei + "\"");
+					data.put("version", version);
+					body = data.toString();
+                    message.addHeader("content-type", "application/x-www-form-urlencoded");
+
+                } else if (mode == ServiceMode.Survfind) {
+					postUrl = "http://www.surfvind.se/RestService/RestService1.svc/"+imei+"/SendSurfvindMeasurements";
+					SurfvindPacket packet = new SurfvindPacket();
+					packet.id = imei;
+					packet.version = version;
+					packet.surfvindMeasurements = (SurfvindStats[]) measurements.toArray(new SurfvindStats[measurements.size()]);
+					Gson g = new Gson();
+                    body = g.toJson(packet);
+                    message.addHeader("content-type", "application/json");
+
+                }
+                message.setURI(new URI(postUrl));
+
+				message.setEntity(new StringEntity(body));
 				System.out.print(data.toString());
 				HttpResponse response = client.execute(message);
 				if (response != null) {

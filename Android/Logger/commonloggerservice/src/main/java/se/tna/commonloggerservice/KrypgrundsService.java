@@ -26,7 +26,7 @@ import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
 public class KrypgrundsService extends IOIOService {
-	private static final String version = "IOIO_R1A05";
+	private static final String version = "IOIO_R1A06";
 	protected long TIME_BETWEEN_SEND_DATA = TimeUnit.MINUTES.toMillis(5);
 	protected long TIME_BETWEEN_ADD_TO_HISTORY = TimeUnit.MINUTES.toMillis(2);
 	protected long TIME_BETWEEN_READING = TimeUnit.SECONDS.toMillis(5);

@@ -11,6 +11,9 @@ public class KrypgrundStats extends Stats {
 	public float absolutFuktInne = 0;
 	public float absolutFuktUte = 100;
 	public boolean fanOn = false;
+	public float absolutFuktExtra = 0;
+	public float moistureExtra = 0;
+	public float temperatureExtra = 0;
 
 	@Override
 	public JSONObject getJSON() {

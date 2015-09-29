@@ -19,6 +19,8 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
 	public float firstExternalHumidity = 0;
 	public float firstExternalTemperature = 0;
 
+	public float rainSensor = 0;
+
 
 
 	@Override
