@@ -1,4 +1,4 @@
-include ':ioio:IOIOLibBT', ':weathermaster', ':commonloggerservice'
+include ':ioio:IOIOLibBT', ':weathermaster', ':commonloggerservice', ':crawlspacemonitor'
 include ':ioio:IOIOLibAccessory'
 include ':ioio:IOIOLibAndroidDevice'
 include ':ioio:IOIOLib:target:android'

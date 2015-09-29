@@ -20,10 +20,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile project(':commonloggerservice')
-    compile files('libs/GraphView-3.1.2.jar')
 }
 repositories {
     mavenCentral()

@@ -9,14 +9,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
@@ -27,14 +30,15 @@ import android.widget.ToggleButton;
 import se.tna.commonloggerservice.Helper;
 import se.tna.commonloggerservice.KrypgrundsService;
 import se.tna.commonloggerservice.StatusOfService;
+import se.tna.commonloggerservice.SurfvindStats;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewDataInterface;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 public class KrypgrundGUI extends Activity {
     private TextView textFuktInne;
@@ -118,6 +122,10 @@ public class KrypgrundGUI extends Activity {
         super.onCreate(savedInstanceState);
         Helper.appendLog("App started");
         Helper.setupGoogleAnalytics(this);
+
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         mConnection = new ServiceConnection() {
 
             @Override
@@ -194,6 +202,15 @@ public class KrypgrundGUI extends Activity {
         temperatureText = (TextView) findViewById(R.id.temperatureText);
         humidText = (TextView) findViewById(R.id.humidText);
         batteryText = (TextView) findViewById(R.id.batteryText);
+
+        ImageView settingsButton = (ImageView) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(KrypgrundGUI.this, SetupActivity.class));
+            }
+        });
+
 
         final LinearLayout debugContainer = (LinearLayout) findViewById(R.id.debugContainer);
         if(debugContainer != null) {
@@ -298,9 +315,55 @@ public class KrypgrundGUI extends Activity {
                 .unit("C")
                 .build();
 	    */
-    }
+        
+        final ArrayList<SurfvindStats> list = new ArrayList<SurfvindStats>();
 
-    int i = 0;
+        SurfvindStats s = new SurfvindStats();
+        s.windSpeedMin = 1.2f;
+        s.windSpeedAvg = 2.3f;
+        s.windSpeedMax = 3.4f;
+        s.windDirectionMin = 4.5f;
+        s.windDirectionAvg = 5.6f;
+        s.windDirectionMax = 6.7f;
+
+        s.onBoardHumidity = 7.8f;
+        s.onBoardTemperature = 8.9f;
+
+        s.firstExternalHumidity = 9.10f;
+        s.firstExternalTemperature = 10.11f;
+
+        s.rainSensor = 11.12f;
+        
+        list.add(s);
+        s = new SurfvindStats();
+        s.windSpeedMin = 11.2f;
+        s.windSpeedAvg = 12.3f;
+        s.windSpeedMax = 13.4f;
+        s.windDirectionMin = 14.5f;
+        s.windDirectionAvg = 15.6f;
+        s.windDirectionMax = 16.7f;
+
+        s.onBoardHumidity = 17.8f;
+        s.onBoardTemperature = 18.9f;
+
+        s.firstExternalHumidity = 19.10f;
+        s.firstExternalTemperature = 20.11f;
+
+        s.rainSensor = 21.12f;
+        list.add(s);
+
+        new AsyncTask<Void,Void,Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                Log.d("TNA",Helper.SendDataToServer(list, KrypgrundsService.ServiceMode.Survfind));
+                return null;
+            }
+        }.execute();
+
+        
+
+    }
 
     @Override
     protected void onStart() {
@@ -341,19 +404,6 @@ public class KrypgrundGUI extends Activity {
         textStationName.setText(name);
     }
 
-    private int getMoistureAngle(float moisture) {
-        int angle = 0;
-        angle = (int) ((moisture / 100f) * 135 * 2);
-        angle -= 135;
-        return angle;
-    }
-
-    private int getTempAngle(float temperature) {
-        int angle = 0;
-        angle = (int) ((temperature / 100f) * 120 * 2);
-        angle -= 120;
-        return angle;
-    }
 
     private void updateUI() {
         if (null != kryp) {
