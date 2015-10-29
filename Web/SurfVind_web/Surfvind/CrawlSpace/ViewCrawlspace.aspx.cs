@@ -11,7 +11,7 @@ namespace Surfvind_2011.CrawlSpace
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            CrawlSpaceDatabaseConnection connection = new CrawlSpaceDatabaseConnection(true, "Krypgrund_data");
+            CrawlSpaceDatabaseConnection connection = new CrawlSpaceDatabaseConnection();
             List<Location> list = connection.GetLocations();
             foreach (Location l in list)
             {

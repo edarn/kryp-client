@@ -63,10 +63,7 @@ namespace Surfvind_2011
          */
         public void update(String location, String duration)
         {
-            String dbToUse = "";
-            dbToUse = "Surfvind_data";
-            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-            WindData wd = new WindData(isMySQL, dbToUse);
+           SurfvindDataConnection wd = new SurfvindDataConnection();
 
             List<Location> loc = wd.GetLocations();
             loc.Sort();
@@ -152,7 +149,7 @@ namespace Surfvind_2011
             }
             return false;
         }
-        public void fetchData(int interval, WindData wd)
+        public void fetchData(int interval, SurfvindDataConnection wd)
         {
             try
             {
@@ -184,7 +181,7 @@ namespace Surfvind_2011
             }
         }
 
-        public void generateSensorImages(String imei, WindData wd)
+        public void generateSensorImages(String imei, SurfvindDataConnection wd)
         {
             Start = DateTime.Now;
             try
@@ -227,7 +224,7 @@ namespace Surfvind_2011
             }
         }
 
-        float[] GetDirectionValuesToTime(int cntIntervals, DateTime begin, DateTime end, WindData wd)
+        float[] GetDirectionValuesToTime(int cntIntervals, DateTime begin, DateTime end, SurfvindDataConnection wd)
         {
             List<float> result = new List<float>();
             TimeSpan t = end.Subtract(begin);

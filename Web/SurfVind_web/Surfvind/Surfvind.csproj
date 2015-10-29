@@ -240,7 +240,7 @@
     <Compile Include="SmallEmbededDisplay.ashx.cs">
       <DependentUpon>SmallEmbededDisplay.ashx</DependentUpon>
     </Compile>
-    <Compile Include="WindData.cs" />
+    <Compile Include="SurfvindDataConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ImageHandler.ashx" />
@@ -276,7 +276,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="smslista.php" />
-    <Content Include="WapPage.php" />
     <Content Include="SmallEmbededDisplay.ashx" />
   </ItemGroup>
   <ItemGroup />

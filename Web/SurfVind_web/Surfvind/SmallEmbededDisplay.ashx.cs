@@ -24,11 +24,10 @@ namespace Surfvind_2011
         public void ProcessRequest(HttpContext context)
         {
             String imei = context.Request.QueryString["imei"];
-             String dbToUse = "";
-            dbToUse = "Surfvind_data";
+            
 
 
-            WindData wd = new WindData(true, dbToUse);
+            SurfvindDataConnection wd = new SurfvindDataConnection();
             //bool isMySQL = true;
             wd.SetImei(imei);
             WindRecord wr = wd.GetCurrentWind();

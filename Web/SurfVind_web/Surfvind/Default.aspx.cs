@@ -35,9 +35,7 @@ namespace Surfvind_2011
             Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
             try
             {
-                String dbToUse = "Surfvind_data";
-                bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-                WindData windData = new WindData(isMySQL, dbToUse);
+               SurfvindDataConnection windData = new SurfvindDataConnection();
                 
                 List<Location> allWeatherStations = windData.GetLocations();
                 allWeatherStations.Sort();
@@ -158,7 +156,7 @@ namespace Surfvind_2011
         }
 
         /* Set the correct arguments to the applet */
-        private void setAppletLocation(WindData wd)
+        private void setAppletLocation(SurfvindDataConnection wd)
         {
             List<Location> loc = wd.GetLocations();
             loc.Sort();

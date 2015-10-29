@@ -16,8 +16,14 @@ namespace Surfvind_2011
         [OperationContract]
         [WebInvoke(Method = "GET",
                     ResponseFormat = WebMessageFormat.Json,
-                    UriTemplate = "{imei}/GetMeasurements")]
-        CrawlSpaceMeasurements GetWindData(string imei);
+                    UriTemplate = "{imei}/CrawlSpaceMeasurements?timeInterval={timeInterval}")]
+        CrawlSpaceMeasurements GetCrawlSpaceData(string imei, string timeInterval);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/WeatherMeasurements?timeInterval={timeInterval}")]
+        SurfvindMeasurements GetWeatherData(string imei, string timeInterval);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
@@ -26,6 +32,16 @@ namespace Surfvind_2011
                     UriTemplate = "{imei}/PostSurfvindMeasurements")]
         string PostSurfvindMeasurements(SurfvindData request, string imei);
     }
+    public enum TimeInterval
+    {
+        Invalid,
+        OneHour,
+        FiveHours,
+        OneDay,
+        OneMonth,
+        OneYear
+
+    };
 
 
     [DataContract]
@@ -74,6 +90,57 @@ namespace Surfvind_2011
 
         [DataMember]
         public float rainSensor { get; set; }
+    }
+
+    [DataContract]
+    public class SurfvindMeasurements
+    {
+        public SurfvindMeasurements()
+        {
+            windSpeedMin = new List<float>();
+            windSpeedAvg = new List<float>();
+            windSpeedMax = new List<float>();
+            windDirectionMin = new List<float>();
+            windDirectionAvg = new List<float>();
+            windDirectionMax = new List<float>();
+            onBoardHumidity = new List<float>();
+            onBoardTemperature = new List<float>();
+            firstExternalHumidity = new List<float>();
+            firstExternalTemperature = new List<float>();
+            batteryVoltage = new List<float>();
+            timeStamp = new List<string>();
+            rainSensor = new List<float>();
+        }
+        [DataMember]
+        public List<float> windSpeedMin { get; set; }
+        [DataMember]
+        public List<float> windSpeedAvg { get; set; }
+        [DataMember]
+        public List<float> windSpeedMax { get; set; }
+        [DataMember]
+        public List<float> windDirectionMin { get; set; }
+        [DataMember]
+        public List<float> windDirectionAvg { get; set; }
+        [DataMember]
+        public List<float> windDirectionMax { get; set; }
+
+        [DataMember]
+        public List<float> onBoardHumidity { get; set; }
+        [DataMember]
+        public List<float> onBoardTemperature { get; set; }
+
+        [DataMember]
+        public List<float> firstExternalHumidity { get; set; }
+        [DataMember]
+        public List<float> firstExternalTemperature { get; set; }
+
+        [DataMember]
+        public List<float> batteryVoltage { get; set; }
+        [DataMember]
+        public List<string> timeStamp { get; set; }
+
+        [DataMember]
+        public List<float> rainSensor { get; set; }
     }
 
     [DataContract]

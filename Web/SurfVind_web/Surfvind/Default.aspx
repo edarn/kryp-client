@@ -144,7 +144,7 @@
         font-size: 14px;">
         &copy; 2008 Surfvind.se
         
-        <!--     <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" /> -->
+            <asp:Timer ID="tmrUpdateCurrentValues" Enabled="true" Interval="30000" runat="server" />
     </div>
     <!-- <script type="text/javascript">
         var c = 0;

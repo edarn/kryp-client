@@ -16,25 +16,46 @@ namespace Surfvind_2011
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "RestService1" in code, svc and config file together.
     public class RestService1 : IRestService1
     {
-        public CrawlSpaceMeasurements GetWindData(string imei)
+        private String ONE_HOUR = "OneHour";
+        private String FIVE_HOURS = "FiveHours";
+        private String ONE_DAY ="OneDay";
+        private String ONE_MONTH ="OneMonth";
+        private String ONE_YEAR ="OneYear";
+       
+        private TimeInterval ValidateInput(string timeInterval)
+        {
+            if (timeInterval.Equals(ONE_HOUR))
+            { return TimeInterval.OneHour; }
+            if (timeInterval.Equals(FIVE_HOURS))
+            { return TimeInterval.FiveHours; }
+            if (timeInterval.Equals(ONE_DAY))
+            { return TimeInterval.OneDay; }
+            if (timeInterval.Equals(ONE_MONTH))
+            { return TimeInterval.OneMonth; }
+            if (timeInterval.Equals(ONE_YEAR))
+            { return TimeInterval.OneYear; }
+            else
+            {
+                return TimeInterval.Invalid;
+            }
+        }
+
+        public CrawlSpaceMeasurements GetCrawlSpaceData(string imei, string timeInterval)
         {
             CrawlSpaceMeasurements result = new CrawlSpaceMeasurements();
 
-            String dbToUse = "";
-            dbToUse = "Krypgrund_data";
-            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-            CrawlSpaceDatabaseConnection csdc = new CrawlSpaceDatabaseConnection(isMySQL, dbToUse);
+            TimeInterval interval = ValidateInput(timeInterval);
+            if (interval == TimeInterval.Invalid) return null;
+  
+            CrawlSpaceDatabaseConnection csdc = new CrawlSpaceDatabaseConnection();
 
-            List<Location> loc = csdc.GetLocations();
-            loc.Sort();
             csdc.SetImei(imei);
-
-            DateTime endInterval = DateTime.Now;
-            DateTime beginInterval = DateTime.Now.AddDays(-365);
-            result =  csdc.GetListBetweenDate(beginInterval,endInterval);
+            result =  csdc.GetMeasurements(interval);
 
             return result;
         }
+       
+
         public Stream GetImage()
         {
             var m = new MemoryStream();
@@ -61,12 +82,24 @@ namespace Surfvind_2011
 
         public string PostSurfvindMeasurements(SurfvindData request, string imei)
         {
-            String dbToUse = "";
-            dbToUse = "Surfvind_data";
-            bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-            WindData wd = new WindData(isMySQL, dbToUse);
+            SurfvindDataConnection wd = new SurfvindDataConnection();
 
             String result = wd.InsertData(request);
+            return result;
+        }
+
+        public SurfvindMeasurements GetWeatherData(string imei, string timeInterval)
+        {
+            SurfvindMeasurements result = new SurfvindMeasurements();
+
+            TimeInterval interval = ValidateInput(timeInterval);
+            if (interval == TimeInterval.Invalid) return null;
+
+            SurfvindDataConnection sdc = new SurfvindDataConnection();
+
+            sdc.SetImei(imei);
+            result = sdc.GetMeasurements(interval);
+
             return result;
         }
     }

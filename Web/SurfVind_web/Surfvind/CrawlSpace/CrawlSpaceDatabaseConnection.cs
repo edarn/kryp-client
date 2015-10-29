@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data.Common;
 using System.Web.Configuration;
 using System.Configuration;
+using System.Globalization;
 
 namespace Surfvind_2011.CrawlSpace
 {
@@ -18,10 +19,11 @@ namespace Surfvind_2011.CrawlSpace
         public String imei;
         #endregion
 
-        public CrawlSpaceDatabaseConnection(bool isMySQL, String databaseName)
+        public CrawlSpaceDatabaseConnection()
         {
-            isMySqlDB = isMySQL;
-            nameOfDatabase = databaseName;
+            isMySqlDB = true;
+            String nameOfDatabase = "Krypgrund_data";
+
 
         }
         public void SetImei(string i)
@@ -97,50 +99,97 @@ namespace Surfvind_2011.CrawlSpace
                     {
                         data.FanOn.Add(10);
                     }
-                  
+
 
                 }
             }
             return data;
         }
 
-        public CrawlSpaceMeasurements GetListBetweenDate(DateTime startDate, DateTime endDate)
+
+        private string GetMySqlCommand(TimeInterval interval, String imei)
         {
-            DateTime tempDate;
-            TimeSpan span = endDate.Subtract(startDate);
-            int steps = 300;
-            double interval = span.TotalMilliseconds / steps;
-            startDate.AddMilliseconds(interval);
+            String mySqlCommand = $" FROM `Krypgrund_data` WHERE Imei='{imei}' AND ";
+            String firstPart = "";
+            String timePart = "";
+            String groupPart = "";
+            DateTime now;
+            switch (interval)
+            {
+                case TimeInterval.OneHour:
+                    now =DateTime.Now.AddHours(-1);
+                    firstPart = "SELECT *";
+                    timePart = $"TimeStamp > '{now}'";
+                    groupPart = ""; //Intentionally left blank.
+                    break;
+                case TimeInterval.FiveHours:
+                    now = DateTime.Now.AddHours(-5);
+                    firstPart = "SELECT *";
+                    timePart = $"TimeStamp > '{now}'";
+                    groupPart = ""; //Intentionally left blank.
+                    break;
+                case TimeInterval.OneDay:
+                    now = DateTime.Now.AddHours(-24);
+                    firstPart = "SELECT *";
+                    timePart = $"TimeStamp > '{now}'";
+                    groupPart = ""; //Intentionally left blank.
+                    break;
+                case TimeInterval.OneMonth:
+                    now = DateTime.Now.AddDays(-30);
+                    firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
+                    timePart = $"TimeStamp > '{now}'";
+                    groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
+                    break;
+                case TimeInterval.OneYear:
+                    now = DateTime.Now.AddDays(-365);
+                    firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
+                    timePart = $"TimeStamp >'{now}'";
+                    groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
+                    break;
 
-      
+            }
+            mySqlCommand = firstPart + mySqlCommand +timePart+ groupPart;
+            return mySqlCommand;
+        }
+        public CrawlSpaceMeasurements GetMeasurements(TimeInterval interval)
+        {
+            String mySqlCommand = GetMySqlCommand(interval, imei);
 
-            string cmdText = string.Format("select AVG(TimeStamp),AVG(AbsolutFuktInne),AVG(AbsolutFuktUte),AVG(FuktInne),AVG(FuktUte),AVG(TempInne),AVG(TempUte),AVG(FanOn) from " + nameOfDatabase + " WHERE imei='" + imei + "' AND TimeStamp between {0} order by TimeStamp desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 CrawlSpaceMeasurements list = new CrawlSpaceMeasurements();
                 conn.Open();
-                using (DbCommand cmd = GetDBCommand(cmdText, conn))
+                
+                using (DbCommand cmd = new MySqlCommand(mySqlCommand, (MySqlConnection)conn))
                 {
-                    tempDate = startDate;
-                    for (int i = 0; i < steps; i++)
-                    {
-                        cmd.Parameters.Clear();
-                        cmd.Parameters.Add(GetDBParam("start", startDate));
-                        cmd.Parameters.Add(GetDBParam("end", startDate.AddMilliseconds(interval)));
-                        DbDataReader reader = cmd.ExecuteReader();
+                    DbDataReader reader = cmd.ExecuteReader();
 
-                        while (reader.Read())
+                    while (reader.Read())
+                    {
+                        try
                         {
-                            try { 
-                            list.TimeStamp.Add(startDate.ToString("yyyy-MM-dd HH:mm:ss"));
-                            list.AbsolutFuktInne.Add((int)float.Parse(reader["AVG(AbsolutFuktInne)"].ToString()));
-                            list.AbsolutFuktUte.Add((int)float.Parse(reader["AVG(AbsolutFuktUte)"].ToString()));
-                            list.FuktInne.Add(float.Parse(reader["AVG(FuktInne)"].ToString()));
-                            list.FuktUte.Add(float.Parse(reader["AVG(FuktUte)"].ToString()));
-                            list.TempInne.Add(float.Parse(reader["AVG(TempInne)"].ToString()));
-                            list.TempUte.Add(float.Parse(reader["AVG(TempUte)"].ToString()));
-                            double fanOn = double.Parse(reader["AVG(FanOn)"].ToString());
-                            if (fanOn> 0.45)
+                            if (interval == TimeInterval.OneMonth || interval == TimeInterval.OneYear)
+                            {
+                                String time = reader["YearMonth"].ToString() + reader["DayHour"].ToString();
+                                DateTime timeStamp;
+                                if (DateTime.TryParseExact(time, "yyyyMMddHH", CultureInfo.InvariantCulture, DateTimeStyles.None, out timeStamp))
+                                {
+                                    list.TimeStamp.Add(timeStamp.ToString("yyyy-MM-dd HH:mm:ss"));
+                                }
+                            }
+                            else
+                            {
+                                list.TimeStamp.Add(reader["TimeStamp"].ToString());
+
+                            }
+                            list.AbsolutFuktInne.Add((int)float.Parse(reader["AbsolutFuktInne"].ToString()));
+                            list.AbsolutFuktUte.Add((int)float.Parse(reader["AbsolutFuktUte"].ToString()));
+                            list.FuktInne.Add(float.Parse(reader["FuktInne"].ToString()));
+                            list.FuktUte.Add(float.Parse(reader["FuktUte"].ToString()));
+                            list.TempInne.Add(float.Parse(reader["TempInne"].ToString()));
+                            list.TempUte.Add(float.Parse(reader["TempUte"].ToString()));
+                            double fanOn = double.Parse(reader["FanOn"].ToString());
+                            if (fanOn > 0.45)
                             {
                                 list.FanOn.Add(90);
                             }
@@ -148,12 +197,12 @@ namespace Surfvind_2011.CrawlSpace
                             {
                                 list.FanOn.Add(10);
                             }
-                            }catch(Exception ee) { }
                         }
-                        reader.Close();
-
-                        startDate = startDate.AddMilliseconds(interval);
+                        catch (Exception ee) { }
                     }
+                    reader.Close();
+
+
 
                 }
                 return list;
