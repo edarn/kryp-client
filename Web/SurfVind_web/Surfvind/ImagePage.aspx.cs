@@ -17,7 +17,7 @@ namespace Surfvind_2011
 		/*protected void Page_Load(object sender, EventArgs e)
 		{
 			bool isMySQL = Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-			WindData wd = new WindData(isMySQL);
+			SurfvindDataConnection wd = new SurfvindDataConnection(isMySQL);
 			WindRecord currentWind = wd.GetCurrentWind();
 			Response.Clear();
 			Response.ContentType = "image/png";

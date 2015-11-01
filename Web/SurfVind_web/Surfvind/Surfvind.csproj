@@ -103,7 +103,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="bin\AjaxControlToolkit.dll" />
-    <Content Include="bin\Application_Log.txt" />
     <Content Include="bin\Artem.GoogleMap.dll" />
     <Content Include="bin\GMaps.dll" />
     <Content Include="bin\GoogleChartSharp.dll" />
@@ -247,15 +246,13 @@
     <Content Include="WebImage.ashx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AddDataHargshamn.php">
+    <Content Include="AddDataHargshamn.php">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="bin\AddDataAndIMEI.php" />
-    <None Include="bin\AddDebug.php" />
-    <None Include="bin\AddWindData2.php" />
+    </Content>
     <Content Include="AddSurfvindDataIOIOv1.php">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="AddSurfvindLocationIOIOv1.php" />
     <None Include="design\Thumbs.db" />
     <Content Include="Documents\Embed components from surfvind_se.pdf" />
     <Content Include="Documents\WindMaster - Installationsanvisning v2.pdf" />
@@ -267,6 +264,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Images\Thumbs.db" />
+    <Content Include="Krypgrund.php">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\ftp.pubxml" />
     <None Include="Properties\PublishProfiles\Profile1 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
@@ -278,7 +278,9 @@
     <Content Include="smslista.php" />
     <Content Include="SmallEmbededDisplay.ashx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="fz3-14457988130200\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

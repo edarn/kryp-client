@@ -20,10 +20,17 @@ namespace Surfvind_2011
         CrawlSpaceMeasurements GetCrawlSpaceData(string imei, string timeInterval);
 
         [OperationContract]
+        [WebInvoke(Method = "POST",
+                    ResponseFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/CrawlSpaceMeasurements")]
+        string PostCrawlspaceMeasurements(CrawlSpaceMeasurements data, string imei);
+
+  [OperationContract]
         [WebInvoke(Method = "GET",
                     ResponseFormat = WebMessageFormat.Json,
                     UriTemplate = "{imei}/WeatherMeasurements?timeInterval={timeInterval}")]
         SurfvindMeasurements GetWeatherData(string imei, string timeInterval);
+
 
         [OperationContract]
         [WebInvoke(Method = "POST",
@@ -31,6 +38,35 @@ namespace Surfvind_2011
                     RequestFormat = WebMessageFormat.Json,
                     UriTemplate = "{imei}/PostSurfvindMeasurements")]
         string PostSurfvindMeasurements(SurfvindData request, string imei);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    RequestFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/GetWindSpeedImage")]
+        Stream GetWindSpeedImage(string imei);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    RequestFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/GetWindDirectionImage")]
+        Stream GetWindDirectionImage(string imei);
+        
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    RequestFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/GetOnBoardTemperatureImage")]
+        Stream GetOnBoardTemperatureImage(string imei);
+        
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    RequestFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/GetFirstExternalTemperatureImage")]
+        Stream GetFirstExternalTemperatureImage(string imei);
     }
     public enum TimeInterval
     {

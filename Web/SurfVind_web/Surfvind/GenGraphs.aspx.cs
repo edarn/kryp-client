@@ -181,6 +181,42 @@ namespace Surfvind_2011
             }
         }
 
+        
+        public Bitmap generateWindSpeedImage(SurfvindDataConnection wd)
+        {
+                WindRecord currentWind = wd.GetCurrentWind();
+                return Helper.GetWindSpeedPic(currentWind.AverageSpeed, currentWind.MinSpeed, currentWind.MaxSpeed);
+        }
+
+        public Bitmap generateWindDirectionImage(SurfvindDataConnection wd)
+        {
+            WindRecord currentWind = wd.GetCurrentWind();
+            return Helper.GetCompassPic(currentWind.AverageDirection, currentWind.MinDirection, currentWind.MaxDirection);
+        }
+        public enum Sensor{
+            Unknown,
+            TempOnMainBoard,
+            HumidityOnMainBoard,
+            FirstExternalTemp,
+            FirstExternalHumidity
+        };
+        public Bitmap generateTemperatureImage(SurfvindDataConnection wd, Sensor sensor)
+        {
+            WindRecord currentWind = wd.GetCurrentWind();
+            if (sensor == Sensor.FirstExternalTemp)
+            {
+                   return Helper.getTempImage(currentWind.AverageWaterTemp);
+             
+            }
+            else if (sensor == Sensor.TempOnMainBoard)
+            {
+                return  Helper.getTempImage(currentWind.AverageAirTemp);
+            }
+            return null;
+        }
+
+
+
         public void generateSensorImages(String imei, SurfvindDataConnection wd)
         {
             Start = DateTime.Now;
@@ -205,9 +241,9 @@ namespace Surfvind_2011
                     {
                         System.IO.Directory.CreateDirectory(path);
                     }
-                    Helper.GetWindSpeedPic(currentWind.AverageSpeed, currentWind.MinSpeed, currentWind.MaxSpeed, Server).Save(Server.MapPath("~/Images/" + imei + "_img_speed.png"));
+                    Helper.GetWindSpeedPic(currentWind.AverageSpeed, currentWind.MinSpeed, currentWind.MaxSpeed).Save(Server.MapPath("~/Images/" + imei + "_img_speed.png"));
                     LogTime();
-                    Helper.GetCompassPic(currentWind.AverageDirection, currentWind.MinDirection, currentWind.MaxDirection, Server).Save(Server.MapPath("~/Images/" + imei + "_img_compass.png"));
+                    Helper.GetCompassPic(currentWind.AverageDirection, currentWind.MinDirection, currentWind.MaxDirection).Save(Server.MapPath("~/Images/" + imei + "_img_compass.png"));
                     LogTime();
 
                     /* Create temperature images */

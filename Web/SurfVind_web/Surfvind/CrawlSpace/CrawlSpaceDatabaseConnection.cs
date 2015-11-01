@@ -19,11 +19,11 @@ namespace Surfvind_2011.CrawlSpace
         public String imei;
         #endregion
 
-        public CrawlSpaceDatabaseConnection()
+        public CrawlSpaceDatabaseConnection(string i)
         {
             isMySqlDB = true;
-            String nameOfDatabase = "Krypgrund_data";
-
+            nameOfDatabase = "Krypgrund_data";
+            imei = i;
 
         }
         public void SetImei(string i)
@@ -109,46 +109,47 @@ namespace Surfvind_2011.CrawlSpace
 
         private string GetMySqlCommand(TimeInterval interval, String imei)
         {
-            String mySqlCommand = $" FROM `Krypgrund_data` WHERE Imei='{imei}' AND ";
+            String mySqlCommand = " FROM `Krypgrund_data` WHERE Imei='{imei}' AND ";
             String firstPart = "";
             String timePart = "";
             String groupPart = "";
-            DateTime now;
+            DateTime now= DateTime.Now;
             switch (interval)
             {
                 case TimeInterval.OneHour:
                     now =DateTime.Now.AddHours(-1);
                     firstPart = "SELECT *";
-                    timePart = $"TimeStamp > '{now}'";
+                    timePart = "TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.FiveHours:
                     now = DateTime.Now.AddHours(-5);
                     firstPart = "SELECT *";
-                    timePart = $"TimeStamp > '{now}'";
+                    timePart = "TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneDay:
                     now = DateTime.Now.AddHours(-24);
                     firstPart = "SELECT *";
-                    timePart = $"TimeStamp > '{now}'";
+                    timePart = "TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneMonth:
                     now = DateTime.Now.AddDays(-30);
                     firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
-                    timePart = $"TimeStamp > '{now}'";
+                    timePart = "TimeStamp > '{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
                     break;
                 case TimeInterval.OneYear:
                     now = DateTime.Now.AddDays(-365);
                     firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
-                    timePart = $"TimeStamp >'{now}'";
+                    timePart = "TimeStamp >'{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
                     break;
 
             }
             mySqlCommand = firstPart + mySqlCommand +timePart+ groupPart;
+            String.Format(mySqlCommand, imei, now);
             return mySqlCommand;
         }
         public CrawlSpaceMeasurements GetMeasurements(TimeInterval interval)
@@ -236,5 +237,64 @@ namespace Surfvind_2011.CrawlSpace
         }
 
         #endregion
+
+        public string InsertMeasurements(CrawlSpaceMeasurements data)
+        {
+            return "OK";
+           /* for (int i = 0; i< data.TimeStamp.Count; i++)
+            {
+                
+            }
+            return "OK"
+            */
+
+
+
+            /*
+            String result = "Data inserted OK";
+            int rowsAffected = 0;
+
+            string baseText = "INSERT INTO " + nameOfDatabase + " SET imei = " + data.i + ", version='" + data.version + "',";
+            using (DbConnection conn = GetDbConnection(GetDBConnString()))
+            {
+                try {
+                    conn.Open();
+                    foreach (SurfvindMeasurement mes in data.surfvindMeasurements)
+                    {
+                        string cmdText = baseText + " time = '" + mes.timeStamp +
+                            "', averageDir ='" + mes.windDirectionAvg +
+                            "',maxDir ='" + mes.windDirectionMax +
+                            "',minDir ='" + mes.windDirectionMin +
+                            "',averageSpeed ='" + mes.windSpeedAvg +
+                            "',maxSpeed ='" + mes.windSpeedMax +
+                            "',minSpeed ='" + mes.windSpeedMin +
+                            "',airTemp ='" + mes.firstExternalTemperature +
+                            "',waterTemp ='" + mes.batteryVoltage +
+                            "',moisture ='" + mes.firstExternalHumidity+"'";
+
+                        using (DbCommand cmd = GetDBCommand(cmdText, conn))
+                        {
+                            rowsAffected += cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (DbException exDb)
+                {
+                    result = "\nDbException.GetType: " + exDb.GetType() +
+                             "\nDbException.Source: " + exDb.Source +
+                             "\nDbException.ErrorCode: " + exDb.ErrorCode +
+                             "\nDbException.Message: " + exDb.Message;
+                             
+                }
+                // Handle all other exceptions. 
+                catch (Exception ex)
+                {
+                    result = "Exception.Message: " + ex.Message;
+                }
+                result += "\n\n" + rowsAffected + " rows was successfully inserted";
+
+            }
+            return result;*/
+        }
     }
 }

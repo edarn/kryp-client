@@ -13,14 +13,14 @@ namespace Surfvind_2011
 		private Helper() { }
 
        	#region #Speed Image
-		private static DR.Bitmap GetSpeedBitmap(int alpha, int minAlpha, int maxAlpha, HttpServerUtility server)
+		private static DR.Bitmap GetSpeedBitmap(int alpha, int minAlpha, int maxAlpha)
 		{
 			//Speed meter		
-			DR.Bitmap speed = new DR.Bitmap(server.MapPath("~/Images/ws_speed.png"));
+			DR.Bitmap speed = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_speed.png"));
 			DR.Graphics speedGr = DR.Graphics.FromImage(speed);
 
 			//Speed arrow
-			DR.Bitmap arrow = new DR.Bitmap(server.MapPath("~/Images/ws_speed_arrow.png"));
+            DR.Bitmap arrow = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_speed_arrow.png"));
 			DR.Graphics arrowGr = DR.Graphics.FromImage(arrow);
 
 			// center of arrow image
@@ -29,11 +29,11 @@ namespace Surfvind_2011
 			//arrowGr.DrawLine(new Pen(Color.Red), new Point(arrow.Width / 2 + 1, 0), new Point(arrow.Width / 2 + 1, arrow.Height));
 
 			//Green marker
-			DR.Bitmap greenMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_white.png"));
+            DR.Bitmap greenMarker = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_arrow_white.png"));
 			DR.Graphics greenMarkerGr = DR.Graphics.FromImage(arrow);
 
 			//Red marker
-			DR.Bitmap redMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_grey.png"));
+            DR.Bitmap redMarker = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_arrow_grey.png"));
 			DR.Graphics redMarkerGr = DR.Graphics.FromImage(arrow);
 
 			//Temporary bitmap
@@ -87,29 +87,29 @@ namespace Surfvind_2011
 			return (int)(-134 + (269) * windSpeed / 30f);
 		}
 
-		public static DR.Bitmap GetWindSpeedPic(float windSpeed, float minSpeed, float maxSpeed, HttpServerUtility server)
+		public static DR.Bitmap GetWindSpeedPic(float windSpeed, float minSpeed, float maxSpeed)
 		{
-			return GetSpeedBitmap(ConvertToAngle(windSpeed), ConvertToAngle(minSpeed), ConvertToAngle(maxSpeed), server);
+			return GetSpeedBitmap(ConvertToAngle(windSpeed), ConvertToAngle(minSpeed), ConvertToAngle(maxSpeed));
 		}
 		#endregion
 
 		#region #Compass Image
-        private static DR.Bitmap GetCompassBitmap(int avAngle, int minAngle, int maxAngle, HttpServerUtility server)
+        private static DR.Bitmap GetCompassBitmap(int avAngle, int minAngle, int maxAngle)
 		{
 			//Compass circle
-			DR.Bitmap compass = new DR.Bitmap(server.MapPath("~/Images/ws_compass.png"));
+            DR.Bitmap compass = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_compass.png"));
 			DR.Graphics compassGr = DR.Graphics.FromImage(compass);
 
 			//Compass arrow
-			DR.Bitmap arrow = new DR.Bitmap(server.MapPath("~/Images/ws_compass_arrow.png"));
+            DR.Bitmap arrow = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_compass_arrow.png"));
 			DR.Graphics arrowGr = DR.Graphics.FromImage(arrow);
 
 			//Green marker
-			DR.Bitmap greenMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_white.png"));
+            DR.Bitmap greenMarker = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_arrow_white.png"));
 			DR.Graphics greenMarkerGr = DR.Graphics.FromImage(arrow);
 
 			//Red marker
-			DR.Bitmap redMarker = new DR.Bitmap(server.MapPath("~/Images/ws_arrow_grey.png"));
+            DR.Bitmap redMarker = new DR.Bitmap(System.Web.Hosting.HostingEnvironment.MapPath("~/Images/ws_arrow_grey.png"));
 			DR.Graphics redMarkerGr = DR.Graphics.FromImage(arrow);
 
 			//Temporary bitmap
@@ -155,18 +155,18 @@ namespace Surfvind_2011
 			return tempBmp;
 		}
 
-		public static DR.Bitmap GetCompassPic(int avDir, int minDir, int maxDir, HttpServerUtility server)
+		public static DR.Bitmap GetCompassPic(int avDir, int minDir, int maxDir)
 		{			
 			//float koeff = ((float)1400) / ((float)360);
-			return GetCompassBitmap((int)avDir, (int)minDir, maxDir, server);
+			return GetCompassBitmap((int)avDir, (int)minDir, maxDir);
 		}
 		#endregion
 
         #region #Temperature Image
         /* Generate temperature image */
-        public static Image getTempImage(float temp)
+        public static Bitmap getTempImage(float temp)
         {
-            Image image;
+            Bitmap image;
             int width, height, rect_width, rect_height, rect_x, rect_y;
             Graphics g;
             Rectangle fillArea;

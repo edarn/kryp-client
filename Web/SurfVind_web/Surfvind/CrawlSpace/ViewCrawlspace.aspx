@@ -21,7 +21,7 @@
                 //document.getElementById("debug").innerHTML = jsonData.AbsolutFuktInne;
 
                 var jsonData = $.ajax({
-                    url: "../RestService/RestService1.svc/" + d + "/json",
+                    url: "../RestService/RestService1.svc/" + d + "/CrawlSpaceMeasurements",
                     dataType: "json",
                     async: false
                 }).responseText;

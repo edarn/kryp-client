@@ -148,7 +148,7 @@ namespace Surfvind_2011
 
         private string GetMySqlCommand(TimeInterval interval, String imei)
         {
-            String mySqlCommand = $" FROM `Surfvind_data` WHERE Imei='{imei}' AND ";
+            String mySqlCommand = " FROM `Surfvind_data` WHERE Imei='{imei}' AND ";
             String firstPart = "";
             String timePart = "";
             String groupPart = "";
@@ -158,31 +158,31 @@ namespace Surfvind_2011
                 case TimeInterval.OneHour:
                     now = DateTime.Now.AddHours(-1);
                     firstPart = "SELECT *";
-                    timePart = $"time > '{now}'";
+                    timePart = "time > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.FiveHours:
                     now = DateTime.Now.AddHours(-5);
                     firstPart = "SELECT *";
-                    timePart = $"time > '{now}'";
+                    timePart = "time > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneDay:
                     now = DateTime.Now.AddHours(-24);
                     firstPart = "SELECT *";
-                    timePart = $"time > '{now}'";
+                    timePart = "time > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneMonth:
                     now = DateTime.Now.AddDays(-30);
                     firstPart = "SELECT extract(YEAR_MONTH FROM time) as YearMonth, extract(DAY_HOUR FROM time) as DayHour, AVG(averageDir) as averageDir, AVG(maxDir) as maxDir, AVG(minDir) as minDir, AVG(averageSpeed) as averageSpeed, AVG(maxSpeed) as maxSpeed, AVG(minSpeed) as minSpeed, AVG(airTemp) as airTemp, AVG(waterTemp) as waterTemp, AVG(moisture) as moisture";
-                    timePart = $"time > '{now}'";
+                    timePart = "time > '{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM time), extract(DAY_HOUR FROM time)";
                     break;
                 case TimeInterval.OneYear:
                     now = DateTime.Now.AddDays(-365);
                     firstPart = "SELECT extract(YEAR_MONTH FROM time) as YearMonth, extract(DAY_HOUR FROM time) as DayHour, AVG(averageDir) as averageDir, AVG(maxDir) as maxDir, AVG(minDir) as minDir, AVG(averageSpeed) as averageSpeed, AVG(maxSpeed) as maxSpeed, AVG(minSpeed) as minSpeed, AVG(airTemp) as airTemp, AVG(waterTemp) as waterTemp, AVG(moisture) as moisture";
-                    timePart = $"time >'{now}'";
+                    timePart = "time >'{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM time), extract(DAY_HOUR FROM time)";
                     break;
 
@@ -226,14 +226,14 @@ namespace Surfvind_2011
                             list.windDirectionMin.Add(float.Parse(reader["minDir"].ToString()));
                             list.windSpeedAvg.Add(float.Parse(reader["averageSpeed"].ToString()));
                             list.windSpeedMax.Add(float.Parse(reader["maxSpeed"].ToString()));
-                            list.windSpeedMin;
+                         /*   list.windSpeedMin;
                             list.rainSensor;
                             list.onBoardHumidity;
                             list.onBoardTemperature;
                             list.batteryVoltage;
                             list.firstExternalHumidity;
                             list.firstExternalTemperature;
-                            
+                           */ 
                         }
                         catch (Exception ee) { }
                     }
@@ -452,6 +452,16 @@ namespace Surfvind_2011
                     currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
                     currWind.Moisture = float.Parse(reader["moisture"].ToString());
                 }
+            }
+
+            if (currWind.Time < DateTime.Now.AddHours(-2))
+            {
+                currWind.AverageSpeed = 0;
+                currWind.MinSpeed = 0;
+                currWind.MaxSpeed = 0;
+                currWind.AverageDirection = 0;
+                currWind.MinDirection = 0;
+                currWind.MaxDirection = 0;
             }
 
             return currWind;
