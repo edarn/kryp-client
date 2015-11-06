@@ -3,13 +3,11 @@ using System.Web;
 using @DR = System.Drawing;
 
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
+using WindInfo;
 
-namespace WindInfo
-{
-    public class Helper
+public class Helper
     {
         private Helper() { }
 
@@ -250,9 +248,7 @@ namespace WindInfo
                 dbToUse = "Surfvind_data";
 
                 WindData wd = new WindData(true, dbToUse);
-                bool isMySQL = true;// Convert.ToBoolean(ConfigurationManager.AppSettings["isMySQL"]);
-
-                loc = wd.GetLocations(null);
+                               loc = wd.GetLocations(null);
 
                 loc.Sort();
             }
@@ -260,4 +256,3 @@ namespace WindInfo
             return loc;
         }
     }
-}

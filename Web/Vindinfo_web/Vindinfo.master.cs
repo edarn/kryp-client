@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web;
-using WindInfo;
 
 
 public partial class Vindinfo : System.Web.UI.MasterPage

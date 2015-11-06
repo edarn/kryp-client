@@ -8,7 +8,7 @@
     
     <h4>Documents:</h4> <br />
     <a href='./Downloadable/Installationsmanual.pdf'>WindMaster Bruksanvisning</a> <br />
-    <a href='./Downloadable/Windmaster-ProductDescription.pdf'>WindMaster Product Description</a> <br />
+    <a href='./Downloadable/WindMaster Product Description_nice.pdf'>WindMaster Product Description_nice</a> <br />
     <br />
     <!--
     <h4>Android Applications:</h4> <br />
