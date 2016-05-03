@@ -19367,44 +19367,6 @@ chip</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="RJ11" prefix="J">
-<description>&lt;b&gt;CORCOM Modular RJ Jacks&lt;/b&gt; No Shield&lt;p&gt;
-Source: https://www.elfa.se/elfa3~se_sv/elfa/init.do?item=42-696-27&amp;toc=0&amp;q=42-696-27</description>
-<gates>
-<gate name="G$1" symbol="JACK6" x="0" y="0"/>
-</gates>
-<devices>
-<device name="AA" package="RJ11-NO_SHIELD_5520250-2">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-<connect gate="G$1" pin="3" pad="3"/>
-<connect gate="G$1" pin="4" pad="4"/>
-<connect gate="G$1" pin="5" pad="5"/>
-<connect gate="G$1" pin="6" pad="6"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="MX-95001-2661" package="MX-95001-2661">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-<connect gate="G$1" pin="3" pad="3"/>
-<connect gate="G$1" pin="4" pad="4"/>
-<connect gate="G$1" pin="5" pad="5"/>
-<connect gate="G$1" pin="6" pad="6"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="LINK" value="http://www.tme.eu/pl/katalog/?idp=1&amp;search=mx-95001-2661&amp;cleanParameters=1" constant="no"/>
-<attribute name="VENDOR" value="TME" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="P82B715_I2C_BUS_EXTENDER" prefix="U" uservalue="yes">
 <gates>
 <gate name="G$1" symbol="P82B715-I2C_BUS_EXTENDER" x="0" y="0"/>
@@ -21213,6 +21175,44 @@ high speed (Philips)</description>
 <technologies>
 <technology name="">
 <attribute name="LINK" value="http://www.tme.eu/pl/details/1n4148-0603/diody-uniwersalne-smd/dc-components/cd4148wt0603c/" constant="no"/>
+<attribute name="VENDOR" value="TME" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="RJ12" prefix="J">
+<description>&lt;b&gt;CORCOM Modular RJ Jacks&lt;/b&gt; No Shield&lt;p&gt;
+Source: https://www.elfa.se/elfa3~se_sv/elfa/init.do?item=42-696-27&amp;toc=0&amp;q=42-696-27</description>
+<gates>
+<gate name="G$1" symbol="JACK6" x="0" y="0"/>
+</gates>
+<devices>
+<device name="AA" package="RJ11-NO_SHIELD_5520250-2">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+<connect gate="G$1" pin="5" pad="5"/>
+<connect gate="G$1" pin="6" pad="6"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="MX-95001-2661" package="MX-95001-2661">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+<connect gate="G$1" pin="5" pad="5"/>
+<connect gate="G$1" pin="6" pad="6"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="LINK" value="http://www.tme.eu/pl/katalog/?idp=1&amp;search=mx-95001-2661&amp;cleanParameters=1" constant="no"/>
 <attribute name="VENDOR" value="TME" constant="no"/>
 </technology>
 </technologies>
@@ -25420,7 +25420,6 @@ PIC24FXXXDA106 / PIC24FXXXDA206</description>
 <part name="R17" library="rcl" deviceset="R-EU_" device="R1206" value="4k7"/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
 <part name="C5" library="Thomas Egnal Library" deviceset="CPOL-EU" device="E2-5" value="100uF/25V"/>
-<part name="J2" library="Thomas Egnal Library" deviceset="RJ11" device="MX-95001-2661"/>
 <part name="C14" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
 <part name="GND24" library="supply1" deviceset="GND" device=""/>
 <part name="U6" library="Thomas Egnal Library" deviceset="CC2D23-CHIPCAP2" device=""/>
@@ -25540,6 +25539,7 @@ PIC24FXXXDA106 / PIC24FXXXDA206</description>
 <part name="R44" library="rcl" deviceset="R-EU_" device="R1206" value="1k"/>
 <part name="R45" library="rcl" deviceset="R-EU_" device="R1206" value="1k"/>
 <part name="GND31" library="supply1" deviceset="GND" device=""/>
+<part name="J2" library="Thomas Egnal Library" deviceset="RJ12" device="MX-95001-2661"/>
 </parts>
 <sheets>
 <sheet>
@@ -25681,7 +25681,6 @@ PORTS-PULL-UP</text>
 <instance part="R17" gate="G$1" x="33.02" y="86.36" rot="R270"/>
 <instance part="GND23" gate="1" x="33.02" y="76.2"/>
 <instance part="C5" gate="G$1" x="-10.16" y="86.36"/>
-<instance part="J2" gate="G$1" x="-40.64" y="40.64" rot="MR0"/>
 <instance part="C14" gate="G$1" x="177.8" y="132.08" rot="R270"/>
 <instance part="GND24" gate="1" x="203.2" y="106.68"/>
 <instance part="U6" gate="G$1" x="203.2" y="127"/>
@@ -25835,6 +25834,7 @@ PORTS-PULL-UP</text>
 <attribute name="VALUE" x="376.174" y="-68.326" size="1.778" layer="96"/>
 </instance>
 <instance part="GND31" gate="1" x="360.68" y="-76.2"/>
+<instance part="J2" gate="G$1" x="-40.64" y="40.64" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -27593,7 +27593,6 @@ PORTS-PULL-UP</text>
 </net>
 <net name="N$15" class="0">
 <segment>
-<pinref part="J2" gate="G$1" pin="2"/>
 <pinref part="D6" gate="G$1" pin="C"/>
 <wire x1="-38.1" y1="43.18" x2="-30.48" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="-30.48" y1="43.18" x2="-22.86" y2="43.18" width="0.1524" layer="91"/>
@@ -27601,6 +27600,7 @@ PORTS-PULL-UP</text>
 <wire x1="-30.48" y1="50.8" x2="-5.08" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="Q1" gate="G$1" pin="B"/>
 <wire x1="-5.08" y1="50.8" x2="-5.08" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$18" class="0">

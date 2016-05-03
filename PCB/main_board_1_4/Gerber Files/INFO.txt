@@ -1,0 +1,10 @@
+[B]Main board v1.4.GBL - copper bottom layer
+[B]Main board v1.4.GTL - copper top layer
+[B]Main board v1.4.GBS - soldermask bottom layer
+[B]Main board v1.4.GTS - soldermask top layer
+[B]Main board v1.4.GTO - silkscreen top layer
+
+[B]Main board v1.4.gpi - gerber info
+
+[B]Main board v1.4.drd - drill files
+[B]Main board v1.4.dri - drill info
