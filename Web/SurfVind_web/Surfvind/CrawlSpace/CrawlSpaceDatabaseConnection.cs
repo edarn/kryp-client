@@ -109,7 +109,7 @@ namespace Surfvind_2011.CrawlSpace
 
         private string GetMySqlCommand(TimeInterval interval, String imei)
         {
-            String mySqlCommand = " FROM `Krypgrund_data` WHERE Imei='{imei}' AND ";
+            String mySqlCommand = $" FROM `Krypgrund_data` WHERE Imei='{imei}' AND ";
             String firstPart = "";
             String timePart = "";
             String groupPart = "";
@@ -119,31 +119,31 @@ namespace Surfvind_2011.CrawlSpace
                 case TimeInterval.OneHour:
                     now =DateTime.Now.AddHours(-1);
                     firstPart = "SELECT *";
-                    timePart = "TimeStamp > '{now}'";
+                    timePart = $"TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.FiveHours:
                     now = DateTime.Now.AddHours(-5);
                     firstPart = "SELECT *";
-                    timePart = "TimeStamp > '{now}'";
+                    timePart = $"TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneDay:
                     now = DateTime.Now.AddHours(-24);
                     firstPart = "SELECT *";
-                    timePart = "TimeStamp > '{now}'";
+                    timePart = $"TimeStamp > '{now}'";
                     groupPart = ""; //Intentionally left blank.
                     break;
                 case TimeInterval.OneMonth:
                     now = DateTime.Now.AddDays(-30);
                     firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
-                    timePart = "TimeStamp > '{now}'";
+                    timePart = $"TimeStamp > '{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
                     break;
                 case TimeInterval.OneYear:
                     now = DateTime.Now.AddDays(-365);
                     firstPart = "SELECT extract(YEAR_MONTH FROM TimeStamp) as YearMonth, extract(DAY_HOUR FROM TimeStamp) as DayHour, AVG(FuktInne) as FuktInne, AVG(FuktUte) as FuktUte, AVG(TempInne) as TempInne, AVG(TempUte) as TempUte, AVG(AbsolutFuktInne) as AbsolutFuktInne, AVG(AbsolutFuktUte) as AbsolutFuktUte, AVG(FanOn) as FanOn";
-                    timePart = "TimeStamp >'{now}'";
+                    timePart = $"TimeStamp >'{now}'";
                     groupPart = "GROUP BY extract(YEAR_MONTH FROM TimeStamp), extract(DAY_HOUR FROM TimeStamp)";
                     break;
 

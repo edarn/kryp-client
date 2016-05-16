@@ -13,18 +13,10 @@
 <body onunload="GUnload()">
     <form id="form1" runat="server">
     <%-- set AsyncPostBackTimeOut="86400" (== 1st Day) second to sesolve problem with "Sys.WebForms.PageRequestManagerTimeoutException: The server request timed out." error  --%>
-    <asp:ScriptManager ID="MainScriptManager" runat="server" EnablePartialRendering="true"
-        EnablePageMethods="true" ScriptMode="Auto" AsyncPostBackTimeout="86400">
-    </asp:ScriptManager>
-    <div style="position: absolute; left: 0; top: 0; z-index: 0;">
+    <div >
         <img src="design/ws_head.png" alt="Windsurfing. Weather report" />
     </div>
-    <div style="position: absolute; left: 0; top: 250px; z-index: 0;">
-        <%--<img src="design/ws_background_sea.png" />--%>
-    </div>
-    <div style="position: absolute; left: 0; top: 1350px; z-index: 0;">
-        <asp:TextBox ID="debug" runat="server" />
-    </div>
+  
     <div style="position: absolute; left: 19px; top: 203px; z-index: 1;">
         <table style="background: url('Images/ws_compass.png') 0 0 no-repeat; width: 127px;
             height: 127px;">
@@ -174,6 +166,12 @@
             imgSpeed.src = imgSpeed.src + "?" + c;
         }	
     </script> -->
+          <div style="position: absolute; left: 0; top: 1350px; z-index: 0;">
+        <asp:TextBox ID="debug" runat="server" />
+    </div>
+<asp:ScriptManager ID="MainScriptManager" runat="server" EnablePartialRendering="true"
+        EnablePageMethods="true" ScriptMode="Auto" AsyncPostBackTimeout="86400">
+    </asp:ScriptManager>
     </form>
     <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
