@@ -351,6 +351,7 @@ public class KrypgrundsService extends IOIOService {
 		Thread.setDefaultUncaughtExceptionHandler(s);
 
 		mWatchdogTime = watchdog_TimeSinceLastOkData = System.currentTimeMillis();
+		/*
 		if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
 
@@ -361,13 +362,13 @@ public class KrypgrundsService extends IOIOService {
                         Helper.trackEvent("LoggerService","Timer","IOIOConnector thread restarted service",restarted);
                         restarted++;
 
-                        KrypgrundsService.this.restart();
+                    //    KrypgrundsService.this.restart();
 					}
 				}
 			};
 			ioioConnectorTimer = new Timer("IOIOConnector");
 			ioioConnectorTimer.scheduleAtFixedRate(mConnectTask, TimeUnit.SECONDS.toMillis(14), TimeUnit.SECONDS.toMillis(10));
-		}
+		} */
 
 		if (mSendDataTask == null) {
 			mSendDataTask = new SendDataTask();
