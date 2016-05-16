@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.CapSense;
+import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalInput.Spec;
 import ioio.lib.api.DigitalInput.Spec.Mode;
 import ioio.lib.api.DigitalOutput;
@@ -74,6 +75,12 @@ public class Helper {
 	private static String imei = "123456789";
 	private static String version = "NotSet";
 
+	private int pcbVersion = 0;
+	public final int FIRST_VERSION = 7;
+	public final int VERSION_1_4_WITHOUT_HUMIDITY = 6;
+	public final int VERSION_1_4_INCLUDING_HUMIDITY = 5;
+
+
 	private enum FrequencyReading {
 		Continuos_Reading, OpenClose_Reading, Analogue_Reading
 	};
@@ -99,6 +106,20 @@ public class Helper {
 		mCtx = kryp.getApplicationContext();
 		if (ioio != null) {
 			try {
+				pcbVersion = 0;
+				DigitalInput i1 = ioio.openDigitalInput(new Spec(13, Mode.PULL_UP));
+				DigitalInput i2 = ioio.openDigitalInput(new Spec(14, Mode.PULL_UP));
+				DigitalInput i3 = ioio.openDigitalInput(new Spec(15, Mode.PULL_UP));
+				if (i1.read()) {
+					pcbVersion += 4;
+				}
+				if (i2.read()) {
+					pcbVersion += 2;
+				}
+				if (i3.read()) {
+					pcbVersion += 1;
+				}
+
 				// if (mode == ServiceMode.Survfind) {
 				anemometer = ioio.openAnalogInput(ANEMOMETER_WIND_VANE);
 				if (GET_SPEED_VERSION == FrequencyReading.Analogue_Reading) {
@@ -149,6 +170,23 @@ public class Helper {
 		B2.close();
         WatchDog.close();
 		power.close();
+	}
+	public enum PcbVersion{
+		OldVersion,
+		Verison_1_4_Including_Humidity,
+		Version_1_4_Withouth_Humidity
+	}
+	public PcbVersion getPcbVersion()
+	{
+		PcbVersion ver = PcbVersion.OldVersion;
+		if (pcbVersion == VERSION_1_4_INCLUDING_HUMIDITY)
+		{
+			ver = PcbVersion.Verison_1_4_Including_Humidity;
+		}else if (pcbVersion == VERSION_1_4_WITHOUT_HUMIDITY)
+		{
+			ver = PcbVersion.Version_1_4_Withouth_Humidity;
+		}
+		return  ver;
 	}
 	public static void setupGoogleAnalytics(Activity activity/*, String id */){
 		GoogleAnalytics analytics = GoogleAnalytics.getInstance(activity);
