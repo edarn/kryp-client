@@ -1,0 +1,11 @@
+In main board i put resitor R43 for mounting option without humidity sensor, and R44 for mounting option with humidity sensor. So You could easy discriminate between these two mounting options - it could be helpful in case when humidity sensor break or some i2c problems occur. 
+ 
+ So when You set internal pull-up resistor You could read at PIN13, 14, 15:
+ In version 1.3 and lower:
+ 111
+ In version 1.4 without humidity
+ 110
+ In version 1.4 with humidty
+ 101
+ 
+ Let me know if You want some changes or have more tasks for me.
