@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "23"
+    compileSdkVersion 22
+    buildToolsVersion "23.0.3"
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -24,10 +24,10 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.google.code.gson:gson:2.3.1'
 
-    compile project(':ioio:IOIOLib:target:android')
-    compile project(':ioio:IOIOLibAccessory')
-    compile project(':ioio:IOIOLibAndroidDevice')
-    compile project(':ioio:IOIOLibBT')
+    compile 'com.github.ytai.ioio:IOIOLibAndroid:5.05'
+    compile 'com.github.ytai.ioio:IOIOLibAndroidBluetooth:5.05'
+    compile 'com.github.ytai.ioio:IOIOLibAndroidAccessory:5.05'
+    compile 'com.github.ytai.ioio:IOIOLibAndroidDevice:5.05'
 }
 repositories {
     mavenCentral()

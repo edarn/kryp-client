@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 21
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 22
+
+    buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId 'se.tna.crawlspacemonitor'
         minSdkVersion 15
@@ -23,7 +24,7 @@ android {
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22'
     compile 'com.jjoe64:graphview:4.0.1'
     compile project(':commonloggerservice')
 }
