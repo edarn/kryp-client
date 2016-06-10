@@ -121,9 +121,12 @@ public class KrypgrundsService extends IOIOService {
 				Helper.appendLog("*** IOIO connected OK. ***");
 				Helper.appendLog("Service mode is: " + serviceMode.toString());
 				isInitialized = true;
-				
+				nbrRainPulses = 0;
+				rainMeasurementTime = System.currentTimeMillis();
 			}
 
+			float nbrRainPulses = 0;
+			long rainMeasurementTime = 0;
 			@Override
 			public void loop() {
 				try {
@@ -182,6 +185,30 @@ public class KrypgrundsService extends IOIOService {
 						tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorInne);
                         oneMeasurement.firstExternalHumidity = tempAndHumidity.humidity;
                         oneMeasurement.firstExternalTemperature = tempAndHumidity.temperature;
+
+                        float frequency = helper.queryIOIO(Helper.RAIN);
+                        if (frequency > 0) {
+                            System.out.println("REGN frequency = " + frequency);
+                            if (frequency <0.5)
+                            {
+                                nbrRainPulses +=2;
+                            }
+                            else {
+                                nbrRainPulses += frequency * (System.currentTimeMillis() - rainMeasurementTime) / 1000;
+                            }
+                        }
+                        rainMeasurementTime = System.currentTimeMillis();
+
+						System.out.println("REGN Antal pulser: " + nbrRainPulses);
+						oneMeasurement.rainSensor = nbrRainPulses;
+
+						Helper.BarometricPressure preassure = helper.GetBarometric();
+
+						if (preassure.okReading)
+						{
+							System.out.println("Preassure is: " + preassure.pressure);
+							oneMeasurement.airPreassure = preassure.pressure;
+						}
 
 						//tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 						System.out.println(oneMeasurement.getJSON());
