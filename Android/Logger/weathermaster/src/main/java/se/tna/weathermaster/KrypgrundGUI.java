@@ -75,6 +75,8 @@ public class KrypgrundGUI extends Activity {
     private int angle = 0;
     private TextView textStationName;
     private LinearLayout noConnectionContainer;
+    private TextView regnText;
+    private TextView lufttryckText;
 
     @Override
     public void onPause() {
@@ -202,6 +204,9 @@ public class KrypgrundGUI extends Activity {
         temperatureText = (TextView) findViewById(R.id.temperatureText);
         humidText = (TextView) findViewById(R.id.humidText);
         batteryText = (TextView) findViewById(R.id.batteryText);
+
+        lufttryckText = (TextView) findViewById(R.id.lufttryckText);
+        regnText = (TextView) findViewById(R.id.regnText);
 
         ImageView settingsButton = (ImageView) findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -333,6 +338,8 @@ public class KrypgrundGUI extends Activity {
         s.firstExternalTemperature = 10.11f;
 
         s.rainSensor = 11.12f;
+        s.airPreassure = 123;
+        s.rainSensor=12.3f;
         
         list.add(s);
         s = new SurfvindStats();
@@ -350,6 +357,8 @@ public class KrypgrundGUI extends Activity {
         s.firstExternalTemperature = 20.11f;
 
         s.rainSensor = 21.12f;
+        s.airPreassure = 1123;
+
         list.add(s);
 
         new AsyncTask<Void,Void,Void>() {
@@ -417,6 +426,8 @@ public class KrypgrundGUI extends Activity {
                     humidText.setText(String.format("%.1f", status.moistureInne));
                     compassImageView.setRotation(status.windDirection);
                     batteryText.setText(String.format("%.1f", status.voltage));
+                    regnText.setText(String.format("%.1f", status.rain));
+                    lufttryckText.setText(status.airpreassure);
 
                     /*
                     textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));

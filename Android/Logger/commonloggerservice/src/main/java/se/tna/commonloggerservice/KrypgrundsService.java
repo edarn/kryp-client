@@ -492,6 +492,8 @@ public class KrypgrundsService extends IOIOService {
 				status.voltage = oneReading.batteryVoltage;
                 status.moistureInne = oneReading.firstExternalHumidity;
                 status.temperatureInne = oneReading.firstExternalTemperature;
+				status.rain = oneReading.rainSensor;
+				status.airpreassure = (int) oneReading.airPreassure;
 			}
 		}
 		if (serviceMode == ServiceMode.Survfind) {

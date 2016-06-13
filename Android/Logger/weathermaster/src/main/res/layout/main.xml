@@ -208,6 +208,76 @@
                                     android:textSize="35sp"/>
 
                         </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="#b0000000"
+                            android:text="Lufttryck (hPa)"
+                            android:textColor="#ffffff"
+                            android:textSize="20sp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="center_vertical"
+
+                                    android:scaleType="centerInside"
+
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+
+                                    android:src="@drawable/lufttryck"/>
+                            <TextView
+                                android:id="@+id/lufttryckText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="#b0000000"
+                                android:text="0"
+                                android:textColor="#ffffff"
+                                android:textSize="35sp"/>
+
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="#b0000000"
+                            android:text="Nederbörd (mm/h)"
+                            android:textColor="#ffffff"
+                            android:textSize="20sp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center_vertical"
+
+                                android:scaleType="centerInside"
+
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+
+                                android:src="@drawable/weather_cloud_sun_rain_vector"/>
+                            <TextView
+                                android:id="@+id/regnText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="#b0000000"
+                                android:text="0"
+                                android:textColor="#ffffff"
+                                android:textSize="35sp"/>
+
+                        </LinearLayout>
                     </LinearLayout>
 
                     <FrameLayout

@@ -26,6 +26,8 @@ public class StatusOfService {
 	public boolean isIOIOConnected;
 	public float moistureExtra = 0;
 	public float temperatureExtra = 0;
+	public int airpreassure;
+	public float rain;
 
 	public StatusOfService(){
 		timeOfCreation = System.currentTimeMillis();
