@@ -2,30 +2,28 @@ package se.tna.commonloggerservice;
 
 import android.app.Activity;
 import android.content.Context;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 
 import ioio.lib.api.AnalogInput;
@@ -676,7 +674,6 @@ public class Helper {
         sb.append("Trying to send ");
         sb.append(measurements.size());
         sb.append(" items. \n");
-        DefaultHttpClient client = null;
         JSONObject data;
         String body = "";
         boolean SendSuccess = true;
@@ -688,9 +685,6 @@ public class Helper {
 			 */
             while (SendSuccess && measurements.size() > 0) {
                 data = new JSONObject();
-
-                client = new DefaultHttpClient();
-
 
                 JSONArray dataArray = new JSONArray();
 
@@ -706,64 +700,60 @@ public class Helper {
 
                     }
                 }
-                HttpPost message = new HttpPost();
+
+                OkHttpClient client = new OkHttpClient();
+                MediaType MEDIA_TYPE_MARKDOWN= null;
+
                 String postUrl = "";
                 if (mode == ServiceMode.Krypgrund) {
                     postUrl = "http://www.surfvind.se/Krypgrund.php";
+                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
                     data.put("measure", dataArray);
                     data.put("id", "\"" + imei + "\"");
                     data.put("version", version);
                     body = data.toString();
-                    message.addHeader("content-type", "application/x-www-form-urlencoded");
-
                 } else if (mode == ServiceMode.Survfind) {
                     postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/SendSurfvindMeasurements";
+                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
                     SurfvindPacket packet = new SurfvindPacket();
                     packet.id = imei;
                     packet.version = version;
                     packet.surfvindMeasurements = (SurfvindStats[]) measurements.toArray(new SurfvindStats[measurements.size()]);
                     Gson g = new Gson();
                     body = g.toJson(packet);
-                    message.addHeader("content-type", "application/json");
-
                 }
-                message.setURI(new URI(postUrl));
+                Request request = new Request.Builder()
+                        .url(postUrl)
+                        .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, body))
+                        .build();
 
-                message.setEntity(new StringEntity(body));
-                System.out.print(data.toString());
-                HttpResponse response = client.execute(message);
-                if (response != null) {
-                    StatusLine line = response.getStatusLine();
-                    if (line != null) {
-                        if (line.getStatusCode() == HttpStatus.SC_OK) {
-                            // Delete the reading that are sent.
-                            measurements.subList(0, nbrOfItemsToSend).clear();
-                            sb.append(" Success");
-                            sb.append(EntityUtils.toString(response.getEntity()));
-                        } else {
-                            SendSuccess = false;
-                            sb.append("Fail: ");
-                            sb.append(line.getStatusCode());
-                            sb.append(EntityUtils.toString(response.getEntity()));
-                        }
-                    }
+                Response response = client.newCall(request).execute();
+                if (response.isSuccessful())
+                {
+                    measurements.subList(0, nbrOfItemsToSend).clear();
+                    sb.append(" Success");
+                    sb.append(response.body().string());
+                }else
+                {
+                    SendSuccess = false;
+                    sb.append("Fail: ");
                 }
+                sb.append(response.body().string());
             }
         } catch (RuntimeException runtime) {
             sb.append("RuntimeException" + runtime.toString());
-        } catch (ClientProtocolException e) {
-            sb.append("ClientProtocolException" + e.toString());
         } catch (IOException io) {
             sb.append("IOException" + io.toString());
         } catch (Exception e) {
             sb.append("Ex:" + e.toString());
         } finally {
-            if (null != client) {
-                ClientConnectionManager manager = client.getConnectionManager();
+            //if (null != client) {
+              /*  ClientConnectionManager manager = client.getConnectionManager();
                 if (manager != null) {
                     manager.shutdown();
                 }
-            }
+                */
+            //}
         }
         return sb.toString();
     }
