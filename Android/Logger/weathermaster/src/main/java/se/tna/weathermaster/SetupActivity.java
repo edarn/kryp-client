@@ -3,12 +3,6 @@ package se.tna.weathermaster;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -28,6 +22,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.squareup.okhttp.OkHttpClient;
 
 import se.tna.commonloggerservice.Helper;
 import se.tna.commonloggerservice.KrypgrundsService;
@@ -149,13 +145,13 @@ public class SetupActivity extends Activity {
 
             @Override
 			protected Boolean doInBackground(Void... params) {
-				HttpClient client = null;
+				OkHttpClient client = null;
 				JSONObject data;
                 Boolean sendSuccess = false;
 				try {
 					data = new JSONObject();
 
-					client = new DefaultHttpClient();
+					client = new OkHttpClient();
 					HttpPost message = new HttpPost(
 							"http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
 					message.addHeader("content-type",
