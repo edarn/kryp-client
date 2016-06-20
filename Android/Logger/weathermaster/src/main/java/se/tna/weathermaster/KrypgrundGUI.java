@@ -427,7 +427,7 @@ public class KrypgrundGUI extends Activity {
                     compassImageView.setRotation(status.windDirection);
                     batteryText.setText(String.format("%.1f", status.voltage));
                     regnText.setText(String.format("%.1f", status.rain));
-                    lufttryckText.setText(status.airpreassure);
+                    lufttryckText.setText(String.valueOf(status.airpreassure));
 
                     /*
                     textTempUte.setText("Temp Ute: " + String.format("%.2f", status.temperatureUte));
