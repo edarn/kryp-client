@@ -11,12 +11,12 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
 import org.json.JSONObject;
 
 import java.io.InputStreamReader;
@@ -143,40 +143,38 @@ public class SetupActivity extends Activity {
 
             @Override
 			protected Boolean doInBackground(Void... params) {
-				HttpClient client = null;
+				OkHttpClient client = null;
 				JSONObject data;
                 Boolean sendSuccess = false;
 				try {
 					data = new JSONObject();
 
-					client = new DefaultHttpClient();
-					HttpPost message = new HttpPost(
-							"http://www.surfvind.se/AddSurfvindLocationIOIOv1.php");
-					message.addHeader("content-type",
-							"application/x-www-form-urlencoded");
+
+					client = new OkHttpClient();
+					MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+
 					data.put("Imei", locData.Imei);
 					data.put("Latitude", locData.Latitude);
 					data.put("Longitude", locData.Longitude);
 					data.put("SensorName", locData.SensorName);
 					data.put("Version", "Setup1.0");
-					message.setEntity(new StringEntity(data.toString()));
-					HttpResponse response = client.execute(message);
-					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						InputStreamReader r = new InputStreamReader(response
-								.getEntity().getContent());
-						char c[] = new char[100];
-						while (r.read() != -1) {
-							r.read(c);
-							System.out.println(c);
-						}
-                        sendSuccess=true;
+
+
+					Request request = new Request.Builder()
+							.url("http://www.surfvind.se/AddSurfvindLocationIOIOv1.php")
+							.post(RequestBody.create(MEDIA_TYPE_MARKDOWN, data.toString()))
+							.build();
+
+					Response response = client.newCall(request).execute();
+					if (response.isSuccessful()) {
+						sendSuccess = true;
+					} else {
+						sendSuccess = false;
 					}
+
 				} catch (Exception e) {
                     //TODO: Add Google Analytics
 
-				} finally {
-					if (null != client)
-						client.getConnectionManager().shutdown();
 				}
 				return sendSuccess;
 			}
