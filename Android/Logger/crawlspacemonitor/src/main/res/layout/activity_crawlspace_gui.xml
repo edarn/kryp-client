@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:src="@drawable/sand" android:scaleType="centerCrop"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/vatten" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:id="@+id/mainContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <!-- ################ WEATHER STATION ###################### -->
 
@@ -24,9 +31,14 @@
                 android:orientation="vertical">
 
 
-                <RelativeLayout android:id="@+id/dick" android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginTop="15dp" android:layout_marginBottom="15dp"
-                    >
+                <RelativeLayout
+                    android:id="@+id/dick"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/textView1"
                         android:layout_width="wrap_content"
@@ -34,236 +46,279 @@
                         android:background="#b0000000"
                         android:text="Name: "
                         android:textColor="#ffffff"
-                        android:textSize="35dp"/>
+                        android:textSize="35dp" />
+
                     <TextView
                         android:id="@+id/stationName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="45dp"
+                        android:layout_toRightOf="@+id/textView1"
                         android:background="#b0000000"
                         android:text="Zebra"
-                        android:layout_toRightOf="@+id/textView1"
                         android:textColor="#ff00ff"
-                        android:layout_marginRight="45dp"
-                        android:textSize="35dp"/>
+                        android:textSize="35dp" />
+
                     <ImageView
                         android:id="@+id/settingsButton"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"  android:src="@drawable/settings_button" android:scaleType="centerInside"/>
+                        android:scaleType="centerInside"
+                        android:src="@drawable/settings" />
 
                 </RelativeLayout>
 
 
                 <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" android:stretchColumns="1" >
-<TableRow android:layout_width="match_parent" >
-    <Space              android:layout_width="0dip" android:layout_weight="1" />
-                    <TextView
-                        android:layout_width="0dip"
-                        android:background="#b0000000"
-                        android:text="Inside"
-                        android:layout_weight="1"
-                        android:textColor="#ffffff"
-                        android:textSize="25dp"
-                        />
-    <TextView
-        android:layout_width="0dip"
-        android:background="#b0000000"
-        android:text="Outside"
-        android:layout_weight="1"
-        android:textColor="#ffffff"
-        android:textSize="25dp"/>
-    <TextView
-        android:layout_width="0dip"
-        android:background="#b0000000"
-        android:text="Extra"
-        android:layout_weight="1"
-        android:textColor="#ffffff"
-        android:textSize="25dp"/>
+                    android:layout_height="match_parent"
+                    android:stretchColumns="1">
 
-</TableRow>
-<TableRow android:layout_margin="10dp">
-                    <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:text="Temperature (\u2103)"
-                        android:textColor="#ffffff"
-                        android:textSize="18dp"/>
-</TableRow>
-                <TableRow>
-                    <ImageView
-                        android:layout_width="0dip"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/temperature"/>
-                    <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
+                    <TableRow android:layout_width="match_parent">
 
-                        android:text="0 \u2103"
-                        android:textColor="#ffffff"
-                        android:textSize="28dp"/>
-                    <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
+                        <Space
+                            android:layout_width="0dip"
+                            android:layout_weight="1" />
 
-                        android:text="0 \u2103"
-                        android:textColor="#ffffff"
-                        android:textSize="28dp"/>
-                    <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_weight="1"
+                            android:background="#b0000000"
+                            android:text="Inside"
+                            android:textColor="#ffffff"
+                            android:textSize="25dp" />
 
-                        android:text="0 \u2103"
-                        android:textColor="#ffffff"
-                        android:textSize="28dp"/>
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_weight="1"
+                            android:background="#b0000000"
+                            android:text="Outside"
+                            android:textColor="#ffffff"
+                            android:textSize="25dp" />
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_weight="1"
+                            android:background="#b0000000"
+                            android:text="Extra"
+                            android:textColor="#ffffff"
+                            android:textSize="25dp" />
+
                     </TableRow>
+
                     <TableRow android:layout_margin="10dp">
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4"
+                            android:text="Temperature (\u2103)"
+                            android:textColor="#ffffff"
+                            android:textSize="18dp" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <ImageView
+                            android:layout_width="0dip"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/temperature" />
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+
+                            android:text="0 \u2103"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp" />
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+
+                            android:text="0 \u2103"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp" />
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+
+                            android:text="0 \u2103"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp" />
+                    </TableRow>
+
+                    <TableRow android:layout_margin="10dp">
+
                         <TextView
                             android:layout_width="0dip"
                             android:layout_height="20dp"
                             android:layout_weight="4"
                             android:text="Humidity (%)"
                             android:textColor="#ffffff"
-                            android:textSize="18dp"/>
+                            android:textSize="18dp" />
                     </TableRow>
 
-                <TableRow>
-                <ImageView
-                    android:layout_width="0dip"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
+                    <TableRow>
 
-                    android:layout_weight="1"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/water_drop"/>
-                <TextView
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
+                        <ImageView
+                            android:layout_width="0dip"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center"
 
-                    android:text="0 \u2103"
-                    android:textColor="#ffffff"
-                    android:textSize="28dp"/>
-                <TextView
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-
-                    android:text="0 \u2103"
-                    android:textColor="#ffffff"
-                    android:textSize="28dp"/>
-                <TextView
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-
-                    android:text="0 \u2103"
-                    android:textColor="#ffffff"
-                    android:textSize="28dp"/>
-             </TableRow>
-<TableRow>
-
-    <FrameLayout android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="55dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="centerInside"
-            android:src="#00FF00"/>
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-
-            android:scaleType="centerInside"
-
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-
-            android:src="@drawable/battery_icon"/>
-    </FrameLayout>
-    <TextView
-        android:id="@+id/batteryText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="#b0000000"
-        android:text="0"
-        android:textColor="#ffffff"
-        android:textSize="35sp"/>
-</TableRow>
-
-        </TableLayout>
-
-                <com.jjoe64.graphview.GraphView
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:id="@+id/graph" />
-
-
-
-
-
-                     <!--
+                            android:layout_weight="1"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/water_drop" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dip"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#b0000000"
-                            android:text="Power (V)"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+
+                            android:text="0 \u2103"
                             android:textColor="#ffffff"
-                            android:textSize="20sp"/>
-                            <FrameLayout android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-                                <ImageView
-                                    android:layout_width="55dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="center_vertical"
-                                    android:scaleType="centerInside"
-                                    android:src="#00FF00"/>
-                                <ImageView
-                                    android:layout_width="60dp"
-                                    android:layout_height="60dp"
-                                    android:layout_gravity="center_vertical"
+                            android:textSize="28dp" />
 
-                                    android:scaleType="centerInside"
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
 
-                                    android:paddingLeft="10dp"
-                                    android:paddingRight="10dp"
+                            android:text="0 \u2103"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp" />
 
-                                    android:src="@drawable/battery_icon"/>
-                            </FrameLayout>
-                            <TextView
-                                android:id="@+id/batteryText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text="0"
-                                android:textColor="#ffffff"
-                                android:textSize="35sp"/>
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+
+                            android:text="0 \u2103"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp" />
+                    </TableRow>
+                    <TableRow android:layout_margin="10dp">
+
+                        <TextView
+                            android:layout_width="0dip"
+                            android:layout_height="20dp"
+                            android:layout_weight="4"
+                            android:text="Battery Level"
+                            android:textColor="#ffffff"
+                            android:textSize="18dp" />
+                    </TableRow>
+
+                    <TableRow>
+                    <TableRow>
+
+
+                        <ImageView
+                            android:layout_width="0dip"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:paddingLeft="10dp"
+
+                            android:paddingRight="10dp"
+                            android:scaleType="centerInside"
+
+                            android:src="@drawable/battery_icon2" />
+
+                        <TextView
+                            android:id="@+id/batteryText"
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:text="0 V"
+                            android:textColor="#ffffff"
+                            android:textSize="28sp" />
+
+                        <TextView
+
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:textColor="#ffffff"
+                            android:textSize="28sp" />
+
+                        <TextView
+
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:textColor="#ffffff"
+                            android:textSize="28sp" />
+                    </TableRow>
+
+                </TableLayout>
+
+                <com.jjoe64.graphview.GraphView
+                    android:id="@+id/graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
+
+
+                <!--
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="10dp"
+                       android:background="#b0000000"
+                       android:text="Power (V)"
+                       android:textColor="#ffffff"
+                       android:textSize="20sp"/>
+                       <FrameLayout android:layout_width="wrap_content"
+                           android:layout_height="wrap_content">
+                           <ImageView
+                               android:layout_width="55dp"
+                               android:layout_height="50dp"
+                               android:layout_gravity="center_vertical"
+                               android:scaleType="centerInside"
+                               android:src="#00FF00"/>
+                           <ImageView
+                               android:layout_width="60dp"
+                               android:layout_height="60dp"
+                               android:layout_gravity="center_vertical"
+
+                               android:scaleType="centerInside"
+
+                               android:paddingLeft="10dp"
+                               android:paddingRight="10dp"
+
+                               android:src="@drawable/battery_icon"/>
+                       </FrameLayout>
+                       <TextView
+                           android:id="@+id/batteryText"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center_vertical"
+                           android:background="#b0000000"
+                           android:text="0"
+                           android:textColor="#ffffff"
+                           android:textSize="35sp"/>
 
 
 
-                     -->
-
+                -->
 
 
                 <LinearLayout
@@ -282,13 +337,13 @@
                         <WebView
                             android:id="@+id/webViewCompassBackground"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent" />
 
                         <WebView
                             android:id="@+id/webViewCompass"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="#00000000"/>
+                            android:background="#00000000" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -298,13 +353,13 @@
                         <WebView
                             android:id="@+id/webViewSpeedBackground"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent" />
 
                         <WebView
                             android:id="@+id/webViewSpeed"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="#00000000"/>
+                            android:background="#00000000" />
                     </FrameLayout>
 
                     <LinearLayout
@@ -317,27 +372,48 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="80dp"
-                            android:text="Direction: "/>
+                            android:text="Direction: " />
 
                         <TextView
                             android:id="@+id/textWindDirection"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:text="246"/>
+                            android:text="246" />
                     </LinearLayout>
 
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/noConnectionContainer" android:visibility="gone">
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Controller Unit NOT Detected" android:textSize="40dp" android:textColor="#ff0000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connect controller to phone with USB cable (or BlueTooth - pair with pin code '4545') and wait a minute. If this message still occurs, please turn off and on the Controller Unit." android:textColor="#ff0000" android:textSize="18dp"/>
+                <LinearLayout
+                    android:id="@+id/noConnectionContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Controller Unit NOT Detected"
+                        android:textColor="#ff0000"
+                        android:textSize="40dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connect controller to phone with USB cable (or BlueTooth - pair with pin code '4545') and wait a minute. If this message still occurs, please turn off and on the Controller Unit."
+                        android:textColor="#ff0000"
+                        android:textSize="18dp" />
 
                 </LinearLayout>
 
-                <ToggleButton android:id="@+id/showDebugButton" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textOn="Hide Debug"
-                    android:textOff="Show Debug" android:visibility="gone"/>
+                <ToggleButton
+                    android:id="@+id/showDebugButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="Show Debug"
+                    android:textOn="Hide Debug"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -354,39 +430,37 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Debug data"
-                    android:textSize="25dp"/>
+                    android:textSize="25dp" />
 
                 <TextView
                     android:id="@+id/connectedText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Not Initialized"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/textFanOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Not Initialized"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/phoneId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Not Initialized"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/debugText"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
                     android:text="Not Initialized"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
             </LinearLayout>
         </LinearLayout>
-
-
     </ScrollView>
 </FrameLayout>
