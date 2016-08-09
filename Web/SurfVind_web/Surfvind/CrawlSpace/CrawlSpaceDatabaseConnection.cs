@@ -171,7 +171,11 @@ namespace Surfvind_2011.CrawlSpace
                         {
                             if (interval == TimeInterval.OneMonth || interval == TimeInterval.OneYear)
                             {
-                                String time = reader["YearMonth"].ToString() + reader["DayHour"].ToString();
+                                String time = reader["YearMonth"].ToString();
+                                String tmp =  reader["DayHour"].ToString();
+                                if (tmp.Length == 3) tmp = "0" + tmp;
+                                time += tmp;
+                  
                                 DateTime timeStamp;
                                 if (DateTime.TryParseExact(time, "yyyyMMddHH", CultureInfo.InvariantCulture, DateTimeStyles.None, out timeStamp))
                                 {
@@ -240,37 +244,25 @@ namespace Surfvind_2011.CrawlSpace
 
         public string InsertMeasurements(CrawlSpaceMeasurements data)
         {
-            return "OK";
-           /* for (int i = 0; i< data.TimeStamp.Count; i++)
-            {
-                
-            }
-            return "OK"
-            */
-
-
-
-            /*
             String result = "Data inserted OK";
             int rowsAffected = 0;
 
-            string baseText = "INSERT INTO " + nameOfDatabase + " SET imei = " + data.i + ", version='" + data.version + "',";
+            string baseText = "INSERT INTO " + nameOfDatabase + " SET imei = " + imei +",";
+          
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
-                try {
+                try
+                {
                     conn.Open();
-                    foreach (SurfvindMeasurement mes in data.surfvindMeasurements)
-                    {
-                        string cmdText = baseText + " time = '" + mes.timeStamp +
-                            "', averageDir ='" + mes.windDirectionAvg +
-                            "',maxDir ='" + mes.windDirectionMax +
-                            "',minDir ='" + mes.windDirectionMin +
-                            "',averageSpeed ='" + mes.windSpeedAvg +
-                            "',maxSpeed ='" + mes.windSpeedMax +
-                            "',minSpeed ='" + mes.windSpeedMin +
-                            "',airTemp ='" + mes.firstExternalTemperature +
-                            "',waterTemp ='" + mes.batteryVoltage +
-                            "',moisture ='" + mes.firstExternalHumidity+"'";
+                    for (int i = 0; i< data.TimeStamp.Count; i++){
+                        string cmdText = baseText + " TimeStamp = '" + data.TimeStamp[i] +
+                            "',AbsolutFuktInne ='" + data.AbsolutFuktInne[i] +
+                            "',AbsolutFuktUte ='" + data.AbsolutFuktUte[i] +
+                            "',FuktInne ='" + data.FuktInne[i] +
+                            "',FuktUte ='" + data.FuktUte[i] +
+                            "',TempInne ='" + data.TempInne[i] +
+                            "',TempUte ='" + data.TempUte[i] +
+                            "',FanOn ='" + data.FanOn[i] + "'";
 
                         using (DbCommand cmd = GetDBCommand(cmdText, conn))
                         {
@@ -284,7 +276,7 @@ namespace Surfvind_2011.CrawlSpace
                              "\nDbException.Source: " + exDb.Source +
                              "\nDbException.ErrorCode: " + exDb.ErrorCode +
                              "\nDbException.Message: " + exDb.Message;
-                             
+
                 }
                 // Handle all other exceptions. 
                 catch (Exception ex)
@@ -294,7 +286,7 @@ namespace Surfvind_2011.CrawlSpace
                 result += "\n\n" + rowsAffected + " rows was successfully inserted";
 
             }
-            return result;*/
+            return result;
         }
-    }
+        }
 }

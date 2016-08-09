@@ -15,7 +15,9 @@ namespace Surfvind_2011.CrawlSpace
             List<Location> list = connection.GetLocations();
             foreach (Location l in list)
             {
-                ListItem item = new ListItem(l.Name, l.imei);
+                ListItem item = ddlWhere.Items.FindByText(l.Name);
+                if (item != null) continue;
+                item = new ListItem(l.Name, l.imei);
                 ddlWhere.Items.Add(item);
             }
         }

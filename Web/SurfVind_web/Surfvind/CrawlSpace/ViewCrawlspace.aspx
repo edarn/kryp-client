@@ -95,7 +95,7 @@
 
 <body>
     <center>
-        <h2>Krypgrundsstatistik Kollandsvik Stuga 20</h2>
+        <h2>Krypgrundsstatistik</h2>
     </center>
     <ul>
         <li>Absolut fuktmängd, i diagram ett, visar total mängd vatten i luften. Enheten är centigram/kubikmeter</li>
