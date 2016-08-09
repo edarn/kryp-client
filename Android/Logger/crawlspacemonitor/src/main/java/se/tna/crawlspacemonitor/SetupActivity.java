@@ -1,6 +1,7 @@
 package se.tna.crawlspacemonitor;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -8,7 +9,11 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.squareup.okhttp.MediaType;
@@ -19,7 +24,6 @@ import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
-import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import se.tna.commonloggerservice.KrypgrundsService;
@@ -39,7 +43,8 @@ public class SetupActivity extends Activity {
 	public static final String SENSOR_TYPE_RADIO = "Radio_Button_Id_Type";
 	private static final String GPS_LONGITUDE = "Longitude";
 	private static final String GPS_LATITUDE = "Latitude";
-    private String stationType=KrypgrundsService.SURFVIND;
+	public static final String SETTINGS_FILE = "TNA_Crawlspace_Settings";
+	private String stationType=KrypgrundsService.KRYPGRUND;
 	private EditText name;
 	private EditText latitude;
 	private EditText longitude;
@@ -56,7 +61,7 @@ public class SetupActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		/*setContentView(R.layout.setup);
+		setContentView(R.layout.setup);
 
 		RadioGroup updateFrequency;
 		RadioGroup measurementDelay;
@@ -69,7 +74,7 @@ public class SetupActivity extends Activity {
 		measurementDelay = (RadioGroup) findViewById(R.id.measurementDelay);
 
 		// Find stored settings
-		prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
+		prefs = getSharedPreferences(SETTINGS_FILE, MODE_PRIVATE);
 		prefsEditor = prefs.edit();
 
         updateFrequency.check(prefs.getInt(SEND_TO_SERVER_DELAY_VIEW,
@@ -93,7 +98,7 @@ public class SetupActivity extends Activity {
 		longitude.setText(lon);
 
 		Button b = (Button) findViewById(R.id.saveButton);
-		b.setOnClickListener(new OnClickListener() {
+		b.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -122,9 +127,8 @@ public class SetupActivity extends Activity {
 				finish();
 			}
 		});
-		locationListener = new MyLocationListener(this);
-		*/
 
+		locationListener = new MyLocationListener(this);
 	}
 
 	private void SendLocationDataToServer(final LocationData locData) {
@@ -171,6 +175,8 @@ public class SetupActivity extends Activity {
 					} else {
 						sendSuccess = false;
 					}
+					response.body().close();
+
 
 				} catch (Exception e) {
                     //TODO: Add Google Analytics

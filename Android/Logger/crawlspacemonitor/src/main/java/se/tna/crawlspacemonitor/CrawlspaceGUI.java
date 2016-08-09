@@ -117,6 +117,13 @@ public class CrawlspaceGUI extends Activity {
         batteryText = (TextView) findViewById(R.id.batteryText);
 
 
+          textFuktInne = (TextView) findViewById(R.id.textHumidIn);
+          textFuktUte= (TextView) findViewById(R.id.textHumidOut);
+          textFuktExtra= (TextView) findViewById(R.id.textHumidExtra);
+
+         textTempInne= (TextView) findViewById(R.id.textTempIn);
+         textTempUte = (TextView) findViewById(R.id.textTempOut);
+         textTempExtra=  (TextView) findViewById(R.id.textTempExtra);
         ImageView settingsButton = (ImageView) findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +139,7 @@ public class CrawlspaceGUI extends Activity {
         noConnectionContainer = (LinearLayout) findViewById(R.id.noConnectionContainer);
 
         if (debugContainer != null) { //We should check if in debug mode
-            debugContainer.setVisibility(View.GONE);
+            debugContainer.setVisibility(View.VISIBLE);
 
             if (debugButton != null) {
                 debugButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -157,7 +164,7 @@ public class CrawlspaceGUI extends Activity {
                 loggerService = ((KrypgrundsService.MyBinder) service).getService();
                 Toast.makeText(CrawlspaceGUI.this, "Connected to service", Toast.LENGTH_SHORT).show();
                 serviceBound = true;
-                loggerService.updateSettings();
+                loggerService.updateSettings(SetupActivity.SETTINGS_FILE);
             }
 
             @Override
@@ -183,50 +190,51 @@ public class CrawlspaceGUI extends Activity {
             }
         };
 
-        timer.scheduleAtFixedRate(t, 1000, 3000);
+        timer.scheduleAtFixedRate(t, 1000, 5000);
 
 
         final ArrayList<KrypgrundStats> list = new ArrayList<>();
 
-        //region DEBUG DATA
-        KrypgrundStats s = new KrypgrundStats();
-        s.absolutFuktInne = 1.2f;
-        s.absolutFuktUte = 2.3f;
-        s.absolutFuktExtra = 9.9f;
-        s.moistureInne = 3.4f;
-        s.moistureUte = 4.5f;
-        s.moistureExtra = 9.9f;
-        s.batteryVoltage = 15.6f;
-        s.fanOn = true;
-
-        s.temperatureInne = 7.8f;
-        s.temperatureUte = 8.9f;
-        s.temperatureExtra = 9.9f;
-
-        list.add(s);
-        s = new KrypgrundStats();
-        s.absolutFuktInne = 1.2f;
-        s.absolutFuktUte = 2.3f;
-        s.absolutFuktExtra = 9.9f;
-        s.moistureInne = 3.4f;
-        s.moistureUte = 4.5f;
-        s.moistureExtra = 9.9f;
-        s.batteryVoltage = 15.6f;
-        s.fanOn = true;
-
-        s.temperatureInne = 7.8f;
-        s.temperatureUte = 8.9f;
-        s.temperatureExtra = 9.9f;
-        list.add(s);
-
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Log.d("TNA", Helper.SendDataToServer(list, KrypgrundsService.ServiceMode.Krypgrund));
-                return null;
-            }
-        }.execute();
+//        //region DEBUG DATA
+//        KrypgrundStats s = new KrypgrundStats();
+//        s.absolutFuktInne = 1.2f;
+//        s.absolutFuktUte = 2.3f;
+//        s.absolutFuktExtra = 9.9f;
+//        s.moistureInne = 3.4f;
+//        s.moistureUte = 4.5f;
+//        s.moistureExtra = 9.9f;
+//        s.batteryVoltage = 15.6f;
+//        s.fanOn = true;
+//
+//        s.temperatureInne = 7.8f;
+//        s.temperatureUte = 8.9f;
+//        s.temperatureExtra = 9.9f;
+//
+//        list.add(s);
+//        s = new KrypgrundStats();
+//        s.absolutFuktInne = 1.2f;
+//        s.absolutFuktUte = 2.3f;
+//        s.absolutFuktExtra = 9.9f;
+//        s.moistureInne = 3.4f;
+//        s.moistureUte = 4.5f;
+//        s.moistureExtra = 9.9f;
+//        s.batteryVoltage = 15.6f;
+//        s.fanOn = true;
+//
+//        s.temperatureInne = 7.8f;
+//        s.temperatureUte = 8.9f;
+//        s.temperatureExtra = 9.9f;
+//        list.add(s);
+//
+//        new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                Log.d("TNA", Helper.SendDataToServer(list, KrypgrundsService.ServiceMode.Krypgrund));
+//                return null;
+//            }
+//        }.execute();
+//
         //endregion
 
 
@@ -260,7 +268,7 @@ public class CrawlspaceGUI extends Activity {
     protected void onResume() {
         super.onResume();
         if (loggerService != null) {
-            loggerService.updateSettings();
+            loggerService.updateSettings(SetupActivity.SETTINGS_FILE);
         }
     }
 
@@ -284,7 +292,7 @@ public class CrawlspaceGUI extends Activity {
         SharedPreferences preferences = getSharedPreferences("TNA_Crawlspace_Settings", Activity.MODE_PRIVATE);
 
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
-      /*  if (name == null || name.isEmpty())
+        if (name == null || name.isEmpty())
         {
 
             // 1. Instantiate an AlertDialog.Builder with its constructor
@@ -305,11 +313,11 @@ public class CrawlspaceGUI extends Activity {
 
                 }
             });
-// 3. Get the AlertDialog from create()
+            // 3. Get the AlertDialog from create()
             AlertDialog dialog = builder.create();
             dialog.show();
 
-        }*/
+        }
         textStationName.setText(name);
     }
 
@@ -318,11 +326,10 @@ public class CrawlspaceGUI extends Activity {
     private void updateUI() {
         if (null != loggerService) {
             final StatusOfService status = loggerService.getStatus();
-            //dataPoints.insertData();
+            //dataPoints.insertData(status);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    /*
                     textFuktExtra.setText(String.format("%.1f", status.moistureExtra));
                     textFuktInne.setText(String.format("%.1f", status.moistureInne));
                     textFuktUte.setText(String.format("%.1f", status.moistureUte));
@@ -331,9 +338,9 @@ public class CrawlspaceGUI extends Activity {
                     textTempInne.setText(String.format("%.1f", status.temperatureInne));
                     textTempUte.setText(String.format("%.1f", status.temperatureUte));
 
-                    textVoltage.setText(String.format("%.1f", status.voltage));
-                    textFanOn.setText("Fan On =" + status.fanOn);
-                    */
+                    batteryText.setText(String.format("%.1f", status.voltage));
+                   // textFanOn.setText("Fan On =" + status.fanOn);
+
                     // Is ioio chip initialized etc
                     if (status.isIOIOConnected)
                         initializedText.setText("Controlunit connected OK");
@@ -360,6 +367,7 @@ public class CrawlspaceGUI extends Activity {
 
                     debugText.setText(sb.toString());
                     debugText.setText(status.statusMessage);
+                    //debugText.setText(status.statusMessage);
 
                     if (noConnectionContainer != null) {
                         if (status.isIOIOConnected) {

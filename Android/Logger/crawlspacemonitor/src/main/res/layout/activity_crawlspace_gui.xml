@@ -86,7 +86,8 @@
                             android:layout_width="0dip"
                             android:layout_weight="1"
                             android:background="#b0000000"
-                            android:text="Inside"
+
+                            android:text="In"
                             android:textColor="#ffffff"
                             android:textSize="25dp" />
 
@@ -94,9 +95,10 @@
                             android:layout_width="0dip"
                             android:layout_weight="1"
                             android:background="#b0000000"
-                            android:text="Outside"
+                            android:text="Out"
                             android:textColor="#ffffff"
-                            android:textSize="25dp" />
+                            android:textSize="25dp"
+                            android:id="@+id/textView" />
 
                         <TextView
                             android:layout_width="0dip"
@@ -134,7 +136,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-
+                            android:id="@+id/textTempIn"
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
                             android:textSize="28dp" />
@@ -144,7 +146,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-
+                            android:id="@+id/textTempOut"
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
                             android:textSize="28dp" />
@@ -154,6 +156,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
+                            android:id="@+id/textTempExtra"
 
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
@@ -190,14 +193,15 @@
 
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
-                            android:textSize="28dp" />
+                            android:textSize="28dp"
+                            android:id="@+id/textHumidIn" />
 
                         <TextView
                             android:layout_width="0dip"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-
+                            android:id="@+id/textHumidOut"
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
                             android:textSize="28dp" />
@@ -207,7 +211,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-
+                            android:id="@+id/textHumidExtra"
                             android:text="0 \u2103"
                             android:textColor="#ffffff"
                             android:textSize="28dp" />
@@ -223,7 +227,6 @@
                             android:textSize="18dp" />
                     </TableRow>
 
-                    <TableRow>
                     <TableRow>
 
 
@@ -430,10 +433,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Debug data"
-                    android:textSize="25dp" />
+                    android:textSize="25dp"
+                    android:textColor="#ffffff"
+                    android:id="@+id/textView3" />
 
                 <TextView
                     android:id="@+id/connectedText"
+                    android:textColor="#ffffff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Not Initialized"
@@ -443,6 +449,7 @@
                     android:id="@+id/textFanOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
                     android:text="Not Initialized"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -450,13 +457,15 @@
                     android:id="@+id/phoneId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
                     android:text="Not Initialized"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/debugText"
-                    android:layout_width="133dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
                     android:text="Not Initialized"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
