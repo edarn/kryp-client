@@ -705,21 +705,37 @@ public class Helper {
                 MediaType MEDIA_TYPE_MARKDOWN= null;
 
                 String postUrl = "";
+                Gson g = new Gson();
                 if (mode == ServiceMode.Krypgrund) {
-                    postUrl = "http://www.surfvind.se/Krypgrund.php";
-                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
-                    data.put("measure", dataArray);
-                    data.put("id", "\"" + imei + "\"");
-                    data.put("version", version);
-                    body = data.toString();
+                   // postUrl = "http://www.surfvind.se/Krypgrund.php";
+                    postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/CrawlSpaceMeasurements";
+                    //MEDIA_TYPE_MARKDOWN= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
+                    CrawlSpacePacket packet = new CrawlSpacePacket();
+
+                    for (KrypgrundStats stats: ((ArrayList<KrypgrundStats>)measurements))
+                    {
+                        packet.AbsolutFuktInne.add((int) stats.absolutFuktInne) ;
+                        packet.AbsolutFuktUte.add((int) stats.absolutFuktUte) ;
+                        packet.FanOn.add(stats.fanOn==true?90:10);
+                        packet.FuktInne.add( stats.moistureInne) ;
+                        packet.FuktUte.add( stats.moistureUte) ;
+                        packet.TempInne.add( stats.temperatureInne) ;
+                        packet.TempUte.add( stats.temperatureUte) ;
+                        packet.TimeStamp.add( stats.time) ;
+                    }
+                    packet.id = imei;
+                    packet.version = version;
+
+                    body = g.toJson(packet);
                 } else if (mode == ServiceMode.Survfind) {
                     postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/SendSurfvindMeasurements";
                     MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
                     SurfvindPacket packet = new SurfvindPacket();
                     packet.id = imei;
                     packet.version = version;
-                    packet.surfvindMeasurements = (SurfvindStats[]) measurements.toArray(new SurfvindStats[measurements.size()]);
-                    Gson g = new Gson();
+                    packet.surfvindMeasurements = measurements.toArray(new SurfvindStats[measurements.size()]);
+
                     body = g.toJson(packet);
                 }
                 Request request = new Request.Builder()
