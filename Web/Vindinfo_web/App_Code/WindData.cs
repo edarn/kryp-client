@@ -77,18 +77,7 @@ namespace WindInfo
 					DbDataReader reader = cmd.ExecuteReader();
 					while (reader.Read())
 					{
-						WindRecord wr = new WindRecord();
-						wr.Time = Convert.ToDateTime(reader["time"]);
-						wr.AverageDirection = int.Parse(reader["averageDir"].ToString());
-						wr.MaxDirection = int.Parse(reader["maxDir"].ToString());
-						wr.MinDirection = int.Parse(reader["minDir"].ToString());
-						wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
-						wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
-						wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
-                        wr.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
-                        wr.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
-                        wr.Moisture = float.Parse(reader["moisture"].ToString());
-						list.Add(wr);
+						list.Add(ParseSQLData(reader));
 					}
 				}
 				return list;
@@ -109,19 +98,9 @@ namespace WindInfo
                     DbDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        WindRecord wr = new WindRecord();
-                        wr.Time =  Convert.ToDateTime(reader["time"]);
-                        wr.AverageDirection = int.Parse(reader["averageDir"].ToString());
-                        wr.MaxDirection = int.Parse(reader["maxDir"].ToString());
-                        wr.MinDirection = int.Parse(reader["minDir"].ToString());
-                        wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
-                        wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
-                        wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
-                        wr.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
-                        wr.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
-                        wr.Moisture = float.Parse(reader["moisture"].ToString());
+                       
 
-                        list.Add(wr);
+                        list.Add(ParseSQLData(reader));
                     }
                 }
                 return list;
@@ -315,100 +294,62 @@ namespace WindInfo
 				conn.Open();
 				DbDataReader reader = cmd.ExecuteReader(CommandBehavior.SingleRow);
 				if (reader.Read())
-				{
-					currWind.Time = Convert.ToDateTime(reader["time"]);
-					currWind.AverageDirection = int.Parse(reader["averageDir"].ToString());
-					currWind.MaxDirection = int.Parse(reader["maxDir"].ToString());
-					currWind.MinDirection = int.Parse(reader["minDir"].ToString());
-					currWind.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
-					currWind.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
-					currWind.MinSpeed = float.Parse(reader["minSpeed"].ToString());
-                    // TODO, uncomment next two lines when the database has posts for temperature
-                    currWind.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
-                    currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
-                    currWind.Moisture = float.Parse(reader["moisture"].ToString());
-				}
+                {
+                    currWind = ParseSQLData(reader);
+
+                }
+                reader.Close();
 			}
 
 			return currWind;
 		}
-	}
+
+        private WindRecord ParseSQLData(DbDataReader reader)
+        {
+            WindRecord currWind = new WindRecord();
+            currWind.Time = Convert.ToDateTime(reader["time"]);
+            currWind.AverageDirection = int.Parse(reader["averageDir"].ToString());
+            currWind.MaxDirection = int.Parse(reader["maxDir"].ToString());
+            currWind.MinDirection = int.Parse(reader["minDir"].ToString());
+            currWind.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
+            currWind.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
+            currWind.MinSpeed = float.Parse(reader["minSpeed"].ToString());
+            currWind.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
+            currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
+            currWind.Moisture = float.Parse(reader["moisture"].ToString());
+
+            currWind.AirPreassure = float.Parse(reader["airPressure"].ToString());
+            currWind.Rain = float.Parse(reader["rainFall"].ToString());
+
+            return currWind;
+        }
+    }
 
    
     public class WindRecord
     {
-        DateTime _time;
-        int _averageDir;
-        int _maxDir;
-        int _minDir;
-        float _averageSpeed;
-        float _maxSpeed;
-        float _minSpeed;
-        float _averageWaterTemp;
-        float _averageAirTemp;
-        float _moisture;
-
-
-        public DateTime Time
-        {
-            get { return _time; }
-            set { _time = value; }
-        }
-
-        public int AverageDirection
-        {
-            get { return _averageDir; }
-            set { _averageDir = value; }
-        }
-
-        public int MaxDirection
-        {
-            get { return _maxDir; }
-            set { _maxDir = value; }
-        }
-
-        public int MinDirection
-        {
-            get { return _minDir; }
-            set { _minDir = value; }
-        }
-
-        public float AverageSpeed
-        {
-            get { return _averageSpeed; }
-            set { _averageSpeed = value; }
-        }
-
-        public float MaxSpeed
-        {
-            get { return _maxSpeed; }
-            set { _maxSpeed = value; }
-        }
-
-        public float MinSpeed
-        {
-            get { return _minSpeed; }
-            set { _minSpeed = value; }
-        }
-
+        public DateTime Time { get; set; }
+      
+        public int AverageDirection { get; set; }
+       
+        public int MaxDirection { get; set; }
+    
+        public int MinDirection { get; set; }
+    
+        public float AverageSpeed { get; set; }
+    
+        public float MaxSpeed { get; set; }
+    
+        public float MinSpeed { get; set; }
+    
         // TODO
-        public float AverageWaterTemp
-        {
-            get { return _averageWaterTemp; }
-            set { _averageWaterTemp = value; }
-        }
-
+        public float AverageWaterTemp { get; set; }
+      
         // TODO
-        public float AverageAirTemp
-        {
-            get { return _averageAirTemp; }
-            set { _averageAirTemp = value; }
-        }
-
-        public float Moisture
-        {
-            get { return _moisture; }
-            set { _moisture = value; }
-        }
+        public float AverageAirTemp { get; set; }
+      
+        public float Moisture { get; set; }
+        public float Rain { get; set; }
+        public float AirPreassure { get; set; }
     }
 }

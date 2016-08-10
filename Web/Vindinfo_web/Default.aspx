@@ -90,7 +90,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>
+                                <td align="center">
                                     <asp:Image ID="water_temp" runat="server" AlternateText="Water temp" ImageUrl="design/battery_icon.png"
                                         Width="50px" />
                                 </td>
@@ -98,6 +98,40 @@
                                     <asp:Label ID="power" runat="server" Text="12 V" />
                                 </td>
                             </tr>
+                           </table>
+                        </div>
+                        <div id="rainfall" runat="server">
+                        <table>
+                            <tr>
+                                <td>
+                                    Rainfall (mm/h)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <asp:Image ID="rainImage" runat="server" AlternateText="rainfall" Height="50px"
+                                        ImageUrl="design/rain_cloud.png" />
+                                </td>
+                                <td>
+                                    <asp:Label ID="rain" runat="server" Text="10 mm" />
+                                </td>
+                            </tr>
+
+                             <tr>
+                                <td>
+                                    AirPreassure (hPa)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <asp:Image ID="preassureImage" runat="server" AlternateText="rainfall" Height="50px"
+                                        ImageUrl="design/barometer.jpg" />
+                                </td>
+                                <td>
+                                    <asp:Label ID="preassure" runat="server" Text="1005 hPa" />
+                                </td>
+                            </tr>
+                               
                         </table>
                     </div>
                 </td>

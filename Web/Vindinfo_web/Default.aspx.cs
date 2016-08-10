@@ -89,6 +89,17 @@ public partial class Default : System.Web.UI.Page
             water.Visible = false;
         }
 
+        if (wr.AirPreassure != 0)
+        { 
+            rain.Text = wr.Rain + " mm/h";
+            preassure.Text = wr.AirPreassure + " hPa";
+            rainfall.Visible = true;
+        }
+        else
+        {
+            rainfall.Visible = false;
+        }
+
         LocationPage.Visible = true;
 
     }
