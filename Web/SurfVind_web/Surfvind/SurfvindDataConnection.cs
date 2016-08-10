@@ -70,7 +70,7 @@ namespace Surfvind_2011
         }
         #endregion
 
-        public List<WindRecord> GetFullList()
+        /*public List<WindRecord> GetFullList()
         {
             string cmdText = "select * from " + dbToUse + " imei='" + imei + "'order by time";
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
@@ -95,7 +95,7 @@ namespace Surfvind_2011
                 }
                 return list;
             }
-        }
+        }*/
 
         public String InsertData(SurfvindData data)
         {
@@ -118,7 +118,10 @@ namespace Surfvind_2011
                             "',minSpeed ='" + mes.windSpeedMin +
                             "',airTemp ='" + mes.firstExternalTemperature +
                             "',waterTemp ='" + mes.batteryVoltage +
-                            "',moisture ='" + mes.firstExternalHumidity+"'";
+                            "',moisture ='" + mes.firstExternalHumidity +
+                            "',rainFall ='" + mes.rainFall +
+                            "',airPressure ='" + mes.airPressure +
+                            "'";
 
                         using (DbCommand cmd = GetDBCommand(cmdText, conn))
                         {
@@ -246,7 +249,7 @@ namespace Surfvind_2011
             }
         }
 
-
+/*
         public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
         {
             string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
@@ -274,7 +277,7 @@ namespace Surfvind_2011
                 }
                 return list;
             }
-        }
+        }*/
 
         public List<WindRecord> GetListBetweenDate2(DateTime startDate, DateTime endDate)
         {
@@ -447,10 +450,11 @@ namespace Surfvind_2011
                     currWind.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
                     currWind.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
                     currWind.MinSpeed = float.Parse(reader["minSpeed"].ToString());
-                    // TODO, uncomment next two lines when the database has posts for temperature
                     currWind.AverageAirTemp = float.Parse(reader["airTemp"].ToString());
                     currWind.AverageWaterTemp = float.Parse(reader["waterTemp"].ToString());
                     currWind.Moisture = float.Parse(reader["moisture"].ToString());
+                    currWind.RainFall = float.Parse(reader["rainFall"].ToString());
+                    currWind.AirPressure = float.Parse(reader["airPressure"].ToString());
                 }
             }
 
@@ -500,6 +504,9 @@ namespace Surfvind_2011
         float _averageWaterTemp;
         float _averageAirTemp;
         float _moisture;
+        float _rainFall;
+        float _airPressure;
+
 
 
         public DateTime Time
@@ -562,6 +569,18 @@ namespace Surfvind_2011
         {
             get { return _moisture; }
             set { _moisture = value; }
+        }
+
+        public float AirPressure
+        {
+            get { return _airPressure; }
+            set { _airPressure = value; }
+        }
+
+        public float RainFall
+        {
+            get { return _rainFall; }
+            set { _rainFall = value; }
         }
     }
 }

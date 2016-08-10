@@ -125,7 +125,10 @@ namespace Surfvind_2011
         public string timeStamp { get; set; }
 
         [DataMember]
-        public float rainSensor { get; set; }
+        public float rainFall { get; set; }
+
+        [DataMember]
+        public float airPressure { get; set; }
     }
 
     [DataContract]
@@ -146,6 +149,7 @@ namespace Surfvind_2011
             batteryVoltage = new List<float>();
             timeStamp = new List<string>();
             rainSensor = new List<float>();
+            airPressure = new List<float>();
         }
         [DataMember]
         public List<float> windSpeedMin { get; set; }
@@ -177,6 +181,9 @@ namespace Surfvind_2011
 
         [DataMember]
         public List<float> rainSensor { get; set; }
+
+        [DataMember]
+        public List<float> airPressure { get; set; }
     }
 
     [DataContract]
