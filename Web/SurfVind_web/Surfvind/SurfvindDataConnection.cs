@@ -229,14 +229,16 @@ namespace Surfvind_2011
                             list.windDirectionMin.Add(float.Parse(reader["minDir"].ToString()));
                             list.windSpeedAvg.Add(float.Parse(reader["averageSpeed"].ToString()));
                             list.windSpeedMax.Add(float.Parse(reader["maxSpeed"].ToString()));
-                         /*   list.windSpeedMin;
-                            list.rainSensor;
-                            list.onBoardHumidity;
-                            list.onBoardTemperature;
-                            list.batteryVoltage;
-                            list.firstExternalHumidity;
-                            list.firstExternalTemperature;
-                           */ 
+                            list.windSpeedMin.Add(float.Parse(reader["minSpeed"].ToString()));
+                            list.rainFall.Add(float.Parse(reader["rainFall"].ToString()));
+                            list.airPressure.Add(float.Parse(reader["airPressure"].ToString())); ;
+                            //list.onBoardHumidity;
+                            //list.onBoardTemperature;
+                            list.batteryVoltage.Add(float.Parse(reader["waterTemp"].ToString())); ;
+                            list.airPressure.Add(float.Parse(reader["airPressure"].ToString())); ;
+                            //list.firstExternalHumidity;
+                            //list.firstExternalTemperature;
+
                         }
                         catch (Exception ee) { }
                     }

@@ -148,7 +148,7 @@ namespace Surfvind_2011
             firstExternalTemperature = new List<float>();
             batteryVoltage = new List<float>();
             timeStamp = new List<string>();
-            rainSensor = new List<float>();
+            rainFall = new List<float>();
             airPressure = new List<float>();
         }
         [DataMember]
@@ -180,7 +180,7 @@ namespace Surfvind_2011
         public List<string> timeStamp { get; set; }
 
         [DataMember]
-        public List<float> rainSensor { get; set; }
+        public List<float> rainFall { get; set; }
 
         [DataMember]
         public List<float> airPressure { get; set; }
