@@ -122,7 +122,7 @@ namespace Surfvind_2011
         [DataMember]
         public float batteryVoltage { get; set; }
         [DataMember]
-        public string timeStamp { get; set; }
+        public string time { get; set; }
 
         [DataMember]
         public float rainFall { get; set; }

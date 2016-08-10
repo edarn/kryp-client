@@ -109,7 +109,7 @@ namespace Surfvind_2011
                     conn.Open();
                     foreach (SurfvindMeasurement mes in data.surfvindMeasurements)
                     {
-                        string cmdText = baseText + " time = '" + mes.timeStamp +
+                        string cmdText = baseText + " time = '" + mes.time +
                             "', averageDir ='" + mes.windDirectionAvg +
                             "',maxDir ='" + mes.windDirectionMax +
                             "',minDir ='" + mes.windDirectionMin +
