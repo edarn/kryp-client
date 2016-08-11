@@ -197,28 +197,29 @@ public class KrypgrundsService extends IOIOService {
                         if (frequency > 0) {
                             System.out.println("REGN frequency = " + frequency);
                             if (frequency < 0.5) {
-                                nbrRainPulses += 2;
+                                nbrRainPulses = 2;
                             } else {
-                                nbrRainPulses += frequency * (System.currentTimeMillis() - rainMeasurementTime) / 1000;
+                                nbrRainPulses = frequency * (System.currentTimeMillis() - rainMeasurementTime) / 1000;
                             }
                         }
                         rainMeasurementTime = System.currentTimeMillis();
 
                         System.out.println("REGN Antal pulser: " + nbrRainPulses);
-                        oneMeasurement.rainSensor = nbrRainPulses;
+                        oneMeasurement.rainFall = nbrRainPulses;
+
 
                         Helper.BarometricPressure preassure = helper.GetBarometric();
 
                         if (preassure.okReading) {
                             System.out.println("Preassure is: " + preassure.pressure);
-                            oneMeasurement.airPreassure = preassure.pressure;
+                            oneMeasurement.airPressure = preassure.pressure;
                         }
 
                         //tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
                         System.out.println(oneMeasurement.getJSON());
 
                         if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
-                                != -40) {
+                                != -40  || oneMeasurement.airPressure != 0) {
                             if (oneMeasurement.windSpeedAvg == -1) oneMeasurement.windSpeedAvg = 0;
 
                             rawSurfvindsMeasurements.add(oneMeasurement);
@@ -293,7 +294,7 @@ public class KrypgrundsService extends IOIOService {
                     debugText = helper.SendDataToServer(krypgrundHistory, ServiceMode.Krypgrund);
                     timeForLastSendData = System.currentTimeMillis();
                 } else if (serviceMode == ServiceMode.Survfind) {
-                    debugText += helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
+                    debugText = helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
                     timeForLastSendData = System.currentTimeMillis();
                 }
 
@@ -503,8 +504,8 @@ public class KrypgrundsService extends IOIOService {
                     status.voltage = oneReading.batteryVoltage;
                     status.moistureInne = oneReading.firstExternalHumidity;
                     status.temperatureInne = oneReading.firstExternalTemperature;
-                    status.rain = oneReading.rainSensor;
-                    status.airpreassure = (int) oneReading.airPreassure;
+                    status.rain = oneReading.rainFall;
+                    status.airpreassure = (int) oneReading.airPressure;
                 }
             }
             if (surfvindHistory != null)
@@ -522,7 +523,7 @@ public class KrypgrundsService extends IOIOService {
                     status.moistureUte = oneReading.moistureUte;
                     status.temperatureUte = oneReading.temperatureUte;
                     //status.rain = oneReading.;
-                    //status.airpreassure = (int) oneReading.airPreassure;
+                    //status.airpreassure = (int) oneReading.airPressure;
                 }
             }
             if (krypgrundHistory != null)

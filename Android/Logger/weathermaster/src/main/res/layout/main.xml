@@ -27,14 +27,7 @@
                 <RelativeLayout android:id="@+id/dick" android:layout_width="match_parent" android:layout_height="wrap_content"
                               android:orientation="horizontal" android:layout_marginTop="15dp" android:layout_marginBottom="15dp"
                     >
-                    <TextView
-                            android:id="@+id/textView1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#b0000000"
-                            android:text="Name: "
-                            android:textColor="#ffffff"
-                            android:textSize="35dp"/>
+
                     <TextView
                             android:id="@+id/stationName"
                             android:layout_width="wrap_content"
@@ -52,8 +45,25 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"  android:src="@drawable/settings_button" android:scaleType="centerInside"/>
 
-                </RelativeLayout>
+                    <TextView
+                            android:id="@+id/textView1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#b0000000"
+                            android:text="Name: "
+                            android:textColor="#ffffff"
+                            android:textSize="35dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
 
+                </RelativeLayout>
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/noConnectionContainer" android:visibility="gone">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Controller Unit NOT Detected" android:textSize="40dp" android:textColor="#ff0000"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connect controller to phone with USB cable (or BlueTooth - pair with pin code '4545') and wait a minute. If this message still occurs, please turn off and on the Controller Unit." android:textColor="#ff0000" android:textSize="18dp"/>
+
+                </LinearLayout>
                 <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -351,12 +361,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/noConnectionContainer" android:visibility="gone">
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Controller Unit NOT Detected" android:textSize="40dp" android:textColor="#ff0000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connect controller to phone with USB cable (or BlueTooth - pair with pin code '4545') and wait a minute. If this message still occurs, please turn off and on the Controller Unit." android:textColor="#ff0000" android:textSize="18dp"/>
-
-                </LinearLayout>
 
                 <ToggleButton android:id="@+id/showDebugButton" android:layout_width="wrap_content"
                               android:layout_height="wrap_content" android:textOn="Hide Debug"

@@ -101,7 +101,7 @@ public class KrypgrundGUI extends Activity {
     protected void onResume() {
         super.onResume();
         if (kryp != null) {
-            kryp.updateSettings();
+            kryp.updateSettings(SetupActivity.SETTINGS_FILE);
         }
     }
 
@@ -135,7 +135,7 @@ public class KrypgrundGUI extends Activity {
                 kryp = ((KrypgrundsService.MyBinder) service).getService();
                 Toast.makeText(KrypgrundGUI.this, "Connected", Toast.LENGTH_SHORT).show();
                 serviceBound = true;
-                kryp.updateSettings();
+                kryp.updateSettings(SetupActivity.SETTINGS_FILE);
             }
 
             @Override
@@ -219,7 +219,7 @@ public class KrypgrundGUI extends Activity {
 
         final LinearLayout debugContainer = (LinearLayout) findViewById(R.id.debugContainer);
         if(debugContainer != null) {
-            debugContainer.setVisibility(View.GONE);
+         //   debugContainer.setVisibility(View.GONE);
         }
 
         noConnectionContainer = (LinearLayout) findViewById(R.id.noConnectionContainer);
@@ -320,7 +320,7 @@ public class KrypgrundGUI extends Activity {
                 .unit("C")
                 .build();
 	    */
-        
+        /*
         final ArrayList<SurfvindStats> list = new ArrayList<SurfvindStats>();
 
         SurfvindStats s = new SurfvindStats();
@@ -337,9 +337,9 @@ public class KrypgrundGUI extends Activity {
         s.firstExternalHumidity = 9.10f;
         s.firstExternalTemperature = 10.11f;
 
-        s.rainSensor = 11.12f;
-        s.airPreassure = 123;
-        s.rainSensor=12.3f;
+        s.rainFall = 11.12f;
+        s.airPressure = 123;
+        s.rainFall=12.3f;
         
         list.add(s);
         s = new SurfvindStats();
@@ -356,8 +356,8 @@ public class KrypgrundGUI extends Activity {
         s.firstExternalHumidity = 19.10f;
         s.firstExternalTemperature = 20.11f;
 
-        s.rainSensor = 21.12f;
-        s.airPreassure = 1123;
+        s.rainFall = 21.12f;
+        s.airPressure = 1123;
 
         list.add(s);
 
@@ -369,7 +369,7 @@ public class KrypgrundGUI extends Activity {
                 return null;
             }
         }.execute();
-
+*/
         
 
     }
@@ -380,7 +380,7 @@ public class KrypgrundGUI extends Activity {
         super.onStart();
 
         //Launch setup activty
-        SharedPreferences preferences = getSharedPreferences("TNA_Sensor", Activity.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(SetupActivity.SETTINGS_FILE, Activity.MODE_PRIVATE);
 
         // String type = preferences.getString(SetupActivity.SENSOR_TYPE_RADIO, KrypgrundsService.KRYPGRUND);
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
@@ -461,8 +461,8 @@ public class KrypgrundGUI extends Activity {
                     cs = DateFormat.format("yyyy-MM-dd - kk:mm:ss", status.timeForLastSendData);
                     sb.append(cs.toString());
 
+                    sb.append("\n StatusMessage:\n" +status.statusMessage);
                     debugText.setText(sb.toString());
-                    debugText.setText(status.statusMessage);
 
                     if (noConnectionContainer != null) {
                         if (status.isIOIOConnected) {

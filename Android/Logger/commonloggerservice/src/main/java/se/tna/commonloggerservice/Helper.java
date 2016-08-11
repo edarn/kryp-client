@@ -152,46 +152,7 @@ public class Helper {
                 i2cOnBoard = ioio.openTwiMaster(2, TwiMaster.Rate.RATE_100KHz, false);
 
 
-                try { //Initialize barometric sensor and obtain calibration data.
-                    byte toSend[] = new byte[1];
-                    byte toReceive[] = new byte[4];
-
-                    toSend[0] = (byte) 0x1E;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    Thread.sleep(200);
-
-                    toSend[0] = (byte) 0x40;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-
-                    toSend[0] = (byte) 0xA0;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-
-                    toSend[0] = (byte) 0xA2;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c1 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-
-                    toSend[0] = (byte) 0xA4;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c2 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-
-                    toSend[0] = (byte) 0xA6;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c3 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-
-                    toSend[0] = (byte) 0xA8;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c4 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-
-                    toSend[0] = (byte) 0xAA;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c5 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-
-                    toSend[0] = (byte) 0xAC;
-                    i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
-                    c6 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                initializeBarometricSensor();
                 // }
 
                 // On board sensors. Are they used?
@@ -207,6 +168,49 @@ public class Helper {
             } catch (Exception e) {
                 e.printStackTrace();
             } // USE FALSE for I2C otherwise to high voltage!!!
+        }
+    }
+
+    public void initializeBarometricSensor() {
+        try { //Initialize barometric sensor and obtain calibration data.
+            byte toSend[] = new byte[1];
+            byte toReceive[] = new byte[4];
+
+            toSend[0] = (byte) 0x1E;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            Thread.sleep(200);
+
+            toSend[0] = (byte) 0x40;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+
+            toSend[0] = (byte) 0xA0;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+
+            toSend[0] = (byte) 0xA2;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c1 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+
+            toSend[0] = (byte) 0xA4;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c2 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+
+            toSend[0] = (byte) 0xA6;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c3 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+
+            toSend[0] = (byte) 0xA8;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c4 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+
+            toSend[0] = (byte) 0xAA;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c5 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+
+            toSend[0] = (byte) 0xAC;
+            i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
+            c6 = ((toReceive[0] & 0xFF) << 8) + (toReceive[1] & 0xFF);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -331,6 +335,7 @@ public class Helper {
         byte toSend[] = new byte[1];
         byte toReceive[] = new byte[4];
         try {
+            if (c1 == 0) initializeBarometricSensor();
             //Get raw Pressure.
             toSend[0] = (byte) 0x40;
             i2cInne.writeRead(barometricAdress, false, toSend, 1, toReceive, 2);
@@ -496,7 +501,7 @@ public class Helper {
         commandExecutor.start();
         try {
             // Give command 4 seconds for command to finish
-            commandExecutor.join(4000);
+            commandExecutor.join(40000);
             if (commandExecutor.isAlive()) {
                 commandExecutor.interrupt();
                 tempAndHumidity.pressure = 0;
@@ -729,7 +734,7 @@ public class Helper {
 
                     body = g.toJson(packet);
                 } else if (mode == ServiceMode.Survfind) {
-                    postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/SendSurfvindMeasurements";
+                    postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/PostSurfvindMeasurements";
                     MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
                     SurfvindPacket packet = new SurfvindPacket();
                     packet.id = imei;
@@ -754,7 +759,6 @@ public class Helper {
                     SendSuccess = false;
                     sb.append("Fail: ");
                 }
-                sb.append(response.body().string());
             }
         } catch (RuntimeException runtime) {
             sb.append("RuntimeException" + runtime.toString());

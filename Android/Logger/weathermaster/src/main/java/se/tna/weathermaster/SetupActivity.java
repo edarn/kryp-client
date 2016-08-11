@@ -48,6 +48,7 @@ public class SetupActivity extends Activity {
     private static final String GPS_LONGITUDE = "Longitude";
     private static final String GPS_LATITUDE = "Latitude";
     private String stationType = KrypgrundsService.SURFVIND;
+    public static final String SETTINGS_FILE = "TNA_Surfvind_Settings";
     private EditText name;
     private EditText latitude;
     private EditText longitude;
@@ -76,7 +77,7 @@ public class SetupActivity extends Activity {
         measurementDelay = (RadioGroup) findViewById(R.id.measurementDelay);
 
         // Find stored settings
-        prefs = getSharedPreferences("TNA_Sensor", MODE_PRIVATE);
+        prefs = getSharedPreferences(SETTINGS_FILE, MODE_PRIVATE);
         prefsEditor = prefs.edit();
 
         updateFrequency.check(prefs.getInt(SEND_TO_SERVER_DELAY_VIEW,
@@ -116,6 +117,7 @@ public class SetupActivity extends Activity {
 
                 prefsEditor.apply();
                 prefsEditor.commit();
+
 
                 LocationData l = new LocationData();
 

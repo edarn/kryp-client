@@ -33,31 +33,41 @@
                 </LinearLayout>
 
 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_gravity="center" android:layout_marginTop="10dp">
-                    <TextView
-                        android:id="@+id/textView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                <RelativeLayout android:id="@+id/dick" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="15dp" android:layout_marginBottom="15dp"
+                    >
 
-
-                        android:layout_gravity="center_horizontal"
-                        android:background="#b0000000"
-                        android:text="Station: "
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/large_font"/>
                     <TextView
                         android:id="@+id/stationName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:layout_gravity="center_horizontal"
                         android:background="#b0000000"
                         android:text="Zebra"
+                        android:layout_toRightOf="@+id/textView1"
                         android:textColor="#ff00ff"
-                        android:textSize="@dimen/large_font"/>
+                        android:layout_marginRight="45dp"
+                        android:textSize="35dp"/>
+                    <ImageView
+                        android:id="@+id/settingsButton"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"  android:src="@drawable/settings_button" android:scaleType="centerInside"/>
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#b0000000"
+                        android:text="Name: "
+                        android:textColor="#ffffff"
+                        android:textSize="35dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                </RelativeLayout>
+
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -66,134 +76,182 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center_vertical"
-                        android:paddingLeft="60dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="@dimen/margin">
-                        <TextView
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
 
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#b0000000"
-                            android:text="WindSpeed (m/s)"
-                            android:textColor="#ffffff"
-                            android:textSize="@dimen/medium_font"/>
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_size"
-                                android:layout_height="@dimen/icon_size"
-                                android:layout_gravity="left"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/speedometer"/>
-
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="15dp">
                             <TextView
-                                android:id="@+id/textWindSpeed"
+
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
+                                android:layout_marginTop="10dp"
                                 android:background="#b0000000"
-                                android:text="0"
+                                android:text="WindSpeed (m/s)"
                                 android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
-                        </LinearLayout>
-                        <TextView
+                                android:textSize="20dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
 
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#b0000000"
-                            android:text="Temperature (\u2103)"
-                            android:textColor="#ffffff"
-                            android:textSize="@dimen/medium_font"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_size"
-                                android:layout_height="@dimen/icon_size"
-                                android:layout_gravity="left"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/temperature"/>
-
-                            <TextView
-                                android:id="@+id/temperatureText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text="-40"
-                                android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
-
-                        </LinearLayout>
-                        <TextView
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#b0000000"
-                            android:text="Humidity (%)"
-                            android:textColor="#ffffff"
-                            android:textSize="@dimen/medium_font"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_size"
-                                android:layout_height="@dimen/icon_size"
-                                android:layout_gravity="left"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/water_drop"/>
-
-                            <TextView
-                                android:id="@+id/humidText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="#b0000000"
-                                android:text="0"
-                                android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
-
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#b0000000"
-                            android:text="Power (V)"
-                            android:textColor="#ffffff"
-                            android:textSize="@dimen/medium_font"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-                            <FrameLayout android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
                                 <ImageView
-                                    android:layout_width="@dimen/icon_size"
-                                    android:layout_height="@dimen/icon_size"
-                                    android:layout_gravity="center_vertical"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="left"
                                     android:scaleType="centerInside"
-                                    android:src="#00FF00"/>
+                                    android:src="@drawable/speedometer"/>
+
+                                <TextView
+                                    android:id="@+id/textWindSpeed"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+                            </LinearLayout>
+                            <TextView
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:background="#b0000000"
+                                android:text="Temperature (\u2103)"
+                                android:textColor="#ffffff"
+                                android:textSize="20dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
                                 <ImageView
-                                    android:layout_width="@dimen/icon_size"
-                                    android:layout_height="@dimen/icon_size"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="left"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/temperature"/>
+
+                                <TextView
+                                    android:id="@+id/temperatureText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+
+                            </LinearLayout>
+                            <TextView
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:background="#b0000000"
+                                android:text="Humidity (%)"
+                                android:textColor="#ffffff"
+                                android:textSize="20dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="left"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/water_drop"/>
+
+                                <TextView
+                                    android:id="@+id/humidText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_gravity="center"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="15dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:background="#b0000000"
+                                android:text="Power (V)"
+                                android:textColor="#ffffff"
+                                android:textSize="20sp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <FrameLayout android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                    <ImageView
+                                        android:layout_width="55dp"
+                                        android:layout_height="50dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:scaleType="centerInside"
+                                        android:src="#00FF00"/>
+                                    <ImageView
+                                        android:layout_width="60dp"
+                                        android:layout_height="60dp"
+                                        android:layout_gravity="center_vertical"
+
+                                        android:scaleType="centerInside"
+
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="10dp"
+
+                                        android:src="@drawable/battery_icon"/>
+                                </FrameLayout>
+                                <TextView
+                                    android:id="@+id/batteryText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+
+                            </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:background="#b0000000"
+                                android:text="Lufttryck (hPa)"
+                                android:textColor="#ffffff"
+                                android:textSize="20sp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
                                     android:layout_gravity="center_vertical"
 
                                     android:scaleType="centerInside"
@@ -201,27 +259,63 @@
                                     android:paddingLeft="10dp"
                                     android:paddingRight="10dp"
 
-                                    android:src="@drawable/battery_icon"/>
-                            </FrameLayout>
+                                    android:src="@drawable/lufttryck"/>
+                                <TextView
+                                    android:id="@+id/lufttryckText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+
+                            </LinearLayout>
                             <TextView
-                                android:id="@+id/batteryText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
+                                android:layout_marginTop="10dp"
                                 android:background="#b0000000"
-                                android:text="0"
+                                android:text="Nederbörd (mm/h)"
                                 android:textColor="#ffffff"
-                                android:textSize="@dimen/large_font"/>
+                                android:textSize="20sp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
 
+                                <ImageView
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:layout_gravity="center_vertical"
+
+                                    android:scaleType="centerInside"
+
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+
+                                    android:src="@drawable/weather_cloud_sun_rain_vector"/>
+                                <TextView
+                                    android:id="@+id/regnText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#b0000000"
+                                    android:text="0"
+                                    android:textColor="#ffffff"
+                                    android:textSize="35sp"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
                     </LinearLayout>
+
 
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_weight="1">
+                        android:layout_weight="2">
 
                         <ImageView
                             android:id="@+id/arrow_background"

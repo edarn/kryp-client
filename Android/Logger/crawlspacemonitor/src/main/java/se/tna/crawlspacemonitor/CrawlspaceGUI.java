@@ -52,7 +52,6 @@ public class CrawlspaceGUI extends Activity {
     private TextView textTempUte;
     private TextView textTempExtra;
 
-    private TextView textVoltage;
 
     private TextView debugText;
     private TextView initializedText;
@@ -366,7 +365,6 @@ public class CrawlspaceGUI extends Activity {
                     sb.append(cs.toString());
 
                     debugText.setText(sb.toString());
-                    debugText.setText(status.statusMessage);
                     //debugText.setText(status.statusMessage);
 
                     if (noConnectionContainer != null) {

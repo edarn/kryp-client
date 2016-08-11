@@ -19,8 +19,8 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
     public float firstExternalHumidity = 0;
     public float firstExternalTemperature = 0;
 
-    public float rainSensor = 0;
-    public float airPreassure;
+    public float rainFall = 0;
+    public float airPressure;
 
 
     @Override
@@ -43,8 +43,8 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
             ret.put("ExternalTemperature1", String.format(Locale.ENGLISH, "%.1f", onBoardTemperature));
             ret.put("ExternalHumidity1", String.format(Locale.ENGLISH, "%.1f", onBoardHumidity));
 
-            ret.put("RainPulses", String.format(Locale.ENGLISH, "%.1f", rainSensor));
-            ret.put("AirPreassure", String.format(Locale.ENGLISH, "%.1f", airPreassure));
+            ret.put("RainPulses", String.format(Locale.ENGLISH, "%.1f", rainFall));
+            ret.put("AirPreassure", String.format(Locale.ENGLISH, "%.1f", airPressure));
 
             ret.put("TimeStamp", time);
 
@@ -95,8 +95,8 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
                 total.onBoardHumidity += stat.onBoardHumidity;
                 total.firstExternalHumidity += stat.firstExternalHumidity;
                 total.firstExternalTemperature += stat.firstExternalTemperature;
-                total.rainSensor += stat.rainSensor;
-                total.airPreassure += stat.airPreassure;
+                total.rainFall += stat.rainFall;
+                total.airPressure += stat.airPressure;
             }
             int size = rawMeasurements.size();
             total.windDirectionAvg /= size;
@@ -106,8 +106,9 @@ public class SurfvindStats extends Stats implements Comparable<SurfvindStats> {
             total.onBoardHumidity /= size;
             total.firstExternalTemperature /= size;
             total.firstExternalHumidity /= size;
-            total.rainSensor /= size;
-            total.airPreassure /= size;
+            //total.rainFall /= size; //Do not uncomment. Rainfall is the amount of pulses and should
+            //not be average, only summed. Web will then add all pulses for an hour and display the rain amount.
+            total.airPressure /= size;
 
         }
         return total;
