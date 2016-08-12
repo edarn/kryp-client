@@ -752,7 +752,6 @@ public class Helper {
                 if (response.isSuccessful())
                 {
                     measurements.subList(0, nbrOfItemsToSend).clear();
-                    sb.append(" Success");
                     sb.append(response.body().string());
                 }else
                 {

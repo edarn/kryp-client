@@ -27,8 +27,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -53,7 +55,6 @@ public class CrawlspaceGUI extends Activity {
     private TextView textTempExtra;
 
 
-
     private TextView debugText;
     private TextView initializedText;
     private TextView fanStatus;
@@ -72,6 +73,8 @@ public class CrawlspaceGUI extends Activity {
 
     private LinearLayout noConnectionContainer;
     private boolean serviceBound = false;
+
+    private GraphView graph;
 
 
     @Override
@@ -92,27 +95,21 @@ public class CrawlspaceGUI extends Activity {
         //region CHART REGION
 
 
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
-        LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(new DataPoint[]{
-                new DataPoint(0, 1.2),
-                new DataPoint(1, 23),
-                new DataPoint(2, 3),
-                new DataPoint(3, 9),
-                new DataPoint(4, 7)
-        });
-        graph.addSeries(series2);
+        graph = (GraphView) findViewById(R.id.graph);
+        // set date label formatter
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
 
-
-        //endregion
-
+/*
+        graph.getViewport().setMinX(d1.getTime());
+        graph.getViewport().setMaxX(d3.getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
+*/
+// as we use dates as labels, the human rounding to nice readable numbers
+// is not nessecary
+        graph.getGridLabelRenderer().setHumanRounding(false);
+        graph.addSeries(dataPoints.getDataSeries(ChartDataPoints.SeriesType.AbsolutFuktInne));
+        graph.addSeries(dataPoints.getDataSeries(ChartDataPoints.SeriesType.AbsolutFuktUte));
 
         textStationName = (TextView) findViewById(R.id.stationName);
 
@@ -125,13 +122,13 @@ public class CrawlspaceGUI extends Activity {
         batteryText = (TextView) findViewById(R.id.batteryText);
 
 
-          textFuktInne = (TextView) findViewById(R.id.textHumidIn);
-          textFuktUte= (TextView) findViewById(R.id.textHumidOut);
-          textFuktExtra= (TextView) findViewById(R.id.textHumidExtra);
+        textFuktInne = (TextView) findViewById(R.id.textHumidIn);
+        textFuktUte = (TextView) findViewById(R.id.textHumidOut);
+        textFuktExtra = (TextView) findViewById(R.id.textHumidExtra);
 
-         textTempInne= (TextView) findViewById(R.id.textTempIn);
-         textTempUte = (TextView) findViewById(R.id.textTempOut);
-         textTempExtra=  (TextView) findViewById(R.id.textTempExtra);
+        textTempInne = (TextView) findViewById(R.id.textTempIn);
+        textTempUte = (TextView) findViewById(R.id.textTempOut);
+        textTempExtra = (TextView) findViewById(R.id.textTempExtra);
 
 
         ImageView settingsButton = (ImageView) findViewById(R.id.settingsButton);
@@ -200,54 +197,7 @@ public class CrawlspaceGUI extends Activity {
             }
         };
 
-        timer.scheduleAtFixedRate(t, 1000, 5000);
-
-
-        final ArrayList<KrypgrundStats> list = new ArrayList<>();
-
-//        //region DEBUG DATA
-//        KrypgrundStats s = new KrypgrundStats();
-//        s.absolutFuktInne = 1.2f;
-//        s.absolutFuktUte = 2.3f;
-//        s.absolutFuktExtra = 9.9f;
-//        s.moistureInne = 3.4f;
-//        s.moistureUte = 4.5f;
-//        s.moistureExtra = 9.9f;
-//        s.batteryVoltage = 15.6f;
-//        s.fanOn = true;
-//
-//        s.temperatureInne = 7.8f;
-//        s.temperatureUte = 8.9f;
-//        s.temperatureExtra = 9.9f;
-//
-//        list.add(s);
-//        s = new KrypgrundStats();
-//        s.absolutFuktInne = 1.2f;
-//        s.absolutFuktUte = 2.3f;
-//        s.absolutFuktExtra = 9.9f;
-//        s.moistureInne = 3.4f;
-//        s.moistureUte = 4.5f;
-//        s.moistureExtra = 9.9f;
-//        s.batteryVoltage = 15.6f;
-//        s.fanOn = true;
-//
-//        s.temperatureInne = 7.8f;
-//        s.temperatureUte = 8.9f;
-//        s.temperatureExtra = 9.9f;
-//        list.add(s);
-//
-//        new AsyncTask<Void, Void, Void>() {
-//
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                Log.d("TNA", Helper.SendDataToServer(list, KrypgrundsService.ServiceMode.Krypgrund));
-//                return null;
-//            }
-//        }.execute();
-//
-        //endregion
-
-
+        timer.scheduleAtFixedRate(t, 2000, 5000);
     }
 
 
@@ -302,8 +252,7 @@ public class CrawlspaceGUI extends Activity {
         SharedPreferences preferences = getSharedPreferences("TNA_Crawlspace_Settings", Activity.MODE_PRIVATE);
 
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
-        if (name == null || name.isEmpty())
-        {
+        if (name == null || name.isEmpty()) {
 
             // 1. Instantiate an AlertDialog.Builder with its constructor
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -336,10 +285,11 @@ public class CrawlspaceGUI extends Activity {
     private void updateUI() {
         if (null != loggerService) {
             final StatusOfService status = loggerService.getStatus();
-            //dataPoints.insertData(status);
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    dataPoints.insertData(status);
 
                     textFuktExtra.setText(String.format("%.1f", status.moistureExtra));
                     textFuktInne.setText(String.format("%.1f", status.moistureInne));
@@ -350,7 +300,7 @@ public class CrawlspaceGUI extends Activity {
                     textTempUte.setText(String.format("%.1f", status.temperatureUte));
 
                     batteryText.setText(String.format("%.1f", status.voltage));
-                   // textFanOn.setText("Fan On =" + status.fanOn);
+                    // textFanOn.setText("Fan On =" + status.fanOn);
 
                     // Is ioio chip initialized etc
                     if (status.isIOIOConnected)
@@ -376,8 +326,8 @@ public class CrawlspaceGUI extends Activity {
                     cs = DateFormat.format("yyyy-MM-dd - kk:mm:ss", status.timeForLastSendData);
                     sb.append(cs.toString());
 
+                    sb.append(status.statusMessage);
                     debugText.setText(sb.toString());
-                    //debugText.setText(status.statusMessage);
 
                     if (noConnectionContainer != null) {
                         if (status.isIOIOConnected) {
@@ -390,7 +340,6 @@ public class CrawlspaceGUI extends Activity {
             });
         }
     }
-
 }
 
 

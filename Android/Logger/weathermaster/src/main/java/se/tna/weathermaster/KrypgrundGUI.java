@@ -260,67 +260,6 @@ public class KrypgrundGUI extends Activity {
 
         compassImageView = (ImageView) findViewById(R.id.arrow);
 
-
-/*
-		Timer te = new Timer();
-
-		TimerTask tu = new TimerTask() {
-			
-			@Override
-			public void run() {
-				
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-                        temperatureImageView.setRotation(angle);
-                        moistureImageView.setRotation(angle);
-                        i+=1;
-					}
-				});
-			}
-		};
-		
-		te.scheduleAtFixedRate(tu, 1,500);
-*/
-	    
-	/*    
-	    Gauge radial = GaugeBuilder.create()
-                .prefWidth(500)
-                .prefHeight(500)
-                .gaugeType(GaugeBuilder.GaugeType.RADIAL)
-                .frameDesign(Gauge.FrameDesign.STEEL)
-                .backgroundDesign(Gauge.BackgroundDesign.DARK_GRAY)
-                .lcdDesign(LcdDesign.STANDARD_GREEN)
-                .lcdDecimals(2)
-                .lcdValueFont(Gauge.LcdFont.LCD)
-                .pointerType(Gauge.PointerType.TYPE14)
-                .valueColor(ColorDef.RED)
-                .knobDesign(Gauge.KnobDesign.METAL)
-                .knobColor(Gauge.KnobColor.SILVER)
-                .sections(new Section[] {
-                    new Section(0, 37, Color.LIME),
-                    new Section(37, 60, Color.YELLOW),
-                    new Section(60, 75, Color.ORANGE})
-                .sectionsVisible(true)
-                .areas(new Section[] {new Section(75, 100, Color.RED)})
-                .areasVisible(true)
-                .markers(new Marker[] {
-                    new Marker(30, Color.MAGENTA),
-                    new Marker(75, Color.AQUAMARINE)})
-                .markersVisible(true)
-                .threshold(40)
-                .thresholdVisible(true)
-                .glowVisible(true)
-                .glowOn(true)
-                .trendVisible(true)
-                .trend(Gauge.Trend.UP)
-                .userLedVisible(true)
-                .bargraph(true)
-                .title("Temperature")
-                .unit("C")
-                .build();
-	    */
-        /*
         final ArrayList<SurfvindStats> list = new ArrayList<SurfvindStats>();
 
         SurfvindStats s = new SurfvindStats();
@@ -369,7 +308,7 @@ public class KrypgrundGUI extends Activity {
                 return null;
             }
         }.execute();
-*/
+
         
 
     }

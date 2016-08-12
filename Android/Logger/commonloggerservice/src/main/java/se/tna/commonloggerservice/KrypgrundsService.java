@@ -506,6 +506,7 @@ public class KrypgrundsService extends IOIOService {
                     status.temperatureInne = oneReading.firstExternalTemperature;
                     status.rain = oneReading.rainFall;
                     status.airpreassure = (int) oneReading.airPressure;
+
                 }
             }
             if (surfvindHistory != null)
@@ -522,6 +523,8 @@ public class KrypgrundsService extends IOIOService {
                     status.temperatureInne = oneReading.temperatureInne;
                     status.moistureUte = oneReading.moistureUte;
                     status.temperatureUte = oneReading.temperatureUte;
+                    status.absolutFuktInne = oneReading.absolutFuktInne;
+                    status.absolutFuktUte = oneReading.absolutFuktUte;
                     //status.rain = oneReading.;
                     //status.airpreassure = (int) oneReading.airPressure;
                 }
