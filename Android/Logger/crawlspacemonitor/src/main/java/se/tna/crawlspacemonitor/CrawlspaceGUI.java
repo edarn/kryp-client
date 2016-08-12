@@ -53,6 +53,7 @@ public class CrawlspaceGUI extends Activity {
     private TextView textTempExtra;
 
 
+
     private TextView debugText;
     private TextView initializedText;
     private TextView fanStatus;
@@ -92,7 +93,7 @@ public class CrawlspaceGUI extends Activity {
 
 
         GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
                 new DataPoint(0, 1),
                 new DataPoint(1, 5),
                 new DataPoint(2, 3),
@@ -100,6 +101,14 @@ public class CrawlspaceGUI extends Activity {
                 new DataPoint(4, 6)
         });
         graph.addSeries(series);
+        LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(new DataPoint[]{
+                new DataPoint(0, 1.2),
+                new DataPoint(1, 23),
+                new DataPoint(2, 3),
+                new DataPoint(3, 9),
+                new DataPoint(4, 7)
+        });
+        graph.addSeries(series2);
 
 
         //endregion
@@ -123,6 +132,8 @@ public class CrawlspaceGUI extends Activity {
          textTempInne= (TextView) findViewById(R.id.textTempIn);
          textTempUte = (TextView) findViewById(R.id.textTempOut);
          textTempExtra=  (TextView) findViewById(R.id.textTempExtra);
+
+
         ImageView settingsButton = (ImageView) findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,6 +340,7 @@ public class CrawlspaceGUI extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
                     textFuktExtra.setText(String.format("%.1f", status.moistureExtra));
                     textFuktInne.setText(String.format("%.1f", status.moistureInne));
                     textFuktUte.setText(String.format("%.1f", status.moistureUte));
