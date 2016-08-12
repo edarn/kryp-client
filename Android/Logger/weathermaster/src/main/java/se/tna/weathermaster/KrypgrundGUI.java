@@ -219,7 +219,7 @@ public class KrypgrundGUI extends Activity {
 
         final LinearLayout debugContainer = (LinearLayout) findViewById(R.id.debugContainer);
         if(debugContainer != null) {
-         //   debugContainer.setVisibility(View.GONE);
+            debugContainer.setVisibility(View.GONE);
         }
 
         noConnectionContainer = (LinearLayout) findViewById(R.id.noConnectionContainer);
@@ -259,7 +259,7 @@ public class KrypgrundGUI extends Activity {
         timer.scheduleAtFixedRate(t, 1000, 5000);
 
         compassImageView = (ImageView) findViewById(R.id.arrow);
-
+/*
         final ArrayList<SurfvindStats> list = new ArrayList<SurfvindStats>();
 
         SurfvindStats s = new SurfvindStats();
@@ -309,7 +309,7 @@ public class KrypgrundGUI extends Activity {
             }
         }.execute();
 
-        
+        */
 
     }
 
