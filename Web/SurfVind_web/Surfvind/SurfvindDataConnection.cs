@@ -9,6 +9,10 @@ using System.Data.Common;
 using System.Web.Configuration;
 using System.Configuration;
 using System.Globalization;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.Text;
+using System.ServiceModel.Web;
 
 namespace Surfvind_2011
 {
@@ -158,6 +162,12 @@ namespace Surfvind_2011
             DateTime now;
             switch (interval)
             {
+                case TimeInterval.Now:
+                    now = DateTime.Now.AddMinutes(-15);
+                    firstPart = "SELECT *";
+                    timePart = $"time > '{now}' order by time desc limit 1";
+                    groupPart = ""; //Intentionally left blank.
+                    break;
                 case TimeInterval.OneHour:
                     now = DateTime.Now.AddHours(-1);
                     firstPart = "SELECT *";
@@ -231,11 +241,10 @@ namespace Surfvind_2011
                             list.windSpeedMax.Add(float.Parse(reader["maxSpeed"].ToString()));
                             list.windSpeedMin.Add(float.Parse(reader["minSpeed"].ToString()));
                             list.rainFall.Add(float.Parse(reader["rainFall"].ToString()));
-                            list.airPressure.Add(float.Parse(reader["airPressure"].ToString())); ;
+                            list.airPressure.Add(float.Parse(reader["airPressure"].ToString())); 
                             //list.onBoardHumidity;
                             //list.onBoardTemperature;
                             list.batteryVoltage.Add(float.Parse(reader["waterTemp"].ToString())); ;
-                            list.airPressure.Add(float.Parse(reader["airPressure"].ToString())); ;
                             //list.firstExternalHumidity;
                             //list.firstExternalTemperature;
 
@@ -243,8 +252,6 @@ namespace Surfvind_2011
                         catch (Exception ee) { }
                     }
                     reader.Close();
-
-
 
                 }
                 return list;
@@ -473,12 +480,16 @@ namespace Surfvind_2011
             return currWind;
         }
     }
-
+    [DataContract]
     public class Location : IComparable
     {
+        [DataMember]
         public String Name = "";
+        [DataMember]
         public String imei = "";
+        [DataMember]
         public double Latitud;
+        [DataMember]
         public double Longitude;
         public Location(String i, String j, String Long, String Lat)
         {

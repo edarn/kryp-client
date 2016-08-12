@@ -16,6 +16,8 @@ namespace Surfvind_2011
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "RestService1" in code, svc and config file together.
     public class RestService1 : IRestService1
     {
+
+        private String NOW = "Now";
         private String ONE_HOUR = "OneHour";
         private String FIVE_HOURS = "FiveHours";
         private String ONE_DAY ="OneDay";
@@ -25,6 +27,8 @@ namespace Surfvind_2011
         private TimeInterval ValidateInput(string timeInterval)
         {
             if (timeInterval == null) return TimeInterval.OneMonth;
+            if (timeInterval.Equals(NOW))
+            { return TimeInterval.Now; }
             if (timeInterval.Equals(ONE_HOUR))
             { return TimeInterval.OneHour; }
             if (timeInterval.Equals(FIVE_HOURS))
@@ -126,9 +130,17 @@ namespace Surfvind_2011
         }
         #endregion
 
+        public ActiveStations GetAvailableWeatherStations()
+        {
+            ActiveStations result = new ActiveStations();
+
+            SurfvindDataConnection windData = new SurfvindDataConnection();
+
+            result.stations = windData.GetLocations();
+            return result;
+       }
 
 
-     
 
         public SurfvindMeasurements GetWeatherData(string imei, string timeInterval)
         {

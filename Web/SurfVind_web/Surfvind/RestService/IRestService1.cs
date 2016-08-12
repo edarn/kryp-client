@@ -67,10 +67,17 @@ namespace Surfvind_2011
                     RequestFormat = WebMessageFormat.Json,
                     UriTemplate = "{imei}/GetFirstExternalTemperatureImage")]
         Stream GetFirstExternalTemperatureImage(string imei);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    UriTemplate = "GetAvailableWeatherStations")]
+        ActiveStations GetAvailableWeatherStations();
     }
     public enum TimeInterval
     {
         Invalid,
+        Now,
         OneHour,
         FiveHours,
         OneDay,
@@ -79,8 +86,15 @@ namespace Surfvind_2011
 
     };
 
-
     [DataContract]
+    public class ActiveStations
+    {
+
+        [DataMember]
+        public List<Location> stations;
+    }
+    
+        [DataContract]
     public class SurfvindData
     {
 
