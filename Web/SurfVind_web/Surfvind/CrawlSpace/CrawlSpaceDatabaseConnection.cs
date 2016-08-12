@@ -247,7 +247,7 @@ namespace Surfvind_2011.CrawlSpace
             String result = "Data inserted OK";
             int rowsAffected = 0;
 
-            string baseText = "INSERT INTO " + nameOfDatabase + " SET imei = " + imei +",";
+            string baseText = "INSERT INTO " + nameOfDatabase + " SET imei = '" + imei +"',";
           
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
