@@ -102,7 +102,7 @@ namespace Surfvind_2011
             String result = "Data inserted OK";
             int rowsAffected = 0;
 
-            string baseText = "INSERT INTO " + dbToUse + " SET imei = " + data.id + ", version='" + data.version + "',";
+            string baseText = "INSERT INTO " + dbToUse + " SET imei = '" + data.id + "', version='" + data.version + "',";
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
                 try {
@@ -110,7 +110,7 @@ namespace Surfvind_2011
                     foreach (SurfvindMeasurement mes in data.surfvindMeasurements)
                     {
                         string cmdText = baseText + " time = '" + mes.time +
-                            "', averageDir ='" + mes.windDirectionAvg +
+                            "',averageDir ='" + mes.windDirectionAvg +
                             "',maxDir ='" + mes.windDirectionMax +
                             "',minDir ='" + mes.windDirectionMin +
                             "',averageSpeed ='" + mes.windSpeedAvg +
