@@ -67,23 +67,37 @@ public class SetupActivity extends Activity {
         setContentView(R.layout.setup);
 
         RadioGroup updateFrequency;
-        RadioGroup measurementDelay;
+        RadioGroup measurementDelayRadio;
 
         // Find views
         name = (EditText) findViewById(R.id.stationName);
         latitude = (EditText) findViewById(R.id.latPosition);
         longitude = (EditText) findViewById(R.id.longPosition);
         updateFrequency = (RadioGroup) findViewById(R.id.updateFrequency);
-        measurementDelay = (RadioGroup) findViewById(R.id.measurementDelay);
+        measurementDelayRadio = (RadioGroup) findViewById(R.id.measurementDelay);
 
         // Find stored settings
         prefs = getSharedPreferences(SETTINGS_FILE, MODE_PRIVATE);
         prefsEditor = prefs.edit();
 
-        updateFrequency.check(prefs.getInt(SEND_TO_SERVER_DELAY_VIEW,
-                R.id.oneMinute));
-        measurementDelay.check(prefs.getInt(MEASUREMENT_DELAY_VIEW,
-                R.id.twoSecondsMeasurement));
+        long sendToServerDelay =  prefs.getLong(SEND_TO_SERVER_DELAY_VIEW,
+                R.id.oneMinute);
+        int idToCheck = R.id.oneMinute;
+        if (sendToServerDelay == TimeUnit.MINUTES.toMillis(1)) idToCheck = R.id.oneMinute;
+        if (sendToServerDelay == TimeUnit.MINUTES.toMillis(3)) idToCheck = R.id.threeMinutes;
+        if (sendToServerDelay == TimeUnit.MINUTES.toMillis(5)) idToCheck = R.id.fiveMinutes;
+        if (sendToServerDelay == TimeUnit.MINUTES.toMillis(10)) idToCheck = R.id.tenMinutes;
+
+        updateFrequency.check(idToCheck);
+
+        long measurementDelay = prefs.getLong(MEASUREMENT_DELAY_VIEW, 0);
+        idToCheck = R.id.twoSecondsMeasurement;
+        if (measurementDelay == TimeUnit.SECONDS.toMillis(2)) idToCheck = R.id.twoSecondsMeasurement;
+        if (measurementDelay == TimeUnit.SECONDS.toMillis(10)) idToCheck = R.id.tenSecondsMeasurement;
+        if (measurementDelay == TimeUnit.SECONDS.toMillis(60)) idToCheck = R.id.oneMinuteMeasurement;
+
+
+        measurementDelayRadio.check(idToCheck);
 
         String sensorName = prefs.getString(STATION_NAME, "");
 

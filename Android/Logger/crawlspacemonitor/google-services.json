@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "577339226021",
+    "firebase_url": "https://surfvind.firebaseio.com",
+    "project_id": "surfvind",
+    "storage_bucket": "surfvind.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577339226021:android:17d8e3e833ab1413",
+        "android_client_info": {
+          "package_name": "se.tna.weathermaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577339226021-b6fl0if0dh1gidcfkht2lqppe6ha84a4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.tna.weathermaster",
+            "certificate_hash": "F1F7F6AB58D4840D2234783C25F81026FABEDCE3"
+          }
+        },
+        {
+          "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL5iae_iFyBHoi76UeIFKnpAKmwhqlxBQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577339226021:android:b2305dc6e9f82766",
+        "android_client_info": {
+          "package_name": "se.tna.commonloggerservice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577339226021-hojsibpd2ud3akn21cdt9t0nbhnptep4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.tna.commonloggerservice",
+            "certificate_hash": "F1F7F6AB58D4840D2234783C25F81026FABEDCE3"
+          }
+        },
+        {
+          "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL5iae_iFyBHoi76UeIFKnpAKmwhqlxBQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577339226021:android:51a0fd151f8de4d5",
+        "android_client_info": {
+          "package_name": "se.tna.crawlspacemonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577339226021-eo6fs6u5ko0q4n8d8saa8pmhnt0u038n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.tna.crawlspacemonitor",
+            "certificate_hash": "F1F7F6AB58D4840D2234783C25F81026FABEDCE3"
+          }
+        },
+        {
+          "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL5iae_iFyBHoi76UeIFKnpAKmwhqlxBQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577339226021-p4gi26dheu2voqti4vpodgagsk4eobno.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

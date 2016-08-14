@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    tools:context=".MainActivity" >
+    tools:context=".WeathermasterGui" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,11 +15,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:singleLine="true"
             android:text="Name of sensor:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#f6fa91"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:maxLines="1" />
 
         <EditText
             android:id="@+id/stationName"
