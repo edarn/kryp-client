@@ -13,6 +13,7 @@ import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -212,7 +213,7 @@ public class SetupActivity extends Activity {
 		locationManager.removeUpdates(locationListener);
 		super.onStop();
 	}
-/*
+
 	public void onRadioButtonClicked(View view) {
 		// Is the button now checked?
 		boolean checked = ((RadioButton) view).isChecked();
@@ -244,7 +245,8 @@ public class SetupActivity extends Activity {
 				prefsEditor.putLong(SEND_TO_SERVER_DELAY_VIEW, sendToServerDelayMs);
 			}
 			break;
-		// Measurement speed
+
+			// Measurement speed
 		case R.id.twoSecondsMeasurement:
 			if (checked) {
 				measurementDelayMs = TimeUnit.SECONDS.toMillis(2);
@@ -265,7 +267,7 @@ public class SetupActivity extends Activity {
 			break;
 		}
 	}
-	*/
+
 
 	public void setPosition(double lat, double longi) {
 		latitude.setText(String.valueOf(lat));

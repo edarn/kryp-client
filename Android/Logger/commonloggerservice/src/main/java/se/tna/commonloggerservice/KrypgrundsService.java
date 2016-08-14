@@ -216,7 +216,6 @@ public class KrypgrundsService extends IOIOService {
                         }
 
                         //tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
-                        System.out.println(oneMeasurement.getJSON());
 
                         if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
                                 != -40  || oneMeasurement.airPressure != 0) {
@@ -506,7 +505,6 @@ public class KrypgrundsService extends IOIOService {
                     status.temperatureInne = oneReading.firstExternalTemperature;
                     status.rain = oneReading.rainFall;
                     status.airpreassure = (int) oneReading.airPressure;
-
                 }
             }
             if (surfvindHistory != null)
@@ -525,8 +523,8 @@ public class KrypgrundsService extends IOIOService {
                     status.temperatureUte = oneReading.temperatureUte;
                     status.absolutFuktInne = oneReading.absolutFuktInne;
                     status.absolutFuktUte = oneReading.absolutFuktUte;
-                    //status.rain = oneReading.;
-                    //status.airpreassure = (int) oneReading.airPressure;
+                    status.rain = oneReading.rainFall;
+                    status.airpreassure = (int) oneReading.airPressure;
                 }
             }
             if (krypgrundHistory != null)

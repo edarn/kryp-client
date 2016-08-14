@@ -279,7 +279,7 @@ ADDED from AndroidManifest.xml:30:9
 		ADDED from AndroidManifest.xml:32:17
 	android:name
 		ADDED from AndroidManifest.xml:31:17
-activity#se.tna.weathermaster.KrypgrundGUI
+activity#se.tna.weathermaster.WeathermasterGui
 ADDED from AndroidManifest.xml:34:9
 	android:label
 		ADDED from AndroidManifest.xml:37:17

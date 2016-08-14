@@ -75,6 +75,8 @@ public class CrawlspaceGUI extends Activity {
     private boolean serviceBound = false;
 
     private GraphView graph;
+    private ChartDataPoints dataPoints = new ChartDataPoints(200);
+
 
 
     @Override
@@ -84,21 +86,16 @@ public class CrawlspaceGUI extends Activity {
         setContentView(R.layout.activity_crawlspace_gui);
 
         Helper.appendLog("App started");
-//        Helper.setupGoogleAnalytics(this);
-
-        //Remove title bar
-
+        Helper.setupGoogleAnalytics(this);
 
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String id = telephonyManager.getDeviceId();
 
         //region CHART REGION
-
-
         graph = (GraphView) findViewById(R.id.graph);
         // set date label formatter
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
 
 /*
         graph.getViewport().setMinX(d1.getTime());
@@ -249,7 +246,7 @@ public class CrawlspaceGUI extends Activity {
         super.onStart();
 
         //Launch setup activty
-        SharedPreferences preferences = getSharedPreferences("TNA_Crawlspace_Settings", Activity.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(SetupActivity.SETTINGS_FILE, Activity.MODE_PRIVATE);
 
         String name = preferences.getString(SetupActivity.STATION_NAME, "");
         if (name == null || name.isEmpty()) {
@@ -280,7 +277,6 @@ public class CrawlspaceGUI extends Activity {
         textStationName.setText(name);
     }
 
-    ChartDataPoints dataPoints = new ChartDataPoints(200);
 
     private void updateUI() {
         if (null != loggerService) {

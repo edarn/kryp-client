@@ -28,14 +28,15 @@ public class ChartDataPoints {
 
     public ChartDataPoints(int iSize) {
         size = iSize;
-        absolutMoistureDatapointsInside = new LineGraphSeries<DataPoint>();
-        absolutMoistureDatapointsOutside = new LineGraphSeries<DataPoint>();
+        absolutMoistureDatapointsInside = new LineGraphSeries<>();
+        absolutMoistureDatapointsOutside = new LineGraphSeries<>();
     }
 
     public void insertData(StatusOfService measurement) {
             absolutMoistureDatapointsOutside.appendData(new DataPoint(new Date(System.currentTimeMillis()), measurement.absolutFuktUte),false,200);
             absolutMoistureDatapointsInside.appendData(new DataPoint(new Date(System.currentTimeMillis()), measurement.absolutFuktInne),false,200);
     }
+
     public enum SeriesType
     {
         AbsolutFuktUte,
@@ -46,12 +47,6 @@ public class ChartDataPoints {
 
         if (type == SeriesType.AbsolutFuktInne) return absolutMoistureDatapointsInside;
         else if (type == SeriesType.AbsolutFuktUte) return absolutMoistureDatapointsOutside;
-        /*if (array != null) {
-            for (int i = 0; i < array.size(); i++) {
-                serie.appendData(array.get(i), false, 200);
-            }
-        }
-        */
         return null;
     }
 }

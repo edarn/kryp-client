@@ -5,7 +5,7 @@
     <!-- Enable automatic Activity measurement -->
     <bool name="ga_autoActivityTracking">true</bool>
 
-    <screenName name="se.tna.weathermaster.KrypgrundGUI">WindMaster Activity</screenName>
+    <screenName name="se.tna.weathermaster.WeathermasterGui">WindMaster Activity</screenName>
     <screenName name="se.tna.weathermaster.SetupActivity">Setup Activity</screenName>
 
     <screenName name="se.tna.crawlspacemonitor.CrawlspaceGUI">Crawlspace Activity</screenName>

@@ -33,7 +33,7 @@
                 android:label="@string/service_name" />
 
         <activity
-                android:name="se.tna.weathermaster.KrypgrundGUI"
+                android:name="se.tna.weathermaster.WeathermasterGui"
                 android:configChanges="orientation|keyboardHidden"
                 android:label="@string/app_name"
                 android:launchMode="singleTask">

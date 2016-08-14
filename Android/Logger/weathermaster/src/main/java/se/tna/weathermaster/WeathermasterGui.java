@@ -2,19 +2,16 @@ package se.tna.weathermaster;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,17 +27,12 @@ import android.widget.ToggleButton;
 import se.tna.commonloggerservice.Helper;
 import se.tna.commonloggerservice.KrypgrundsService;
 import se.tna.commonloggerservice.StatusOfService;
-import se.tna.commonloggerservice.SurfvindStats;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-
-public class KrypgrundGUI extends Activity {
+public class WeathermasterGui extends Activity {
     private TextView textFuktInne;
     private TextView textFuktUte;
     private TextView textTempInne;
@@ -133,7 +125,7 @@ public class KrypgrundGUI extends Activity {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 kryp = ((KrypgrundsService.MyBinder) service).getService();
-                Toast.makeText(KrypgrundGUI.this, "Connected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WeathermasterGui.this, "Connected", Toast.LENGTH_SHORT).show();
                 serviceBound = true;
                 kryp.updateSettings(SetupActivity.SETTINGS_FILE);
             }
@@ -142,7 +134,7 @@ public class KrypgrundGUI extends Activity {
             public void onServiceDisconnected(ComponentName name) {
                 kryp = null;
                 serviceBound = false;
-                Toast.makeText(KrypgrundGUI.this, "DisConnected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WeathermasterGui.this, "DisConnected", Toast.LENGTH_SHORT).show();
 
             }
         };
@@ -212,7 +204,7 @@ public class KrypgrundGUI extends Activity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(KrypgrundGUI.this, SetupActivity.class));
+                startActivity(new Intent(WeathermasterGui.this, SetupActivity.class));
             }
         });
 
@@ -336,7 +328,7 @@ public class KrypgrundGUI extends Activity {
             // Add the buttons
             builder.setPositiveButton("OK!", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    startActivity(new Intent(KrypgrundGUI.this, SetupActivity.class));
+                    startActivity(new Intent(WeathermasterGui.this, SetupActivity.class));
                 }
             });
             builder.setNegativeButton("Nope!", new DialogInterface.OnClickListener() {

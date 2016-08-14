@@ -6,8 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Created by thomas on 2014-10-17.
  */
 public class ConcurrentMaxSizeArray<E> {
-    ArrayBlockingQueue<E> theList;
-    int maxSize = 0;
+    private ArrayBlockingQueue<E> theList;
+    private int maxSize = 0;
 
     public ConcurrentMaxSizeArray() {
         initiate(100);
@@ -31,6 +31,7 @@ public class ConcurrentMaxSizeArray<E> {
 
     public E getMostRecentlyAddedObject() {
         E[] arrayList = (E[]) theList.toArray();
+
         return arrayList[arrayList.length - 1];
     }
 

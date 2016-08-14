@@ -679,7 +679,6 @@ public class Helper {
         sb.append("Trying to send ");
         sb.append(measurements.size());
         sb.append(" items. \n");
-        JSONObject data;
         String body = "";
         boolean SendSuccess = true;
 
@@ -689,23 +688,6 @@ public class Helper {
 			 * empty.
 			 */
             while (SendSuccess && measurements.size() > 0) {
-                data = new JSONObject();
-
-                JSONArray dataArray = new JSONArray();
-
-                int nbrOfItemsToSend = Math.min(measurements.size(), 50);
-				/* Create a JSON Array that contains the data. */
-                // Dont send more than 50 measures in one post.
-                for (int i = 0; i < nbrOfItemsToSend; i++) {
-                    Stats temp = (Stats) measurements.get(i);
-                    if (temp != null) {
-
-                        dataArray.put(temp.getJSON());
-                        System.out.println("Sending data: " + temp.getJSON());
-
-                    }
-                }
-
                 OkHttpClient client = new OkHttpClient();
                 MediaType MEDIA_TYPE_MARKDOWN= null;
 
@@ -718,11 +700,11 @@ public class Helper {
                     MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
                     CrawlSpacePacket packet = new CrawlSpacePacket();
 
-                    for (KrypgrundStats stats: ((ArrayList<KrypgrundStats>)measurements))
+                    for (KrypgrundStats stats: (ArrayList<KrypgrundStats>) measurements)
                     {
                         packet.AbsolutFuktInne.add((int) stats.absolutFuktInne) ;
                         packet.AbsolutFuktUte.add((int) stats.absolutFuktUte) ;
-                        packet.FanOn.add(stats.fanOn==true?90:10);
+                        packet.FanOn.add(stats.fanOn ?90:10);
                         packet.FuktInne.add( stats.moistureInne) ;
                         packet.FuktUte.add( stats.moistureUte) ;
                         packet.TempInne.add( stats.temperatureInne) ;
@@ -751,7 +733,7 @@ public class Helper {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful())
                 {
-                    measurements.subList(0, nbrOfItemsToSend).clear();
+                    measurements.subList(0, Math.min(measurements.size(), 50)).clear();
                     sb.append(response.body().string());
                 }else
                 {
@@ -766,13 +748,7 @@ public class Helper {
         } catch (Exception e) {
             sb.append("Ex:" + e.toString());
         } finally {
-            //if (null != client) {
-              /*  ClientConnectionManager manager = client.getConnectionManager();
-                if (manager != null) {
-                    manager.shutdown();
-                }
-                */
-            //}
+
         }
         return sb.toString();
     }
