@@ -36,7 +36,7 @@ if (!empty($string)){
 
 		if (!empty($imei) && !empty($name))
 		{
-			echo TNA_QuerySQL("DELETE FROM `Surfvind_location` WHERE imei=$imei");
+			echo TNA_QuerySQL("DELETE FROM `Surfvind_location` WHERE imei='$imei'");
 			echo TNA_QuerySQL("INSERT INTO `Surfvind_location` SET imei='$imei', Location='$name', Latitiud='$latitude', Longitud='$longitude'");
 		}
 	}
