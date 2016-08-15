@@ -218,7 +218,7 @@ public class KrypgrundsService extends IOIOService {
                         //tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 
                         if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
-                                != -40  || oneMeasurement.airPressure != 0) {
+                                != -40 || oneMeasurement.airPressure != 0) {
                             if (oneMeasurement.windSpeedAvg == -1) oneMeasurement.windSpeedAvg = 0;
 
                             rawSurfvindsMeasurements.add(oneMeasurement);
@@ -275,26 +275,29 @@ public class KrypgrundsService extends IOIOService {
         }
     }
 
-    private TimerTask mConnectTask = null;
+
     private TimerTask mSendDataTask = null;
     private TimerTask mAddToHistoryTask = null;
     private TimerTask mPreventIOIOHWLockTask = null;
     private Timer addToHistoryTimer;
-    private Timer ioioConnectorTimer;
+
     private Timer dataSenderTimer;
     private Timer preventIOIOHWLockTimer;
+    private Object sendLock = new Object();
 
     class SendDataTask extends TimerTask {
         @Override
         public void run() {
             if (helper != null) {
                 debugText = "";
-                if (serviceMode == ServiceMode.Krypgrund) {
-                    debugText = helper.SendDataToServer(krypgrundHistory, ServiceMode.Krypgrund);
-                    timeForLastSendData = System.currentTimeMillis();
-                } else if (serviceMode == ServiceMode.Survfind) {
-                    debugText = helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
-                    timeForLastSendData = System.currentTimeMillis();
+                synchronized (sendLock) {
+                    if (serviceMode == ServiceMode.Krypgrund) {
+                        debugText = helper.SendDataToServer(krypgrundHistory, ServiceMode.Krypgrund);
+                        timeForLastSendData = System.currentTimeMillis();
+                    } else if (serviceMode == ServiceMode.Survfind) {
+                        debugText = helper.SendDataToServer(surfvindHistory, ServiceMode.Survfind);
+                        timeForLastSendData = System.currentTimeMillis();
+                    }
                 }
 
             }
@@ -326,32 +329,35 @@ public class KrypgrundsService extends IOIOService {
     class AddDataTask extends TimerTask {
         @Override
         public void run() {
-            // Reset time, so that we will soon add a new value to
-            // the history
-            timeForLastAddToHistory = System.currentTimeMillis();
 
-            if (serviceMode == ServiceMode.Krypgrund) {
-                if (rawKrypgrundMeasurements != null && rawKrypgrundMeasurements.size() > 0) {
-                    KrypgrundStats average = KrypgrundStats.getAverage(rawKrypgrundMeasurements);
-                    if (average != null) {
-                        ControlFan(average);
-                        if (helper != null) {
-                            average.fanOn = helper.IsFanOn();
+            synchronized (sendLock) {
+                // Reset time, so that we will soon add a new value to
+                // the history
+                timeForLastAddToHistory = System.currentTimeMillis();
+
+                if (serviceMode == ServiceMode.Krypgrund) {
+                    if (rawKrypgrundMeasurements != null && rawKrypgrundMeasurements.size() > 0) {
+                        KrypgrundStats average = KrypgrundStats.getAverage(rawKrypgrundMeasurements);
+                        if (average != null) {
+                            ControlFan(average);
+                            if (helper != null) {
+                                average.fanOn = helper.IsFanOn();
+                            }
+                            krypgrundHistory.add(average);
                         }
-                        krypgrundHistory.add(average);
+                        rawKrypgrundMeasurements.clear();
                     }
-                    rawKrypgrundMeasurements.clear();
+                    rawKrypgrundMeasurements = new ConcurrentMaxSizeArray<KrypgrundStats>();
                 }
-                rawKrypgrundMeasurements = new ConcurrentMaxSizeArray<KrypgrundStats>();
-            }
 
-            if (serviceMode == ServiceMode.Survfind) {
-                if (rawSurfvindsMeasurements != null && rawSurfvindsMeasurements.size() > 0) {
-                    SurfvindStats average = SurfvindStats.getAverage(rawSurfvindsMeasurements);
-                    surfvindHistory.add(average);
-                    rawSurfvindsMeasurements.clear();
+                if (serviceMode == ServiceMode.Survfind) {
+                    if (rawSurfvindsMeasurements != null && rawSurfvindsMeasurements.size() > 0) {
+                        SurfvindStats average = SurfvindStats.getAverage(rawSurfvindsMeasurements);
+                        surfvindHistory.add(average);
+                        rawSurfvindsMeasurements.clear();
+                    }
+                    rawSurfvindsMeasurements = new ConcurrentMaxSizeArray<SurfvindStats>();
                 }
-                rawSurfvindsMeasurements = new ConcurrentMaxSizeArray<SurfvindStats>();
             }
 
         }
@@ -385,8 +391,8 @@ public class KrypgrundsService extends IOIOService {
         Thread.setDefaultUncaughtExceptionHandler(s);
 
         mWatchdogTime = watchdog_TimeSinceLastOkData = System.currentTimeMillis();
-		/*
-		if (mConnectTask == null) {
+        /*
+        if (mConnectTask == null) {
 			mConnectTask = new TimerTask() {
 
 				@Override

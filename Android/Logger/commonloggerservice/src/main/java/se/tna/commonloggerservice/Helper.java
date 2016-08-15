@@ -106,14 +106,14 @@ public class Helper {
     }
 
     private static final FrequencyReading GET_SPEED_VERSION = FrequencyReading.Continuos_Reading;
-    private static Context mCtx = null;
+    // private static Context mCtx = null;
 
     public Helper(IOIO _ioio, KrypgrundsService kryp, String id, String ver, ServiceMode mode) {
         ioio = _ioio;
         krypService = kryp;
         imei = id;
         version = ver;
-        mCtx = kryp.getApplicationContext();
+        //mCtx = kryp.getApplicationContext();
         if (ioio != null) {
             try {
                 pcbVersion = 0;
@@ -159,8 +159,14 @@ public class Helper {
                 power = ioio.openAnalogInput(42);
 
                 WatchDog = ioio.openDigitalOutput(9, DigitalOutput.Spec.Mode.OPEN_DRAIN, watchValue);
-                B2 = ioio.openDigitalOutput(20);
-                B1 = ioio.openDigitalOutput(19);
+                //Old HW
+                // B2 = ioio.openDigitalOutput(20);
+                // B1 = ioio.openDigitalOutput(19);
+                //New HW (1.4)
+                B2 = ioio.openDigitalOutput(45);
+                B1 = ioio.openDigitalOutput(46);
+
+
                 WatchDog.write(watchValue);
                 B1.write(mFanOn);
                 B2.write(mFanOn);
@@ -680,67 +686,61 @@ public class Helper {
         sb.append(measurements.size());
         sb.append(" items. \n");
         String body = "";
-        boolean SendSuccess = true;
 
         try {
-			/*
+            /*
 			 * Keep sending data until there is a send failure or the history is
 			 * empty.
 			 */
-            while (SendSuccess && measurements.size() > 0) {
-                OkHttpClient client = new OkHttpClient();
-                MediaType MEDIA_TYPE_MARKDOWN= null;
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_MARKDOWN = null;
 
-                String postUrl = "";
-                Gson g = new Gson();
-                if (mode == ServiceMode.Krypgrund) {
-                   // postUrl = "http://www.surfvind.se/Krypgrund.php";
-                    postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/CrawlSpaceMeasurements";
-                    //MEDIA_TYPE_MARKDOWN= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
-                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
-                    CrawlSpacePacket packet = new CrawlSpacePacket();
+            String postUrl = "";
+            Gson g = new Gson();
+            if (mode == ServiceMode.Krypgrund) {
+                // postUrl = "http://www.surfvind.se/Krypgrund.php";
+                postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/CrawlSpaceMeasurements";
+                //MEDIA_TYPE_MARKDOWN= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+                MEDIA_TYPE_MARKDOWN = MediaType.parse("application/json; charset=utf-8");
+                CrawlSpacePacket packet = new CrawlSpacePacket();
 
-                    for (KrypgrundStats stats: (ArrayList<KrypgrundStats>) measurements)
-                    {
-                        packet.AbsolutFuktInne.add((int) stats.absolutFuktInne) ;
-                        packet.AbsolutFuktUte.add((int) stats.absolutFuktUte) ;
-                        packet.FanOn.add(stats.fanOn ?90:10);
-                        packet.FuktInne.add( stats.moistureInne) ;
-                        packet.FuktUte.add( stats.moistureUte) ;
-                        packet.TempInne.add( stats.temperatureInne) ;
-                        packet.TempUte.add( stats.temperatureUte) ;
-                        packet.TimeStamp.add( stats.time) ;
-                    }
-                    packet.id = imei;
-                    packet.version = version;
-
-                    body = g.toJson(packet);
-                } else if (mode == ServiceMode.Survfind) {
-                    postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/PostSurfvindMeasurements";
-                    MEDIA_TYPE_MARKDOWN= MediaType.parse("application/json; charset=utf-8");
-                    SurfvindPacket packet = new SurfvindPacket();
-                    packet.id = imei;
-                    packet.version = version;
-                    packet.surfvindMeasurements = measurements.toArray(new SurfvindStats[measurements.size()]);
-
-                    body = g.toJson(packet);
+                for (KrypgrundStats stats : (ArrayList<KrypgrundStats>) measurements) {
+                    packet.AbsolutFuktInne.add((int) stats.absolutFuktInne);
+                    packet.AbsolutFuktUte.add((int) stats.absolutFuktUte);
+                    packet.FanOn.add(stats.fanOn ? 90 : 10);
+                    packet.FuktInne.add(stats.moistureInne);
+                    packet.FuktUte.add(stats.moistureUte);
+                    packet.TempInne.add(stats.temperatureInne);
+                    packet.TempUte.add(stats.temperatureUte);
+                    packet.TimeStamp.add(stats.time);
                 }
-                Request request = new Request.Builder()
-                        .url(postUrl)
-                        .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, body))
-                        .build();
+                packet.id = imei;
+                packet.version = version;
 
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful())
-                {
-                    measurements.subList(0, Math.min(measurements.size(), 50)).clear();
-                    sb.append(response.body().string());
-                }else
-                {
-                    SendSuccess = false;
-                    sb.append("Fail: ");
-                }
+                body = g.toJson(packet);
+            } else if (mode == ServiceMode.Survfind) {
+                postUrl = "http://www.surfvind.se/RestService/RestService1.svc/" + imei + "/PostSurfvindMeasurements";
+                MEDIA_TYPE_MARKDOWN = MediaType.parse("application/json; charset=utf-8");
+                SurfvindPacket packet = new SurfvindPacket();
+                packet.id = imei;
+                packet.version = version;
+                packet.surfvindMeasurements = measurements.toArray(new SurfvindStats[measurements.size()]);
+
+                body = g.toJson(packet);
             }
+            Request request = new Request.Builder()
+                    .url(postUrl)
+                    .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, body))
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                measurements.clear();
+                sb.append(response.body().string());
+            } else {
+                sb.append("Fail: ");
+            }
+
         } catch (RuntimeException runtime) {
             sb.append("RuntimeException" + runtime.toString());
         } catch (IOException io) {

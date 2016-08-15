@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.util.CircularArray;
+import android.support.v4.util.TimeUtils;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -33,8 +34,10 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.Series;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import se.tna.commonloggerservice.Helper;
 import se.tna.commonloggerservice.KrypgrundStats;
@@ -97,9 +100,13 @@ public class CrawlspaceGUI extends Activity {
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
 
+        graph.getViewport().setMinY(500);
+        graph.getViewport().setMaxY(2000);
+        graph.getViewport().setYAxisBoundsManual(true);
+
 /*
-        graph.getViewport().setMinX(d1.getTime());
-        graph.getViewport().setMaxX(d3.getTime());
+        graph.getViewport().setMinX(System.currentTimeMillis());
+        graph.getViewport().setMaxX(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(2));
         graph.getViewport().setXAxisBoundsManual(true);
 */
 // as we use dates as labels, the human rounding to nice readable numbers
@@ -107,6 +114,7 @@ public class CrawlspaceGUI extends Activity {
         graph.getGridLabelRenderer().setHumanRounding(false);
         graph.addSeries(dataPoints.getDataSeries(ChartDataPoints.SeriesType.AbsolutFuktInne));
         graph.addSeries(dataPoints.getDataSeries(ChartDataPoints.SeriesType.AbsolutFuktUte));
+
 
         textStationName = (TextView) findViewById(R.id.stationName);
 
@@ -227,6 +235,8 @@ public class CrawlspaceGUI extends Activity {
         if (loggerService != null) {
             loggerService.updateSettings(SetupActivity.SETTINGS_FILE);
         }
+
+       // debugSendData();
     }
 
     @Override
@@ -335,6 +345,50 @@ public class CrawlspaceGUI extends Activity {
                 }
             });
         }
+    }
+    private void debugSendData()
+    {
+                //region DEBUG DATA
+
+        final ArrayList<KrypgrundStats> list = new ArrayList<>();
+        KrypgrundStats s = new KrypgrundStats();
+        s.absolutFuktInne = 1.2f;
+        s.absolutFuktUte = 2.3f;
+        s.absolutFuktExtra = 9.9f;
+        s.moistureInne = 3.4f;
+        s.moistureUte = 4.5f;
+        s.moistureExtra = 9.9f;
+        s.batteryVoltage = 15.6f;
+        s.fanOn = true;
+
+        s.temperatureInne = 7.8f;
+        s.temperatureUte = 8.9f;
+        s.temperatureExtra = 9.9f;
+
+        list.add(s);
+        s = new KrypgrundStats();
+        s.absolutFuktInne = 1.2f;
+        s.absolutFuktUte = 2.3f;
+        s.absolutFuktExtra = 9.9f;
+        s.moistureInne = 3.4f;
+        s.moistureUte = 4.5f;
+        s.moistureExtra = 9.9f;
+        s.batteryVoltage = 15.6f;
+        s.fanOn = false;
+
+        s.temperatureInne = 7.8f;
+        s.temperatureUte = 8.9f;
+        s.temperatureExtra = 9.9f;
+        list.add(s);
+
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                Log.d("TNA", Helper.SendDataToServer(list, KrypgrundsService.ServiceMode.Krypgrund));
+                return null;
+            }
+        }.execute();
     }
 }
 

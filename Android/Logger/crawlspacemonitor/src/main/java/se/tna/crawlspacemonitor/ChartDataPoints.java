@@ -2,6 +2,7 @@ package se.tna.crawlspacemonitor;
 
 //import android.support.v4.util.CircularArray;
 
+import android.graphics.Color;
 import android.support.v4.util.CircularArray;
 
 import com.jjoe64.graphview.series.DataPoint;
@@ -23,18 +24,23 @@ import se.tna.commonloggerservice.StatusOfService;
 public class ChartDataPoints {
 
     int size;
-    public LineGraphSeries<DataPoint> absolutMoistureDatapointsInside;
-    public LineGraphSeries<DataPoint> absolutMoistureDatapointsOutside;
+    public LineGraphSeries<ChartDataPoint> absolutMoistureDatapointsInside;
+    public LineGraphSeries<ChartDataPoint> absolutMoistureDatapointsOutside;
 
     public ChartDataPoints(int iSize) {
         size = iSize;
         absolutMoistureDatapointsInside = new LineGraphSeries<>();
+       // absolutMoistureDatapointsInside.setDrawDataPoints(true);
+        absolutMoistureDatapointsInside.setColor(Color.RED);
         absolutMoistureDatapointsOutside = new LineGraphSeries<>();
+       // absolutMoistureDatapointsOutside.setDrawDataPoints(true);
+        absolutMoistureDatapointsOutside.setColor(Color.BLUE);
+
     }
 
     public void insertData(StatusOfService measurement) {
-            absolutMoistureDatapointsOutside.appendData(new DataPoint(new Date(System.currentTimeMillis()), measurement.absolutFuktUte),false,200);
-            absolutMoistureDatapointsInside.appendData(new DataPoint(new Date(System.currentTimeMillis()), measurement.absolutFuktInne),false,200);
+            absolutMoistureDatapointsOutside.appendData(new ChartDataPoint(measurement.absolutFuktUte),false,200);
+            absolutMoistureDatapointsInside.appendData(new ChartDataPoint(measurement.absolutFuktInne),false,200);
     }
 
     public enum SeriesType
@@ -42,7 +48,7 @@ public class ChartDataPoints {
         AbsolutFuktUte,
         AbsolutFuktInne
     }
-    public LineGraphSeries<DataPoint> getDataSeries(SeriesType type)
+    public LineGraphSeries<ChartDataPoint> getDataSeries(SeriesType type)
     {
 
         if (type == SeriesType.AbsolutFuktInne) return absolutMoistureDatapointsInside;
