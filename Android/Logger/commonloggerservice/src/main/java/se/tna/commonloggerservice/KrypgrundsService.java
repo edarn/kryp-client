@@ -201,7 +201,13 @@ public class KrypgrundsService extends IOIOService {
                             } else {
                                 nbrRainPulses = frequency * (System.currentTimeMillis() - rainMeasurementTime) / 1000;
                             }
+                        } else {
+                            nbrRainPulses = 0;
                         }
+
+                        //0.3mm rain per pulse!
+                        nbrRainPulses *= 0.3;
+
                         rainMeasurementTime = System.currentTimeMillis();
 
                         System.out.println("REGN Antal pulser: " + nbrRainPulses);
@@ -218,7 +224,7 @@ public class KrypgrundsService extends IOIOService {
                         //tempAndHumidity = helper.GetChipCap2TempAndHumidity(SensorLocation.SensorUte);
 
                         if (oneMeasurement.windDirectionAvg != -1 || oneMeasurement.windSpeedAvg != -1 || oneMeasurement.onBoardHumidity != 0 || oneMeasurement.onBoardTemperature
-                                != -40 || oneMeasurement.airPressure != 0) {
+                                != -40 || oneMeasurement.airPressure != 0 || oneMeasurement.rainFall != 0) {
                             if (oneMeasurement.windSpeedAvg == -1) oneMeasurement.windSpeedAvg = 0;
 
                             rawSurfvindsMeasurements.add(oneMeasurement);
