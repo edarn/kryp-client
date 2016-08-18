@@ -245,8 +245,8 @@ namespace Surfvind_2011
                             //list.onBoardHumidity;
                             //list.onBoardTemperature;
                             list.batteryVoltage.Add(float.Parse(reader["waterTemp"].ToString())); ;
-                            //list.firstExternalHumidity;
-                            //list.firstExternalTemperature;
+                            list.firstExternalHumidity.Add(float.Parse(reader["moisture"].ToString()));
+                            list.firstExternalTemperature.Add(float.Parse(reader["airTemp"].ToString()));
 
                         }
                         catch (Exception ee) { }
@@ -258,35 +258,98 @@ namespace Surfvind_2011
             }
         }
 
-/*
-        public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
+        private string GetMySqlCommandRain(TimeInterval interval, String imei)
         {
-            string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+            String mySqlCommand = $" FROM `Surfvind_data` WHERE Imei='{imei}' AND ";
+            String firstPart = "SELECT sum(rainFall)";
+            String timePart = "";
+            String groupPart = "";
+            DateTime now = DateTime.Now;
+            switch (interval)
+            {
+                case TimeInterval.Now:
+                    now = DateTime.Now.AddMinutes(-15);
+                    break;
+                case TimeInterval.OneHour:
+                    now = DateTime.Now.AddHours(-1);
+                    break;
+                case TimeInterval.FiveHours:
+                    now = DateTime.Now.AddHours(-5);
+                    break;
+                case TimeInterval.OneDay:
+                    now = DateTime.Now.AddHours(-24);
+                    break;
+                case TimeInterval.OneMonth:
+                    now = DateTime.Now.AddDays(-30);
+                    break;
+                case TimeInterval.OneYear:
+                    now = DateTime.Now.AddDays(-365);
+                    break;
+
+            }
+            timePart = $"time >'{now}'";
+
+            mySqlCommand = firstPart + mySqlCommand + timePart + groupPart;
+            return mySqlCommand;
+        }
+
+        public decimal GetTotalRain(TimeInterval interval)
+        {
+            String mySqlCommand = GetMySqlCommandRain(interval, imei);
+            decimal result=-1;
             using (DbConnection conn = GetDbConnection(GetDBConnString()))
             {
-                List<WindRecord> list = new List<WindRecord>();
+                SurfvindMeasurements list = new SurfvindMeasurements();
                 conn.Open();
-                using (DbCommand cmd = GetDBCommand(cmdText, conn))
+
+                using (DbCommand cmd = new MySqlCommand(mySqlCommand, (MySqlConnection)conn))
                 {
-                    cmd.Parameters.Add(GetDBParam("start", startDate));
-                    cmd.Parameters.Add(GetDBParam("end", endDate));
                     DbDataReader reader = cmd.ExecuteReader();
+
                     while (reader.Read())
                     {
-                        WindRecord wr = new WindRecord();
-                        wr.Time = Convert.ToDateTime(reader["time"]);
-                        wr.AverageDirection = int.Parse(reader["averageDir"].ToString());
-                        wr.MaxDirection = int.Parse(reader["maxDir"].ToString());
-                        wr.MinDirection = int.Parse(reader["minDir"].ToString());
-                        wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
-                        wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
-                        wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
-                        list.Add(wr);
+                        try
+                        {
+                           result = decimal.Parse(reader["sum(rainFall)"].ToString());
+                        }
+                        catch (Exception ee) { }
                     }
+                    reader.Close();
+
                 }
-                return list;
+                return result;
             }
-        }*/
+        }
+
+        /*
+                public List<WindRecord> GetListBetweenDate(DateTime startDate, DateTime endDate)
+                {
+                    string cmdText = string.Format("select * from " + dbToUse + " WHERE imei='" + imei + "' AND time between {0} order by time desc", (isMySqlDB ? "?start and ?end" : "@start and @end"));
+                    using (DbConnection conn = GetDbConnection(GetDBConnString()))
+                    {
+                        List<WindRecord> list = new List<WindRecord>();
+                        conn.Open();
+                        using (DbCommand cmd = GetDBCommand(cmdText, conn))
+                        {
+                            cmd.Parameters.Add(GetDBParam("start", startDate));
+                            cmd.Parameters.Add(GetDBParam("end", endDate));
+                            DbDataReader reader = cmd.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                WindRecord wr = new WindRecord();
+                                wr.Time = Convert.ToDateTime(reader["time"]);
+                                wr.AverageDirection = int.Parse(reader["averageDir"].ToString());
+                                wr.MaxDirection = int.Parse(reader["maxDir"].ToString());
+                                wr.MinDirection = int.Parse(reader["minDir"].ToString());
+                                wr.AverageSpeed = float.Parse(reader["averageSpeed"].ToString());
+                                wr.MaxSpeed = float.Parse(reader["maxSpeed"].ToString());
+                                wr.MinSpeed = float.Parse(reader["minSpeed"].ToString());
+                                list.Add(wr);
+                            }
+                        }
+                        return list;
+                    }
+                }*/
 
         public List<WindRecord> GetListBetweenDate2(DateTime startDate, DateTime endDate)
         {

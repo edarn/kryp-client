@@ -25,11 +25,17 @@ namespace Surfvind_2011
                     UriTemplate = "{imei}/CrawlSpaceMeasurements")]
         string PostCrawlspaceMeasurements(CrawlSpaceMeasurements data, string imei);
 
-  [OperationContract]
+        [OperationContract]
         [WebInvoke(Method = "GET",
                     ResponseFormat = WebMessageFormat.Json,
                     UriTemplate = "{imei}/WeatherMeasurements?timeInterval={timeInterval}")]
         SurfvindMeasurements GetWeatherData(string imei, string timeInterval);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+                    ResponseFormat = WebMessageFormat.Json,
+                    UriTemplate = "{imei}/TotalRain?timeInterval={timeInterval}")]
+        decimal GetRainData(string imei, string timeInterval);
 
 
         [OperationContract]

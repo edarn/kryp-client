@@ -157,5 +157,23 @@ namespace Surfvind_2011
 
             return result;
         }
+
+        public decimal GetRainData(string imei, string timeInterval)
+        {
+            decimal result = -1;
+
+            TimeInterval interval = ValidateInput(timeInterval);
+            if (interval == TimeInterval.Invalid) return -1;
+
+            SurfvindDataConnection sdc = new SurfvindDataConnection();
+
+            sdc.SetImei(imei);
+            result = sdc.GetTotalRain(interval);
+
+
+            return result;
+        }
+
+        
     }
 }
