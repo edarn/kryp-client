@@ -91,6 +91,41 @@
             </tr>
         </table>
     </div>
+         <div id="rainfall" runat="server" style="position: absolute; left: 1380px;
+        top: 195px; width: 140px; z-index: 1;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Rainfall (mm/h)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <asp:Image ID="rainImage" runat="server" AlternateText="rainfall" Width="50px"
+                                        ImageUrl="design/rain_cloud.png" />
+                                </td>
+                                <td>
+                                    <asp:Label ID="rain" runat="server" Text="10 mm" />
+                                </td>
+                            </tr>
+
+                             <tr>
+                                <td>
+                                    AirPreassure (hPa)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <asp:Image ID="preassureImage" runat="server" AlternateText="rainfall" Width="50px"
+                                        ImageUrl="design/barometer.jpg" />
+                                </td>
+                                <td>
+                                    <asp:Label ID="preassure" runat="server" Text="1005 hPa" />
+                                </td>
+                            </tr>
+                               
+                        </table>
+                    </div>
     <div style="position: absolute; left: 750px; top: 200px; width: 430px; z-index: 1;">
         <cc1:GMap ID="GMap1" runat="server" Height="270" Width="410" />
     </div>

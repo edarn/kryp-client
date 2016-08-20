@@ -310,7 +310,7 @@ namespace Surfvind_2011
                     {
                         try
                         {
-                           result = decimal.Parse(reader["sum(rainFall)"].ToString());
+                           result = int.Parse(reader["sum(rainFall)"].ToString());
                         }
                         catch (Exception ee) { }
                     }

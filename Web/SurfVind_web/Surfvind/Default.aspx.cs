@@ -90,6 +90,17 @@ namespace Surfvind_2011
                     temperature_container.Visible = false;
                 }
 
+                if (wr.AirPressure != 0)
+                {
+                    rain.Text = windData.GetTotalRain(TimeInterval.OneHour) + " mm/h";
+                    preassure.Text = wr.AirPressure + " hPa";
+                    rainfall.Visible = true;
+                }
+                else
+                {
+                    rainfall.Visible = false;
+                }
+
                 // Graphs are now generated on demand. 
                 graphGenerator.fetchData(2, windData);
                 twentyFourHGraph.ImageUrl = graphGenerator.generateGraphOnServer(2,1050,250);

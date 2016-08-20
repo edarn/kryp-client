@@ -90,18 +90,8 @@ namespace Surfvind_2011.CrawlSpace
                     data.FuktUte.Add(float.Parse(reader["FuktUte"].ToString()));
                     data.TempInne.Add(float.Parse(reader["TempInne"].ToString()));
                     data.TempUte.Add(float.Parse(reader["TempUte"].ToString()));
-                    bool fanOn = bool.Parse(reader["FanOn"].ToString());
-                    if (fanOn)
-                    {
-                        data.FanOn.Add(90);
-                    }
-                    else
-                    {
-                        data.FanOn.Add(10);
-                    }
-
-
-                }
+                    data.FanOn.Add((int)float.Parse(reader["FanOn"].ToString()));
+                  }
             }
             return data;
         }
@@ -193,15 +183,7 @@ namespace Surfvind_2011.CrawlSpace
                             list.FuktUte.Add(float.Parse(reader["FuktUte"].ToString()));
                             list.TempInne.Add(float.Parse(reader["TempInne"].ToString()));
                             list.TempUte.Add(float.Parse(reader["TempUte"].ToString()));
-                            double fanOn = double.Parse(reader["FanOn"].ToString());
-                            if (fanOn > 0.45)
-                            {
-                                list.FanOn.Add(90);
-                            }
-                            else
-                            {
-                                list.FanOn.Add(10);
-                            }
+                            list.FanOn.Add((int)float.Parse(reader["FanOn"].ToString()));
                         }
                         catch (Exception ee) { }
                     }
